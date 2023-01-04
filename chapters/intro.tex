@@ -1,0 +1,90 @@
+\chapter{Introduction}
+This template is meant as an example
+of how a technical report can be
+structured. Discuss the table of content and the names of the chapters with the
+group members and supervisor to suit your specific report.\\
+
+\section{Some \LaTeX{} Examples}
+
+\subsection{Using the Bibliography}
+
+This is an example of how to use the bibliography and citations. Cite to Einstein \cite{einstein}, or something else \cite{dirac}.\\
+
+
+\subsection{Writing Mathematics}
+
+This is some examples of how to write math in \LaTeX.
+
+\begin{equation}
+    y(x) = \frac{\sin x}{e^x}
+    \label{eq:label1}
+\end{equation}
+
+We can refer to the equation by using the label, like this: eq \ref{eq:label1}.\\
+
+We can choose whether to number the equation or not:
+\begin{equation*}
+    y(x) = \frac{\sin x}{e^x}
+\end{equation*}
+
+Lastly, we can write inline math: $y = a \cdot x + b$ 
+
+\subsection{Programming Code}
+
+Inline MATLAB code: \mcode{variabel = max(input)}\\
+
+MATLAB code in section:
+\begin{lstlisting}
+for i = 1 : 10
+% Skriv kode her
+end
+\end{lstlisting}
+
+
+\newpage
+
+\subsection{Inserting Tables}
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{c|c}
+        Variable    &   Value   \\
+        \hline
+         $\theta$   &   10      \\
+         $\omega$   &   40 
+    \end{tabular}
+    \caption{The table Caption}
+    \label{tab:label1}
+\end{table}
+
+This table can be referred to by using the label, like this: table \ref{tab:label1}.
+
+
+\subsection{Including figures}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width = 0.7\textwidth]{Figures/Frontpage/forside_master_nor.pdf}
+    \caption{The figure Caption}
+    \label{fig:label1}
+\end{figure}
+
+This figure can be referred to by using the label, like this: figure \ref{fig:label1}.
+
+
+\subsection{Multicolumn}
+
+\begin{minipage}{0.45\textwidth}
+
+    \vspace{-4cm}
+    Text to describe for example a photo. Here we can write really long sentences just to prove the concept of the minipage, which is that the text will follow the width of the minipage that we have specified. In this case it was 45 \% of the total textwidth, with a small spacing in between, using the command "hspace". If we would like the text to start further up in the minipace, we can use the command "vspace" in front of the text, to shift it vertically.
+
+\end{minipage}
+\hspace{0.05\textwidth}
+\begin{minipage}{0.45\textwidth}
+ 
+    \includegraphics[width = \textwidth]{Figures/Frontpage/forside_bachelor_nor.pdf}
+
+\end{minipage}
+
+

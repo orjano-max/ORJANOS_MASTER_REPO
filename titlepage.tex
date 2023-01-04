@@ -1,0 +1,61 @@
+\begin{titlepage}
+
+
+%%%% Select the correct front page by changing the reference below %%%% 
+
+% Figures/Frontpage/forside_bachelor_eng.pdf
+% Figures/Frontpage/forside_bachelor_nor.pdf
+% Figures/Frontpage/forside_master_eng.pdf
+% Figures/Frontpage/forside_master_nor.pdf
+
+\AddToShipoutPicture*{
+    \put(-4,0){
+        \parbox[b][\paperheight]{\paperwidth}{%
+            \vfill
+            \centering
+            % Change the reference in this line to change front page
+            % forside_bachelor_eng.pdf, forside_bachelor_nor.pdf 
+            % forside_master_eng.pdf, forside_master_nor.pdf
+            \includegraphics[width=1.275\textwidth]{Figures/Frontpage/forside_master_eng.pdf}%
+            \vfill
+        }
+    }
+    \put(0,0){%
+        \transparent{0}\textcolor{white}{\rule{\paperwidth}{\paperheight}}
+    }
+}
+
+%%%% Type in your data here %%%% 
+
+\newcommand{\projectTitle}{Autonomous Warehouse UGV}
+\newcommand{\projectSubTitlel}{ This thesis could have a subtitle that often could be somewhat longer than the title, and also stretch over several lines.}
+\newcommand{\authors}{ØRJAN ØVSTHUS}
+\newcommand{\supervisor}{Ajit Jha, Ilya Tyapin}
+
+\newcommand{\projectYear}{2021}
+\newcommand{\facultyName}{Faculty of Engineering and Science}
+\newcommand{\departmentName}{Department of Engineering and Sciences}
+
+
+
+
+%%%% Page Layout %%%% 
+\begin{tabular}{p{12cm}}
+                                            \\[5cm]
+    \LARGE{\textsc{\textbf{\projectTitle}}} \\[1.5cm]
+    \projectSubTitlel                       \\[2.5cm]
+    \large{\authors}                        \\[9cm]
+    \Large{SUPERVISOR}                      \\
+    \supervisor
+\end{tabular}
+
+
+
+\vfill
+
+
+\textbf{University of Agder, \projectYear} \\
+\small{\facultyName \\
+\departmentName}
+\vspace{1cm}
+\end{titlepage}
