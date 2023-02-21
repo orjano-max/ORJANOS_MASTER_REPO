@@ -56,8 +56,54 @@
 
   
   <!-- THIS IS COMMENTED OUT BY ØØ, HUSKY PROJECT <xacro:include filename="$(arg urdf_extras)" /> -->
-  
-  <!-- OUSTER LIDAR LINK. ØØ. 19.09.22 -->
+  <link
+    name="frame_link">
+    <inertial>
+      <origin
+        xyz="-0.019514 -0.052513 0.024073"
+        rpy="0 0 0" />
+      <mass
+        value="1.5326" />
+      <inertia
+        ixx="0.025107"
+        ixy="7.1994E-19"
+        ixz="-4.8558E-21"
+        iyy="0.004688"
+        iyz="9.2216E-19"
+        izz="0.020746" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find husky_description)/meshes/frame_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89804 0.91765 0.92941 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find husky_description)/meshes/frame_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="frame_joint" type="fixed">
+    <parent link="user_rail_link"/>
+    <child link="frame_link"/>
+    <origin xyz="0 0 0.3" rpy="-1.57079633 0 0"/>
+  </joint>
+
+  <!-- OUSTER LIDAR LINK. ØØ. 19.09.22 
   <link name="lidar_link">
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -80,13 +126,13 @@
     </visual>
   </link>
 
-  <joint name="lidar_join" type="fixed">
+  <joint name="lidar_joint" type="fixed">
     <parent link="base_link"/>
     <child link="lidar_link"/>
     <origin xyz="0.175 0 0.505" rpy="0 0 3.14"/>
-  </joint>
+  </joint> -->
 
-  <!-- OUSTER LIDAR GAZEBO. ØØ. 19.09.22 -->
+  <!-- OUSTER LIDAR GAZEBO. ØØ. 19.09.22 
   <gazebo reference="lidar_link">
     <sensor name="lidar" type="ray">
       <always_on>true</always_on>
@@ -121,6 +167,9 @@
       </plugin>
     </sensor>
   </gazebo>
+
+  -->
+  
   
 
   
