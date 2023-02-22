@@ -23,13 +23,95 @@ def generate_launch_description():
         'ouster_lidar.yaml'],
     )
 
-
-    # Launch husky, Which brings up the husky control
-    launch_husky_base = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(PathJoinSubstitution(
-        [FindPackageShare("husky_group"), 'launch', 'base.launch.py']))
-        
+    urdf_extras_path = PathJoinSubstitution(
+                [FindPackageShare("husky_group"), "urdf", "husky_urdf_extras.urdf"]
+                )
+    
+    config_husky_velocity_controller = PathJoinSubstitution(
+        [FindPackageShare("husky_control"),
+        "config",
+        "control.yaml"],
     )
+
+    # Get URDF via xacro
+    robot_description_content = Command(
+        [
+            PathJoinSubstitution([FindExecutable(name="xacro")]),
+            " ",
+            PathJoinSubstitution(
+                [FindPackageShare("husky_description"), "urdf", "husky.urdf.xacro"]
+            ),
+            " ",
+            "name:=husky",
+            " ",
+            "prefix:=''",
+            " ",
+            "is_sim:=true",
+            " ",
+            "urdf_extras:=",urdf_extras_path,
+            " ",
+            "gazebo_controllers:=",config_husky_velocity_controller,
+        ]
+    )
+
+    robot_description = {"robot_description": robot_description_content}
+
+    node_robot_state_publisher = Node(
+        package="robot_state_publisher",
+        executable="robot_state_publisher",
+        output="screen",
+        parameters=[robot_description],
+    )
+
+    node_controller_manager = Node(
+        package="controller_manager",
+        executable="ros2_control_node",
+        parameters=[robot_description, config_husky_velocity_controller],
+        output={
+            "stdout": "screen",
+            "stderr": "screen",
+        },
+    )
+
+    spawn_controller = Node(
+        package="controller_manager",
+        executable="spawner.py",
+        arguments=["joint_state_broadcaster"],
+        output="screen",
+    )
+
+    spawn_husky_velocity_controller = Node(
+        package="controller_manager",
+        executable="spawner.py",
+        arguments=["husky_velocity_controller"],
+        output="screen",
+    )
+
+    # Launch husky_control/control.launch.py which is just robot_localization.
+    launch_husky_control = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(PathJoinSubstitution(
+        [FindPackageShare("husky_control"), 'launch', 'control.launch.py'])))
+    
+    # Launch husky_control/teleop_base.launch.py which is various ways to tele-op
+    # the robot but does not include the joystick. Also, has a twist mux.
+    launch_husky_teleop_base = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(PathJoinSubstitution(
+        [FindPackageShare("husky_control"), 'launch', 'teleop_base.launch.py'])))
+
+    # Launch husky_control/teleop_joy.launch.py which is tele-operation using a physical joystick.
+    launch_husky_teleop_joy = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(PathJoinSubstitution(
+        [FindPackageShare("husky_control"), 'launch', 'teleop_joy.launch.py'])))
+
+
+    # Launch husky_bringup/accessories.launch.py which is the sensors commonly used on the Husky.
+    launch_husky_accessories = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(PathJoinSubstitution(
+        [FindPackageShare("husky_bringup"), 'launch', 'accessories.launch.py'])))
+
+
+
+    #  ----------------------- ALT UNDER HER VAR HER FRA FØR----------------------------------
 
 
     #Launch the UM7 IMU
@@ -71,21 +153,38 @@ def generate_launch_description():
         }]
     )
 
-    node_manipulator_placement = Node(
-            package='tf2_ros',
-            executable='static_transform_publisher',
-            arguments = ['0', '0', '1', '0', '0', '0', 'base_link', 'world']
-        )
+    launch_interbotix = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(PathJoinSubstitution(
+            [FindPackageShare('interbotics_xsarm_control'), 'launch', 'xsarm_control.launch.py'])),
+            launch_arguments ={
+            'robot_model' : 'vx300',
+            'use_rviz' : 'false'
+            }.items()
+    )
+
+    node_tf_publisher = Node(
+        package="tf2_ros",
+        executable="static_transform_publisher",
+        arguments = ["-0.3", "0", "0.2", "-1.5708", "0", "0", "base_link", "world"],
+    )
     
 
 
     ld = LaunchDescription()
     
-    ld.add_action(node_pointcloud_to_laserscan)
-    ld.add_action(launch_husky_base)
-    ld.add_action(node_um7_imu)
-    ld.add_action(launch_ouster_lidar)
-    ld.add_action(node_manipulator_placement)
+    #ld.add_action(node_pointcloud_to_laserscan)
+    ld.add_action(node_robot_state_publisher)
+    ld.add_action(node_controller_manager)
+    ld.add_action(spawn_controller)
+    ld.add_action(spawn_husky_velocity_controller)
+    ld.add_action(launch_husky_control)
+    ld.add_action(launch_husky_teleop_base)
+    ld.add_action(launch_husky_teleop_joy)
+    ld.add_action(launch_husky_accessories)
+    #ld.add_action(node_um7_imu)
+    #ld.add_action(launch_ouster_lidar)
+    #ld.add_action(launch_interbotix)
+    #ld.add_action(node_tf_publisher)
     
 
     return ld
