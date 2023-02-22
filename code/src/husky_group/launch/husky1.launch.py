@@ -48,9 +48,7 @@ def generate_launch_description():
             " ",
             "is_sim:=true",
             " ",
-            "urdf_extras:=",urdf_extras_path,
-            " ",
-            "gazebo_controllers:=",config_husky_velocity_controller,
+            "urdf_extras:=",urdf_extras_path
         ]
     )
 
