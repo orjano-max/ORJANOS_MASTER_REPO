@@ -11,7 +11,6 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
   <depend>interbotix_xsarm_descriptions</depend>
   <depend>interbotix_xs_modules</depend>
-  <depend>interbotix_xs_ros_control</depend>
   <depend>interbotix_common_sim</depend>
   <depend>controller_manager</depend>
   <depend>effort_controllers</depend>
