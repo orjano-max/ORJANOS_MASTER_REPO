@@ -1,3 +1,4 @@
+import os
 from symbol import parameters
 import math
 from launch import LaunchDescription
@@ -7,6 +8,7 @@ from launch.substitutions import Command, FindExecutable, PathJoinSubstitution, 
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
+os.environ["HUSKY_TOP_PLATE_ENABLED"] = "false"
 
 def generate_launch_description():
     # Get parameters
