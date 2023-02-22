@@ -168,19 +168,19 @@ def generate_launch_description():
 
     ld = LaunchDescription()
     
-    ld.add_action(node_pointcloud_to_laserscan)
+    #ld.add_action(node_pointcloud_to_laserscan)
     ld.add_action(node_robot_state_publisher)
     ld.add_action(node_controller_manager)
     ld.add_action(spawn_controller)
-    ld.add_action(spawn_husky_velocity_controller)
-    ld.add_action(launch_husky_control)
-    ld.add_action(launch_husky_teleop_base)
-    ld.add_action(launch_husky_teleop_joy)
-    ld.add_action(launch_husky_accessories)
-    ld.add_action(node_um7_imu)
-    ld.add_action(launch_ouster_lidar)
-    ld.add_action(launch_interbotix)
-    ld.add_action(node_tf_publisher)
+    #ld.add_action(spawn_husky_velocity_controller)
+    #ld.add_action(launch_husky_control)
+    #ld.add_action(launch_husky_teleop_base)
+    #ld.add_action(launch_husky_teleop_joy)
+    #ld.add_action(launch_husky_accessories)
+    #ld.add_action(node_um7_imu)
+    #ld.add_action(launch_ouster_lidar)
+    #ld.add_action(launch_interbotix)
+    #ld.add_action(node_tf_publisher)
     
 
     return ld
