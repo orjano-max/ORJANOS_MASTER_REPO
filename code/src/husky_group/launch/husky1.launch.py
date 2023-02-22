@@ -46,8 +46,6 @@ def generate_launch_description():
             " ",
             "prefix:=''",
             " ",
-            "is_sim:=true",
-            " ",
             "urdf_extras:=",urdf_extras_path
         ]
     )
