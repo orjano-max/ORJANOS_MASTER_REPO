@@ -174,7 +174,7 @@ def generate_launch_description():
     
     #ld.add_action(node_pointcloud_to_laserscan)
     ld.add_action(node_robot_state_publisher)
-    #ld.add_action(node_controller_manager)
+    ld.add_action(node_controller_manager)
     #ld.add_action(spawn_controller)
     #ld.add_action(spawn_husky_velocity_controller)
     #ld.add_action(launch_husky_control)
