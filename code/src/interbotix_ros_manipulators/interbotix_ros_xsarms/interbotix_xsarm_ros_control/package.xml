@@ -11,7 +11,6 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   <depend>interbotix_xsarm_control</depend>
-  <depend>interbotix_xs_ros_control</depend>
   <exec_depend>controller_manager</exec_depend>
   <exec_depend>joint_trajectory_controller</exec_depend>
 
