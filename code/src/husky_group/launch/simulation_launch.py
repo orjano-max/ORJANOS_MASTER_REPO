@@ -149,7 +149,7 @@ def generate_launch_description():
     node_tf_publisher = Node(
         package="tf2_ros",
         executable="static_transform_publisher",
-        arguments = ["-0.3", "0", "0.2", "-1.5708", "0", "0", "base_link", "world"],
+        arguments = ["-0.44", "-0.104", "0", "-1.5708", "0", "0", "user_rail_link", "world"],
     )
 
     

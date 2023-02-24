@@ -151,7 +151,7 @@ def generate_launch_description():
         }]
     )
 
-    launch_interbotix = IncludeLaunchDescription(
+    launch_interbotix_control = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(PathJoinSubstitution(
             [FindPackageShare('interbotix_xsarm_control'), 'launch', 'xsarm_control.launch.py'])),
             launch_arguments ={
@@ -160,10 +160,20 @@ def generate_launch_description():
             }.items()
     )
 
+    launch_interbotix_moveit = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(PathJoinSubstitution(
+            [FindPackageShare('interbotix_xsarm_control'), 'launch', 'xsarm_control.launch.py'])),
+            launch_arguments ={
+            'robot_model' : 'vx300',
+            'use_rviz' : 'false',
+            }.items()
+    )
+
+    # Static transform that places the interbotics robot on the husky
     node_tf_publisher = Node(
         package="tf2_ros",
         executable="static_transform_publisher",
-        arguments = ["-0.3", "0", "0.2", "-1.5708", "0", "0", "base_link", "world"],
+        arguments = ["-0.44", "-0.104", "0", "-1.5708", "0", "0", "user_rail_link", "world"],
     )
     
 
@@ -181,7 +191,8 @@ def generate_launch_description():
     ld.add_action(launch_husky_accessories)
     #ld.add_action(node_um7_imu)
     ld.add_action(launch_ouster_lidar)
-    ld.add_action(launch_interbotix)
+    ld.add_action(launch_interbotix_control)
+    #ld.add_action(launch_interbotix_moveit)
     ld.add_action(node_tf_publisher)
     
 
