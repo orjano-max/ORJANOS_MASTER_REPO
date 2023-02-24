@@ -88,24 +88,27 @@ def generate_launch_description():
     # Launch husky_control/control.launch.py which is just robot_localization.
     launch_husky_control = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(PathJoinSubstitution(
-        [FindPackageShare("husky_control"), 'launch', 'control.launch.py'])))
+        [FindPackageShare("husky_control"), 'launch', 'control_launch.py'])))
     
     # Launch husky_control/teleop_base.launch.py which is various ways to tele-op
     # the robot but does not include the joystick. Also, has a twist mux.
     launch_husky_teleop_base = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(PathJoinSubstitution(
-        [FindPackageShare("husky_control"), 'launch', 'teleop_base.launch.py'])))
+        [FindPackageShare("husky_control"), 'launch', 'teleop_launch.py'])))
 
-    # Launch husky_control/teleop_joy.launch.py which is tele-operation using a physical joystick.
+    # Launch husky_control/teleop_joy.launch.py which is tele-operation using a physical 	joystick.
+    '''
     launch_husky_teleop_joy = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(PathJoinSubstitution(
-        [FindPackageShare("husky_control"), 'launch', 'teleop_joy.launch.py'])))
+        [FindPackageShare("husky_control"), 'launch', 'teleop_joy_launch.py'])))
+	
 
 
+    '''
     # Launch husky_bringup/accessories.launch.py which is the sensors commonly used on the Husky.
     launch_husky_accessories = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(PathJoinSubstitution(
-        [FindPackageShare("husky_bringup"), 'launch', 'accessories.launch.py'])))
+        [FindPackageShare("husky_bringup"), 'launch', 'accessories_launch.py'])))
 
 
 
@@ -187,7 +190,7 @@ def generate_launch_description():
     ld.add_action(spawn_husky_velocity_controller)
     ld.add_action(launch_husky_control)
     ld.add_action(launch_husky_teleop_base)
-    ld.add_action(launch_husky_teleop_joy)
+    #ld.add_action(launch_husky_teleop_joy)
     ld.add_action(launch_husky_accessories)
     #ld.add_action(node_um7_imu)
     ld.add_action(launch_ouster_lidar)
