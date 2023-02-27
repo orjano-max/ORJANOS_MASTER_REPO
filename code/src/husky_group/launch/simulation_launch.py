@@ -20,29 +20,19 @@ ARGUMENTS = [
 os.environ["HUSKY_TOP_PLATE_ENABLED"] = "false"
 
 def generate_launch_description():
-
-    # Launch args
-    world_path = LaunchConfiguration('world_path')
-    prefix = LaunchConfiguration('prefix')
-
-    
-
-    gz_resource_path = SetEnvironmentVariable(name='GAZEBO_MODEL_PATH', value=[
-                                                EnvironmentVariable('GAZEBO_MODEL_PATH',
-                                                                    default_value=''),
-                                                '/usr/share/gazebo-11/models/:',
-                                                str(Path(get_package_share_directory('husky_description')).
-                                                    parent.resolve())])
     
     urdf_extras_path = PathJoinSubstitution(
                 [FindPackageShare("husky_group"), "urdf", "husky_urdf_extras.urdf"]
                 )
 
+    # Launch args
+    world_path = LaunchConfiguration('world_path')
+    prefix = LaunchConfiguration('prefix')
+
     config_husky_velocity_controller = PathJoinSubstitution(
         [FindPackageShare("husky_control"), "config", "control.yaml"]
     )
 
-    
     # Get URDF via xacro
     robot_description_content = Command(
         [
@@ -58,18 +48,16 @@ def generate_launch_description():
             " ",
             "is_sim:=true",
             " ",
-            "urdf_extras:=",urdf_extras_path,
+            "urdf_extras:=", urdf_extras_path,
             " ",
-            "gazebo_controllers:=",config_husky_velocity_controller,
+            "gazebo_controllers:=", config_husky_velocity_controller,
         ]
     )
-
     robot_description = {"robot_description": robot_description_content}
-
 
     spawn_husky_velocity_controller = Node(
         package='controller_manager',
-        executable='spawner.py',
+        executable='spawner',
         arguments=['husky_velocity_controller', '-c', '/controller_manager'],
         output='screen',
     )
@@ -83,7 +71,7 @@ def generate_launch_description():
 
     spawn_joint_state_broadcaster = Node(
         package='controller_manager',
-        executable='spawner.py',
+        executable='spawner',
         arguments=['joint_state_broadcaster', '-c', '/controller_manager'],
         output='screen',
     )
@@ -95,7 +83,6 @@ def generate_launch_description():
             on_exit=[spawn_husky_velocity_controller],
         )
     )
-
     # Gazebo server
     gzserver = ExecuteProcess(
         cmd=['gzserver',
@@ -124,24 +111,12 @@ def generate_launch_description():
         output='screen',
     )
 
-    # Launch husky_control/control.launch.py which is just robot_localization.
-    launch_husky_control = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(PathJoinSubstitution(
-        [FindPackageShare("husky_control"), 'launch', 'control.launch.py'])))
-    
-    # Launch husky_control/teleop_base.launch.py which is various ways to tele-op
-    # the robot but does not include the joystick. Also, has a twist mux.
-    launch_husky_teleop_base = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(PathJoinSubstitution(
-        [FindPackageShare("husky_control"), 'launch', 'teleop_base.launch.py'])))
-
     launch_interbotix = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(PathJoinSubstitution(
-            [FindPackageShare('interbotix_xsarm_descriptions'), 'launch', 'xsarm_description.launch.py'])),
+            [FindPackageShare('interbotix_xsarm_moveit'), 'launch', 'xsarm_moveit.launch.py'])),
             launch_arguments ={
             'robot_model' : 'vx300',
-            'use_rviz' : 'false',
-            'use_joint_pub_gui' : 'true'
+            'hardware_type' : 'fake'
             }.items()
     )
 
@@ -156,18 +131,15 @@ def generate_launch_description():
 
     ld = LaunchDescription(ARGUMENTS)
     # Launch husky
-    ld.add_action(gz_resource_path)
     ld.add_action(node_robot_state_publisher)
     ld.add_action(spawn_joint_state_broadcaster)
     ld.add_action(diffdrive_controller_spawn_callback)
     ld.add_action(gzserver)
     ld.add_action(gzclient)
     ld.add_action(spawn_robot)
-    ld.add_action(launch_husky_control)
-    ld.add_action(launch_husky_teleop_base)
 
     # Launch Interbotix manipulator
-    ld.add_action(launch_interbotix)
+    #ld.add_action(launch_interbotix)
     ld.add_action(node_tf_publisher)
 
 
