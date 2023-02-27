@@ -130,6 +130,10 @@ def generate_launch_description():
     
 
     ld = LaunchDescription(ARGUMENTS)
+    # Launch Interbotix manipulator
+    ld.add_action(launch_interbotix)
+    ld.add_action(node_tf_publisher)
+
     # Launch husky
     ld.add_action(node_robot_state_publisher)
     ld.add_action(spawn_joint_state_broadcaster)
@@ -138,9 +142,7 @@ def generate_launch_description():
     ld.add_action(gzclient)
     ld.add_action(spawn_robot)
 
-    # Launch Interbotix manipulator
-    #ld.add_action(launch_interbotix)
-    ld.add_action(node_tf_publisher)
+    
 
 
     return ld
