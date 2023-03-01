@@ -74,5 +74,35 @@
         "typeinfo": "cpp",
         "variant": "cpp",
         "bit": "cpp"
-    }
+    },
+    "python.autoComplete.extraPaths": [
+        "/home/orjan/moveit2_ws/install/moveit_msgs/lib/python3.8/site-packages",
+        "/home/orjan/moveit2_ws/install/moveit_configs_utils/lib/python3.8/site-packages",
+        "/home/orjan/moveit2_ws/install/launch_param_builder/lib/python3.8/site-packages",
+        "/home/orjan/interbotix_ws/install/interbotix_xs_modules/lib/python3.8/site-packages",
+        "/home/orjan/interbotix_ws/install/interbotix_xs_msgs/lib/python3.8/site-packages",
+        "/home/orjan/interbotix_ws/install/interbotix_common_modules/lib/python3.8/site-packages",
+        "/home/orjan/interbotix_ws/install/apriltag_msgs/lib/python3.8/site-packages",
+        "/home/orjan/git/ORJANOS_MASTER_REPO/install/um7/lib/python3.8/site-packages",
+        "/home/orjan/git/ORJANOS_MASTER_REPO/install/scene_publisher/lib/python3.8/site-packages",
+        "/home/orjan/git/ORJANOS_MASTER_REPO/install/pyhello_moveit/lib/python3.8/site-packages",
+        "/home/orjan/git/ORJANOS_MASTER_REPO/install/husky_msgs/lib/python3.8/site-packages",
+        "/home/orjan/git/ORJANOS_MASTER_REPO/install/apriltag_msgs/lib/python3.8/site-packages",
+        "/opt/ros/galactic/lib/python3.8/site-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/orjan/moveit2_ws/install/moveit_msgs/lib/python3.8/site-packages",
+        "/home/orjan/moveit2_ws/install/moveit_configs_utils/lib/python3.8/site-packages",
+        "/home/orjan/moveit2_ws/install/launch_param_builder/lib/python3.8/site-packages",
+        "/home/orjan/interbotix_ws/install/interbotix_xs_modules/lib/python3.8/site-packages",
+        "/home/orjan/interbotix_ws/install/interbotix_xs_msgs/lib/python3.8/site-packages",
+        "/home/orjan/interbotix_ws/install/interbotix_common_modules/lib/python3.8/site-packages",
+        "/home/orjan/interbotix_ws/install/apriltag_msgs/lib/python3.8/site-packages",
+        "/home/orjan/git/ORJANOS_MASTER_REPO/install/um7/lib/python3.8/site-packages",
+        "/home/orjan/git/ORJANOS_MASTER_REPO/install/scene_publisher/lib/python3.8/site-packages",
+        "/home/orjan/git/ORJANOS_MASTER_REPO/install/pyhello_moveit/lib/python3.8/site-packages",
+        "/home/orjan/git/ORJANOS_MASTER_REPO/install/husky_msgs/lib/python3.8/site-packages",
+        "/home/orjan/git/ORJANOS_MASTER_REPO/install/apriltag_msgs/lib/python3.8/site-packages",
+        "/opt/ros/galactic/lib/python3.8/site-packages"
+    ]
 }
