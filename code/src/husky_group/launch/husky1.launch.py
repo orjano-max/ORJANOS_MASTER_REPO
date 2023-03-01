@@ -80,37 +80,10 @@ def generate_launch_description():
 
     spawn_husky_velocity_controller = Node(
         package="controller_manager",
-        executable="spawner.py",
+        executable="spawner",
         arguments=["husky_velocity_controller"],
         output="screen",
     )
-
-    # Launch husky_control/control.launch.py which is just robot_localization.
-    launch_husky_control = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(PathJoinSubstitution(
-        [FindPackageShare("husky_control"), 'launch', 'control_launch.py'])))
-    
-    # Launch husky_control/teleop_base.launch.py which is various ways to tele-op
-    # the robot but does not include the joystick. Also, has a twist mux.
-    launch_husky_teleop_base = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(PathJoinSubstitution(
-        [FindPackageShare("husky_control"), 'launch', 'teleop_launch.py'])))
-
-    # Launch husky_control/teleop_joy.launch.py which is tele-operation using a physical 	joystick.
-    '''
-    launch_husky_teleop_joy = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(PathJoinSubstitution(
-        [FindPackageShare("husky_control"), 'launch', 'teleop_joy_launch.py'])))
-	
-
-
-    '''
-    # Launch husky_bringup/accessories.launch.py which is the sensors commonly used on the Husky.
-    launch_husky_accessories = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(PathJoinSubstitution(
-        [FindPackageShare("husky_bringup"), 'launch', 'accessories_launch.py'])))
-
-
 
     #  ----------------------- ALT UNDER HER VAR HER FRA FØR----------------------------------
 
