@@ -16,20 +16,24 @@ int main(int argc, char* argv[])
   // Create a ROS logger
   auto const logger = rclcpp::get_logger("hello_moveit");
 
+ auto const joint_state_topic = rclcpp::Parameter::as_string("/vx300/robot_description");
+
+  move_group_node->set_parameter(joint_state_topic);  
+
   // We spin up a SingleThreadedExecutor for the current state monitor to get information
   // about the robot's state.
   rclcpp::executors::SingleThreadedExecutor executor;
   executor.add_node(move_group_node);
   std::thread([&executor]() { executor.spin(); }).detach();
 
-
+   
   // MoveIt operates on sets of joints called "planning groups" and stores them in an object called
   // the ``JointModelGroup``. Throughout MoveIt, the terms "planning group" and "joint model group"
   // are used interchangeably.
   static const std::string PLANNING_GROUP = "interbotix_arm";
   //static const std::string PLANNING_GROUP = "panda_arm";
 
-
+  
   // The
   // :moveit_codedir:`MoveGroupInterface<moveit_ros/planning_interface/move_group/include/moveit/move_group/move_group.h>`
   // class can be easily set up using just the name of the planning group you would like to control and plan for.

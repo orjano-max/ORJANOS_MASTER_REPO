@@ -301,7 +301,7 @@ def launch_setup(context, *args, **kwargs):
         output="screen",
         parameters=[
             {
-                'planning_scene_monitor_options': {
+                'node_options': {
                     'robot_description':
                         'robot_description',
                     'joint_state_topic':
