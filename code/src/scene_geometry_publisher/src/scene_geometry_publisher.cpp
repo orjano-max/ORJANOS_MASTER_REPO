@@ -3,83 +3,131 @@
 #include <rclcpp/rclcpp.hpp>
 #include <moveit/move_group_interface/move_group_interface.h>
 
-int main(int argc, char * argv[])
+
+class ScenePublisher : public rclcpp::Node
+{
+  public:
+  ScenePublisher()
+  : Node("scene_geometry_publisher")
+  {
+    RCLCPP_INFO(get_logger(), "Scene publisher node started.");
+
+    
+
+  }
+
+
+  private:
+  void load_scene(std::string scene_file)
+  {
+    // Read scene geometry from file
+    std::ifstream file(file_name_);
+    std::string line;
+    std::vector<std::string> tokens;
+    std::vector<moveit_msgs::msg::CollisionObject> collision_objects;
+    while (std::getline(file, line))
+    {
+      if (line.empty() || line[0] == '#')
+        continue;
+      boost::split(tokens, line, boost::is_any_of(" "));
+      if (tokens[0] == "Base_Scene")
+        continue;
+      else if (tokens[0] == "*")
+      {
+        moveit_msgs::msg::CollisionObject collision_object;
+        collision_object.id = tokens[1];
+        geometry_msgs::msg::Pose pose;
+        pose.position.x = std::stof(tokens[2]);
+        pose.position.y = std::stof(tokens[3]);
+        pose.position.z = std::stof(tokens[4]);
+        pose.orientation.x = std::stof(tokens[5]);
+        pose.orientation.y = std::stof(tokens[6]);
+        pose.orientation.z = std::stof(tokens[7]);
+        pose.orientation.w = std::stof(tokens[8]);
+        shape_msgs::msg::SolidPrimitive shape;
+        if (tokens[9] == "box")
+          shape.type = shape_msgs::msg::SolidPrimitive::BOX;
+        else if (tokens[9] == "cylinder")
+          shape.type = shape_msgs::msg::SolidPrimitive::CYLINDER;
+        shape.dimensions.resize(3);
+        shape.dimensions[0] = std::stof(tokens[10]);
+        shape.dimensions[1] = std::stof(tokens[11]);
+        if (shape.type == shape_msgs::msg::SolidPrimitive::BOX)
+          shape.dimensions[2] = std::stof(tokens[12]);
+        else if (shape.type == shape_msgs::msg::SolidPrimitive::CYLINDER)
+          shape.dimensions[2] = 0.0;
+        collision_object.primitives.push_back(shape);
+        collision_object.primitive_poses.push_back(pose);
+        collision_object.operation = moveit_msgs::msg::CollisionObjectOperation::ADD;
+        collision_objects.push_back(collision_object);
+      }
+    }
+
+  }
+
+}
+int main(int argc, char* argv[])
 {
   // Initialize ROS and create the Node
   rclcpp::init(argc, argv);
-  auto const node = std::make_shared<rclcpp::Node>(
-    "hello_moveit",
-    rclcpp::NodeOptions().automatically_declare_parameters_from_overrides(true)
-  );
-
+  rclcpp::NodeOptions node_options;
+  node_options.automatically_declare_parameters_from_overrides(true);
+  auto move_group_node = rclcpp::Node::make_shared("hello_moveit", node_options);
+  
   // Create a ROS logger
   auto const logger = rclcpp::get_logger("hello_moveit");
 
-  /* // Declare the parameter for robot description
-  node->declare_parameter<std::string>("robot_description");
-
-  // Get the robot description from the parameter server
-  std::string robot_description;
-  if (!node->get_parameter("robot_description", robot_description)) {
-    RCLCPP_ERROR(logger, "Failed to get robot description from parameter server");
-    return 1;
-  }
+  // We spin up a SingleThreadedExecutor for the current state monitor to get information
+  // about the robot's state.
+  rclcpp::executors::SingleThreadedExecutor executor;
+  executor.add_node(move_group_node);
+  std::thread([&executor]() { executor.spin(); }).detach();
   
-  // Get the robot model from the parameter server
-  std::string robot_model;
+  // MoveIt operates on sets of joints called "planning groups" and stores them in an object called
+  // the ``JointModelGroup``. Throughout MoveIt, the terms "planning group" and "joint model group"
+  // are used interchangeably.
+  static const std::string PLANNING_GROUP = "interbotix_arm";
   
-  if (!node->get_parameter("robot_model", robot_model)){
-    RCLCPP_ERROR(logger, "Failed to get robot model from parameter server");
-    return 1;
-  }
+  // The
+  // :moveit_codedir:`MoveGroupInterface<moveit_ros/planning_interface/move_group/include/moveit/move_group/move_group.h>`
+  // class can be easily set up using just the name of the planning group you would like to control and plan for.
+  moveit::planning_interface::MoveGroupInterface move_group(move_group_node, PLANNING_GROUP);
 
-  std::cout << "Robot description is set to: " << robot_description << std::endl
-            << "Robot model is set to: " << robot_model << std::endl;
- */
+  // We will use the
+  // :moveit_codedir:`PlanningSceneInterface<moveit_ros/planning_interface/planning_scene_interface/include/moveit/planning_scene_interface/planning_scene_interface.h>`
+  // class to add and remove collision objects in our "virtual world" scene
+  moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
 
-
-  /* 
-  // Create the MoveIt MoveGroup Interface
-  using moveit::planning_interface::MoveGroupInterface;
-
-  //std::string const group_name = "interbotix_arm";
-  std::string const group_name = "panda_arm";
-
-  MoveGroupInterface::Options move_group_options(group_name);
-  //auto move_group_interface = MoveGroupInterface(node, move_group_options);
-  auto move_group_interface = MoveGroupInterface(node, group_name);
-  */
-
-
-  // Create the MoveIt MoveGroup Interface
-  using moveit::planning_interface::MoveGroupInterface;
-  auto move_group_interface = MoveGroupInterface(node, "panda_arm");
+  // Raw pointers are frequently used to refer to the planning group for improved performance.
+  //const moveit::core::JointModelGroup* joint_model_group =
+  //    move_group.getCurrentState()->getJointModelGroup(PLANNING_GROUP);
 
   // Set a target Pose
-  auto const target_pose = []{
-  geometry_msgs::msg::Pose msg;
-  msg.orientation.w = 1.0;
-  msg.position.x = 0.28;
-  msg.position.y = -0.2;
-  msg.position.z = 0.5;
-  return msg;
+  auto const target_pose = [] {
+    geometry_msgs::msg::Pose msg;
+    msg.position.x = 0.6;
+    msg.position.y = 0.0;
+    msg.position.z = 0.5;
+    return msg;
   }();
-  move_group_interface.setPoseTarget(target_pose);
+  move_group.setPoseTarget(target_pose);
 
   // Create a plan to that target pose
-  auto const [success, plan] = [&move_group_interface]{
-  moveit::planning_interface::MoveGroupInterface::Plan msg;
-  auto const ok = static_cast<bool>(move_group_interface.plan(msg));
-  return std::make_pair(ok, msg);
+  auto const [success, plan] = [&move_group] {
+    moveit::planning_interface::MoveGroupInterface::Plan msg;
+    auto const ok = static_cast<bool>(move_group.plan(msg));
+    return std::make_pair(ok, msg);
   }();
 
   // Execute the plan
-  if(success) {
-  move_group_interface.execute(plan);
-  } else {
-  RCLCPP_ERROR(logger, "Planing failed!");
+  if (success)
+  {
+    move_group.execute(plan);
   }
-
+  else
+  {
+    RCLCPP_ERROR(logger, "Planning failed!");
+  }
 
   // Shutdown ROS
   rclcpp::shutdown();

@@ -300,15 +300,8 @@ def launch_setup(context, *args, **kwargs):
         executable="hello_moveit",
         output="screen",
         parameters=[
-            {
-                'node_options': {
-                    'robot_description':
-                        'robot_description',
-                    'joint_state_topic':
-                        f'/{robot_name_launch_arg.perform(context)}/joint_states',
-                },
-                'use_sim_time': use_sim_time_param,
-            },
+            {'joint_state_topic': f'/{robot_name_launch_arg.perform(context)}/joint_states' },
+            {'use_sim_time': use_sim_time_param},
             robot_description,
             robot_description_semantic,
             kinematics_config,
