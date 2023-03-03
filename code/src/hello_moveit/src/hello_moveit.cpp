@@ -39,6 +39,7 @@ int main(int argc, char* argv[])
   // class to add and remove collision objects in our "virtual world" scene
   moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
 
+
   // Raw pointers are frequently used to refer to the planning group for improved performance.
   //const moveit::core::JointModelGroup* joint_model_group =
   //    move_group.getCurrentState()->getJointModelGroup(PLANNING_GROUP);

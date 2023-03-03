@@ -70,14 +70,7 @@ int main(int argc, char* argv[])
   // class can be easily set up using just the name of the planning group you would like to control and plan for.
   moveit::planning_interface::MoveGroupInterface move_group_interface(node, PLANNING_GROUP);
 
-  // We will use the
-  // :moveit_codedir:`PlanningSceneInterface<moveit_ros/planning_interface/planning_scene_interface/include/moveit/planning_scene_interface/planning_scene_interface.h>`
-  // class to add and remove collision objects in our "virtual world" scene
-  //moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
-
-  // Raw pointers are frequently used to refer to the planning group for improved performance.
-  //const moveit::core::JointModelGroup* joint_model_group =
-  //    move_group_interface.getCurrentState()->getJointModelGroup(PLANNING_GROUP);
+  
 
   node->setHomePoseTarget(move_group_interface);
   
