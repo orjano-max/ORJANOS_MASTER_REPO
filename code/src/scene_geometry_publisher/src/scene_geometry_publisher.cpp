@@ -32,7 +32,7 @@ class ScenePublisher : public rclcpp::Node
         msg.position.x = 0.537;
         msg.position.y = 0.0;
         msg.position.z = 0.427;
-        msg.orientation.w = -1;
+        msg.orientation.w = 1;
         return msg;
       }();
 
