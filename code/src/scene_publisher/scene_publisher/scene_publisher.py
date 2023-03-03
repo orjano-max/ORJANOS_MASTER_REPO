@@ -1,68 +1,41 @@
 import rclpy
-from rclpy.node import Node
-from moveit_msgs.msg import CollisionObject, PlanningScene
-from shape_msgs.msg import SolidPrimitive
-from geometry_msgs.msg import Pose, Point, Quaternion
-
-
-
-
-
-class ScenePublisher(Node):
-    def __init__(self, filename):
-        super().__init__('scene_publisher')
-        self.scene_pub = self.create_publisher(PlanningScene, 'planning_scene', 10)
-        self.file = filename
-        self.frame_id_ = "world"
-
-    def load_scene(self):
-        with open(self.file, 'r') as f:
-            scene_str = f.read()
-        lines = scene_str.splitlines()
-        scene_name = lines.pop(0)  # first line is the scene name
-        collision_objects = []
-        for i, line in enumerate(lines):
-            if line.startswith('*'):
-                obj_name = line[2:]
-                pose = lines[i+1].split(' ')
-                quat = lines[i+2].strip().split(' ')
-                scale = lines[i+3].split(' ')
-                shape_type = lines[i+4].strip()
-                if shape_type == 'box':
-                    collision_obj = CollisionObject()
-                    collision_obj.id = obj_name
-                    collision_obj.header.frame_id = self.frame_id_
-                    collision_obj.primitives.append(SolidPrimitive(type=SolidPrimitive.BOX, dimensions=list(map(float, scale))))
-                    collision_obj.primitive_poses.append(Pose(
-                        position=Point(x=float(pose[0]), y=float(pose[1]), z=float(pose[2])),
-                        orientation=Quaternion(x=float(quat[0]), y=float(quat[1]), z=float(quat[2]), w=float(quat[3]))))
-                    collision_objects.append(collision_obj)
-                elif shape_type == 'cylinder':
-                    collision_obj = CollisionObject()
-                    collision_obj.id = obj_name
-                    collision_obj.header.frame_id = self.frame_id_
-                    collision_obj.primitives.append(SolidPrimitive(type=SolidPrimitive.CYLINDER, dimensions=list(map(float, scale))))
-                    collision_obj.primitive_poses.append(Pose(
-                        position=Point(x=float(pose[0]), y=float(pose[1]), z=float(pose[2])),
-                        orientation=Quaternion(x=float(quat[0]), y=float(quat[1]), z=float(quat[2]), w=float(quat[3]))))
-                    collision_objects.append(collision_obj)
-        return collision_objects
-
-    def publish_scene(self):
-        msg = PlanningScene()
-        msg.is_diff = True
-        msg.robot_model_name = 'vx300'
-        msg.world.collision_objects = self.load_scene()
-        self.scene_pub.publish(msg)
-        self.get_logger().info('Scene published.')
+from rclpy.executors import SingleThreadedExecutor
+from geometry_msgs.msg import Pose
+from moveit_msgs.msg import MoveItErrorCodes
+from moveit_py_bindings_tools import moveit_get_python_bindings
+from moveit_py_bindings_tools import load_moveit_bindings
+from moveit_py_bindings_tools import OBJECT_NAME, PLANNING_SCENE_TOPIC, PLANNING_SCENE_WORLD_TOPIC
+from moveit_py_bindings_tools import PyPlanningSceneInterface, PyPlanningSceneMonitor, PyRobotModel
+from moveit_py_bindings_tools import PyRobotState, PyJointModelGroup, PyMoveGroupInterface
+from moveit_ros_planning_interface import _moveit_roscpp_initializer as moveit_cpp_api
 
 def main(args=None):
     rclpy.init(args=args)
-    filename = '/home/orjan/git/ORJANOS_MASTER_REPO/code/params/scene_geometry.scene'
-    node = ScenePublisher(filename)
-    node.publish_scene()
-    rclpy.spin(node)
+
+    # Initialize MoveItCpp API
+    moveit_cpp_api.MoveItCppInitializer()
+
+    # Create a MoveGroupInterface for the planning group
+    move_group = PyMoveGroupInterface("interbotix_arm")
+
+    # Set the target pose
+    target_pose = Pose()
+    target_pose.position.x = 0.6
+    target_pose.position.y = 0.0
+    target_pose.position.z = 0.5
+    move_group.set_pose_target(target_pose)
+
+    # Create a plan to the target pose
+    plan = move_group.plan()
+
+    # Execute the plan
+    if plan and move_group.execute(plan):
+        print("Plan executed successfully!")
+    else:
+        print("Planning failed!")
+
+    # Shutdown ROS
     rclpy.shutdown()
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
