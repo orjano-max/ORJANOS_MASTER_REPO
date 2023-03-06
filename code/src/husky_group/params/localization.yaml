@@ -3,6 +3,7 @@ ekf_node:
     odom_frame: odom
     base_link_frame: base_link
     world_frame: odom
+    imu_frame: 
 
     two_d_mode: true
     publish_tf: true
