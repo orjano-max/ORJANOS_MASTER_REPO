@@ -128,15 +128,6 @@ def generate_launch_description():
         }]
     )
 
-    launch_interbotix_control = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(PathJoinSubstitution(
-            [FindPackageShare('interbotix_xsarm_control'), 'launch', 'xsarm_control.launch.py'])),
-            launch_arguments ={
-            'robot_model' : 'vx300',
-            'use_rviz' : 'false',
-            }.items()
-    )
-
     launch_interbotix_moveit = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(PathJoinSubstitution(
             [FindPackageShare('interbotix_xsarm_moveit'), 'launch', 'xsarm_moveit.launch.py'])),
@@ -158,7 +149,8 @@ def generate_launch_description():
     ld = LaunchDescription()
 
     ld.add_action(node_tf_publisher)
-    ld.add_action(launch_interbotix_control)
+    ld.add_action(launch_interbotix_moveit)
+    
     ld.add_action(node_pointcloud_to_laserscan)
     ld.add_action(node_robot_state_publisher)
     ld.add_action(node_controller_manager)
@@ -166,7 +158,7 @@ def generate_launch_description():
     ld.add_action(spawn_husky_velocity_controller)
     #ld.add_action(node_um7_imu)
     ld.add_action(launch_ouster_lidar)
-    ld.add_action(launch_interbotix_moveit)
+    
 
     return ld
 
