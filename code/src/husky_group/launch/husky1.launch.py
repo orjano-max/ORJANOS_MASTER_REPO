@@ -103,9 +103,15 @@ def generate_launch_description():
     )
 
     #Launch husky_control
-    launch_husky_teleop = IncludeLaunchDescription(
+    launch_husky_teleop_base = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(PathJoinSubstitution(
-        [FindPackageShare("husky_control"), 'launch', 'teleop_launch.py'])),
+        [FindPackageShare("husky_group"), 'launch', 'teleop_base_launch.py'])),
+    )
+
+    #Launch husky_control
+    launch_husky_teleop_joy = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(PathJoinSubstitution(
+        [FindPackageShare("husky_group"), 'launch', 'teleop_joy_launch.py'])),
     )
 
 
@@ -115,6 +121,7 @@ def generate_launch_description():
         executable="um7_node",
         output="screen",
     )
+
 
     #Launch the LIDAR
     launch_ouster_lidar = IncludeLaunchDescription(
@@ -179,7 +186,8 @@ def generate_launch_description():
     ld.add_action(node_um7_imu)
     ld.add_action(launch_ouster_lidar)
     ld.add_action(launch_husky_control)
-    ld.add_action(launch_husky_teleop)
+    ld.add_action(launch_husky_teleop_base)
+    ld.add_action(launch_husky_teleop_joy)
     
     return ld
 
