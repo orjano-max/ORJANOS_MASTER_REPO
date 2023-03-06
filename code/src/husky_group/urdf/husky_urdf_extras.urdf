@@ -54,32 +54,11 @@
   </joint>
 
  <!-- OUSTER LIDAR LINK. ØØ. 19.09.22 -->
-  <link name="lidar_link">
-    <inertial>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <mass value="0.125"/>
-      <inertia ixx="0.001"  ixy="0"  ixz="0" iyy="0.001" iyz="0" izz="0.001" />
-    </inertial>
-
-    <collision>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <geometry>
-         <cylinder radius="0.0508" length="0.055"/>
-      </geometry>
-    </collision>
-
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <geometry>
-         <cylinder radius="0.0508" length="0.055"/>
-      </geometry>
-    </visual>
-  </link>
 
   <joint name="lidar_joint" type="fixed">
     <parent link="user_rail_link"/>
     <child link="lidar_link"/>
-    <origin xyz="-0.0635 0 0.610" rpy="0 0 3.14"/>
+    <origin xyz="-0.0635 0 0.610" rpy="0 0 0"/>
   </joint>
 
 </robot>
