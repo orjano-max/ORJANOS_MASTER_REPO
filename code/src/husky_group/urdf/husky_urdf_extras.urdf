@@ -54,6 +54,9 @@
   </joint>
 
  <!-- OUSTER LIDAR LINK. ØØ. 19.09.22 -->
+  <link name="lidar_link">
+    
+  </link>
 
   <joint name="lidar_joint" type="fixed">
     <parent link="user_rail_link"/>
