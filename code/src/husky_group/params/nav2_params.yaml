@@ -58,8 +58,7 @@ bt_navigator:
     enable_groot_monitoring: True
     groot_zmq_publisher_port: 1666
     groot_zmq_server_port: 1667
-    default_nav_through_poses_bt_xml: nav2_bt_navigator/navigate_to_pose_w_replanning_and_recovery.xml
-    default_nav_to_pose_bt_xml: nav2_bt_navigator/navigate_through_poses_w_replanning_and_recovery.xml
+    default_bt_xml_filename: "navigate_w_replanning_and_recovery.xml"
     # 'default_nav_through_poses_bt_xml' and 'default_nav_to_pose_bt_xml' are use defaults:
     # nav2_bt_navigator/navigate_to_pose_w_replanning_and_recovery.xml
     # nav2_bt_navigator/navigate_through_poses_w_replanning_and_recovery.xml
