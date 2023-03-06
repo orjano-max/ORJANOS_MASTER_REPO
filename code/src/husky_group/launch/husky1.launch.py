@@ -189,7 +189,7 @@ def generate_launch_description():
     ld.add_action(launch_husky_teleop_joy)
 
     # Launch imu and lidar
-    ld.add_action(node_um7_imu)
+    #ld.add_action(node_um7_imu)
     ld.add_action(launch_ouster_lidar)
     
     return ld
