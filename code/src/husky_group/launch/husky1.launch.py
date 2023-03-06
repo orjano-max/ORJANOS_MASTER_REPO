@@ -29,11 +29,6 @@ def generate_launch_description():
                 [FindPackageShare("husky_group"), "urdf", "husky_urdf_extras.urdf"]
                 )
     
-    config_husky_velocity_controller = PathJoinSubstitution(
-        [FindPackageShare("husky_control"),
-        "config",
-        "control.yaml"],
-    )
 
     # Get URDF via xacro
     robot_description_content = Command(
@@ -53,6 +48,12 @@ def generate_launch_description():
     )
 
     robot_description = {"robot_description": robot_description_content}
+
+    config_husky_velocity_controller = PathJoinSubstitution(
+        [FindPackageShare("husky_control"),
+        "config",
+        "control.yaml"],
+    )
 
     node_robot_state_publisher = Node(
         package="robot_state_publisher",
@@ -155,22 +156,17 @@ def generate_launch_description():
 
 
     ld = LaunchDescription()
-    
+
+    ld.add_action(node_tf_publisher)
+    ld.add_action(launch_interbotix_control)
     ld.add_action(node_pointcloud_to_laserscan)
     ld.add_action(node_robot_state_publisher)
     ld.add_action(node_controller_manager)
     ld.add_action(spawn_controller)
     ld.add_action(spawn_husky_velocity_controller)
-    ld.add_action(launch_husky_control)
-    ld.add_action(launch_husky_teleop_base)
-    #ld.add_action(launch_husky_teleop_joy)
-    ld.add_action(launch_husky_accessories)
     #ld.add_action(node_um7_imu)
     ld.add_action(launch_ouster_lidar)
-    #ld.add_action(launch_interbotix_control)
     ld.add_action(launch_interbotix_moveit)
-    ld.add_action(node_tf_publisher)
-    
 
     return ld
 
