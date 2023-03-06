@@ -148,9 +148,9 @@ def generate_launch_description():
 
     ld = LaunchDescription()
 
-    ld.add_action(node_tf_publisher)
-    ld.add_action(launch_interbotix_moveit)
-    
+    #ld.add_action(node_tf_publisher)
+    #ld.add_action(launch_interbotix_moveit)
+
     ld.add_action(node_pointcloud_to_laserscan)
     ld.add_action(node_robot_state_publisher)
     ld.add_action(node_controller_manager)
