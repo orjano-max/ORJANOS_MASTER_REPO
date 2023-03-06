@@ -176,7 +176,7 @@ def generate_launch_description():
     ld.add_action(node_controller_manager)
     ld.add_action(spawn_controller)
     ld.add_action(spawn_husky_velocity_controller)
-    #ld.add_action(node_um7_imu)
+    ld.add_action(node_um7_imu)
     ld.add_action(launch_ouster_lidar)
     ld.add_action(launch_husky_control)
     ld.add_action(launch_husky_teleop)
