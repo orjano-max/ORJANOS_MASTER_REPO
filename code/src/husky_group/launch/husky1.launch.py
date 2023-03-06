@@ -12,17 +12,23 @@ os.environ["HUSKY_TOP_PLATE_ENABLED"] = "false"
 
 def generate_launch_description():
     # Get parameters
-    params = PathJoinSubstitution(
+    """ params = PathJoinSubstitution(
         [FindPackageShare('husky_group'),
         'params',
         'params.yaml'],
-    )
+    ) """
 
     # Get LIDAR parameters
     lidar_params = PathJoinSubstitution(
         [FindPackageShare('husky_group'),
         'params',
         'ouster_lidar.yaml'],
+    )
+
+    localization_params = PathJoinSubstitution(
+        [FindPackageShare('husky_group'),
+        'params',
+        'localization.yaml'],
     )
 
     urdf_extras_path = PathJoinSubstitution(
@@ -86,7 +92,21 @@ def generate_launch_description():
         output="screen",
     )
 
-    #  ----------------------- ALT UNDER HER VAR HER FRA FØR----------------------------------
+
+    #Launch husky_control
+    launch_husky_control = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(PathJoinSubstitution(
+        [FindPackageShare("husky_control"), 'launch', 'control_launch.py'])),
+        launch_arguments ={
+            "params_file" : localization_params
+        }.items()
+    )
+
+    #Launch husky_control
+    launch_husky_teleop = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(PathJoinSubstitution(
+        [FindPackageShare("husky_control"), 'launch', 'teleop_launch.py'])),
+    )
 
 
     #Launch the UM7 IMU
@@ -158,7 +178,8 @@ def generate_launch_description():
     ld.add_action(spawn_husky_velocity_controller)
     ld.add_action(node_um7_imu)
     ld.add_action(launch_ouster_lidar)
+    ld.add_action(launch_husky_control)
+    ld.add_action(launch_husky_teleop)
     
-
     return ld
 
