@@ -9,6 +9,8 @@ from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
 os.environ["HUSKY_TOP_PLATE_ENABLED"] = "false"
+os.environ["HUSKY_IMU_XYZ"] = "0 0 0"
+os.environ["CPR_IMU_RPY"] = "0 0 0"
 
 def generate_launch_description():
     # Get parameters
