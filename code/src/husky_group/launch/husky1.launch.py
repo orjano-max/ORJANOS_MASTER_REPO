@@ -57,7 +57,7 @@ def generate_launch_description():
 
     config_husky_velocity_controller = PathJoinSubstitution(
         [FindPackageShare("husky_group"),
-        "config",
+        "params",
         "control.yaml"],
     )
 
