@@ -3,12 +3,11 @@ ekf_node:
     odom_frame: odom
     base_link_frame: base_link
     world_frame: odom
-    imu_frame: 
 
     two_d_mode: true
-    publish_tf: false
+    publish_tf: true
 
-    frequency: 20.0
+    frequency: 50.0
 
     # odom0: husky_velocity_controller/odom
     odom0: odom

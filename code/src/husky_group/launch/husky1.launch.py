@@ -9,6 +9,8 @@ from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
 os.environ["HUSKY_TOP_PLATE_ENABLED"] = "false"
+os.environ["HUSKY_IMU_XYZ"] = "0 0 0"
+os.environ["HUSKY_IMU_RPY"] = "0 0 0"
 
 def generate_launch_description():
     # Get parameters
@@ -80,7 +82,7 @@ def generate_launch_description():
 
     spawn_controller = Node(
         package="controller_manager",
-        executable="spawner.py",
+        executable="spawner",
         arguments=["joint_state_broadcaster"],
         output="screen",
     )
@@ -179,8 +181,13 @@ def generate_launch_description():
     ld.add_action(node_tf_publisher)
     ld.add_action(launch_interbotix_moveit)
 
-    # Launch Husky UGV
+    # Launch pointcloud to laserscan, imu and lidar
     ld.add_action(node_pointcloud_to_laserscan)
+    ld.add_action(node_um7_imu)
+    ld.add_action(launch_ouster_lidar)
+
+
+    # Launch Husky UGV
     ld.add_action(node_robot_state_publisher)
     ld.add_action(node_controller_manager)
     ld.add_action(spawn_controller)
@@ -188,10 +195,6 @@ def generate_launch_description():
     ld.add_action(launch_husky_control)
     ld.add_action(launch_husky_teleop_base)
     ld.add_action(launch_husky_teleop_joy)
-
-    # Launch imu and lidar
-    ld.add_action(node_um7_imu)
-    ld.add_action(launch_ouster_lidar)
     
     return ld
 
