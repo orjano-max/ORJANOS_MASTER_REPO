@@ -1,7 +1,9 @@
 #include <memory>
-
+#include <fstream>
+#include <boost>
 #include <rclcpp/rclcpp.hpp>
 #include <moveit/move_group_interface/move_group_interface.h>
+#include <moveit/planning_scene_interface/planning_scene_interface.h>
 
 
 
@@ -11,6 +13,7 @@ class ScenePublisher : public rclcpp::Node
 
     std::string scene_name_ = "noname";
     std::string file_path_ = "~/git/ORJANOS_MASTER_REPO/code/params/scene_geometry.scene";
+    std::vector<moveit_msgs::msg::CollisionObject> collision_objects_;
 
     ScenePublisher(const rclcpp::NodeOptions & options) : Node("scene_geometry_publisher", options) {
 
@@ -37,7 +40,68 @@ class ScenePublisher : public rclcpp::Node
       }();
 
       move_group_interface.setPoseTarget(home_pose);
-    }    
+    }
+
+    void load_scene()
+    {
+      
+      // Read scene geometry from file
+      std::ifstream file(file_path_);
+      std::string line;
+      std::vector<std::string> tokens;
+      std::vector<moveit_msgs::msg::CollisionObject> collision_objects;
+
+      RCLCPP_INFO(get_logger(), "Loading scene...");
+
+      ///scene_name = tokens[0];
+
+      while (std::getline(file, line))
+      {
+        if (line.empty() || line[0] == '#')
+          continue;
+        boost::split(tokens, line, boost::is_any_of(" "));
+        if (tokens[0] == scene_name_;)
+          continue;
+        else if (tokens[0] == "*")
+        {
+          moveit_msgs::msg::CollisionObject collision_object;
+          collision_object.id = tokens[1];
+          geometry_msgs::msg::Pose pose;
+          pose.position.x = std::stof(tokens[2]);
+          pose.position.y = std::stof(tokens[3]);
+          pose.position.z = std::stof(tokens[4]);
+          pose.orientation.x = std::stof(tokens[5]);
+          pose.orientation.y = std::stof(tokens[6]);
+          pose.orientation.z = std::stof(tokens[7]);
+          pose.orientation.w = std::stof(tokens[8]);
+          shape_msgs::msg::SolidPrimitive shape;
+          if (tokens[9] == "box")
+            shape.type = shape_msgs::msg::SolidPrimitive::BOX;
+          else if (tokens[9] == "cylinder")
+            shape.type = shape_msgs::msg::SolidPrimitive::CYLINDER;
+          shape.dimensions.resize(3);
+          shape.dimensions[0] = std::stof(tokens[10]);
+          shape.dimensions[1] = std::stof(tokens[11]);
+          if (shape.type == shape_msgs::msg::SolidPrimitive::BOX)
+            shape.dimensions[2] = std::stof(tokens[12]);
+          else if (shape.type == shape_msgs::msg::SolidPrimitive::CYLINDER)
+            shape.dimensions[2] = 0.0;
+          collision_object.primitives.push_back(shape);
+          collision_object.primitive_poses.push_back(pose);
+          collision_object.operation = moveit_msgs::msg::CollisionObjectOperation::ADD;
+          collision_objects.push_back(collision_object);
+        }
+      }
+
+      collision_objects_ = collision_objects;
+
+      RCLCPP_INFO(get_logger(), "Scene Loaded");
+    }
+
+    std::vector<moveit_msgs::msg::CollisionObject> getCollisionObjects()
+    {
+      return collision_objects_;
+    }
 
 };
 
@@ -69,10 +133,14 @@ int main(int argc, char* argv[])
   // :moveit_codedir:`MoveGroupInterface<moveit_ros/planning_interface/move_group_interface/include/moveit/move_group_interface/move_group_interface.h>`
   // class can be easily set up using just the name of the planning group you would like to control and plan for.
   moveit::planning_interface::MoveGroupInterface move_group_interface(node, PLANNING_GROUP);
+  moveit::planning_interface::PlanningSceneInterface planning_scene_interface
 
-  
+  node->load_scene();
 
-  node->setHomePoseTarget(move_group_interface);
+  RCLCPP_INFO(LOGGER, "Add an object into the world");
+  planning_scene_interface.addCollisionObjects(node->getCollisionObjects());
+
+  //node->setHomePoseTarget(move_group_interface);
   
 
   // Create a plan to that target pose

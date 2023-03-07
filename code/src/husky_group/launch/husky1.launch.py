@@ -155,7 +155,7 @@ def generate_launch_description():
         }]
     )
 
-    """  launch_interbotix_moveit = IncludeLaunchDescription(
+    launch_interbotix_moveit = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(PathJoinSubstitution(
             [FindPackageShare('interbotix_xsarm_moveit'), 'launch', 'xsarm_moveit.launch.py'])),
             launch_arguments ={
@@ -169,14 +169,15 @@ def generate_launch_description():
         package="tf2_ros",
         executable="static_transform_publisher",
         arguments = ["-0.44", "-0.104", "0", "-1.5708", "0", "0", "user_rail_link", "world"],
-    ) """
+    )
     
 
 
     ld = LaunchDescription()
+    
     # Launch Interbotix manipulator
-    #ld.add_action(node_tf_publisher)
-    #ld.add_action(launch_interbotix_moveit)
+    ld.add_action(node_tf_publisher)
+    ld.add_action(launch_interbotix_moveit)
 
     # Launch Husky UGV
     ld.add_action(node_pointcloud_to_laserscan)
