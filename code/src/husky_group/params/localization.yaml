@@ -7,7 +7,7 @@ ekf_node:
     two_d_mode: true
     publish_tf: true
 
-    frequency: 20.0
+    frequency: 50.0
 
     # odom0: husky_velocity_controller/odom
     odom0: odom

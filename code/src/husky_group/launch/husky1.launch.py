@@ -178,8 +178,13 @@ def generate_launch_description():
     #ld.add_action(node_tf_publisher)
     #ld.add_action(launch_interbotix_moveit)
 
-    # Launch Husky UGV
+    # Launch pointcloud to laserscan, imu and lidar
     ld.add_action(node_pointcloud_to_laserscan)
+    ld.add_action(node_um7_imu)
+    ld.add_action(launch_ouster_lidar)
+
+
+    # Launch Husky UGV
     ld.add_action(node_robot_state_publisher)
     ld.add_action(node_controller_manager)
     ld.add_action(spawn_controller)
@@ -187,10 +192,6 @@ def generate_launch_description():
     ld.add_action(launch_husky_control)
     ld.add_action(launch_husky_teleop_base)
     ld.add_action(launch_husky_teleop_joy)
-
-    # Launch imu and lidar
-    ld.add_action(node_um7_imu)
-    ld.add_action(launch_ouster_lidar)
     
     return ld
 
