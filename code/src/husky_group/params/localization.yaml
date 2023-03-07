@@ -6,7 +6,7 @@ ekf_node:
     imu_frame: 
 
     two_d_mode: true
-    publish_tf: true
+    publish_tf: false
 
     frequency: 20.0
 
