@@ -123,14 +123,13 @@ def launch_setup(context, *args, **kwargs):
         output={'both': 'log'},
     )
 
-    return moveit_rviz_node
+    return [moveit_rviz_node]
 
 def generate_launch_description():
     declared_arguments = []
     declared_arguments.append(
         DeclareLaunchArgument(
             'robot_model',
-            default_value=LaunchConfiguration('vx300'),
             choices=get_interbotix_xsarm_models(),
             description='model type of the Interbotix Arm such as `wx200` or `rx150`.',
         )

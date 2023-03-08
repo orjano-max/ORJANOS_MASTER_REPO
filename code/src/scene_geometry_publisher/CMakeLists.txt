@@ -9,6 +9,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(moveit_ros_planning_interface REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(ament_index_cpp REQUIRED)
 
 add_executable(scene_geometry_publisher src/scene_geometry_publisher.cpp)
 target_include_directories(scene_geometry_publisher PUBLIC
