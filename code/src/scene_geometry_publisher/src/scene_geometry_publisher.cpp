@@ -1,6 +1,5 @@
 #include <memory>
 #include <fstream>
-#include <boost>
 #include <rclcpp/rclcpp.hpp>
 #include <moveit/move_group_interface/move_group_interface.h>
 #include <moveit/planning_scene_interface/planning_scene_interface.h>
@@ -12,7 +11,7 @@ class ScenePublisher : public rclcpp::Node
   public:
 
     std::string scene_name_ = "noname";
-    std::string file_path_ = "~/git/ORJANOS_MASTER_REPO/code/params/scene_geometry.scene";
+    std::string file_path_ = "~/Git/ORJANOS_MASTER_REPO/code/params/scene_geometry.scene";
     std::vector<moveit_msgs::msg::CollisionObject> collision_objects_;
 
     ScenePublisher(const rclcpp::NodeOptions & options) : Node("scene_geometry_publisher", options) {
@@ -53,14 +52,14 @@ class ScenePublisher : public rclcpp::Node
 
       RCLCPP_INFO(get_logger(), "Loading scene...");
 
-      ///scene_name = tokens[0];
+      
 
       while (std::getline(file, line))
       {
         if (line.empty() || line[0] == '#')
           continue;
-        boost::split(tokens, line, boost::is_any_of(" "));
-        if (tokens[0] == scene_name_;)
+        tokens = split(line, ' ');
+        if (tokens[0] == scene_name_)
           continue;
         else if (tokens[0] == "*")
         {
@@ -88,7 +87,7 @@ class ScenePublisher : public rclcpp::Node
             shape.dimensions[2] = 0.0;
           collision_object.primitives.push_back(shape);
           collision_object.primitive_poses.push_back(pose);
-          collision_object.operation = moveit_msgs::msg::CollisionObjectOperation::ADD;
+          collision_object.operation = collision_object.ADD;
           collision_objects.push_back(collision_object);
         }
       }
@@ -102,6 +101,19 @@ class ScenePublisher : public rclcpp::Node
     {
       return collision_objects_;
     }
+
+  private:
+
+  std::vector<std::string> split(const std::string& str, char delim)
+  {
+    std::vector<std::string> tokens;
+    std::stringstream ss(str);
+    std::string item;
+    while (std::getline(ss, item, delim)) {
+        tokens.push_back(item);
+    }
+    return tokens;
+  }
 
 };
 
@@ -133,11 +145,11 @@ int main(int argc, char* argv[])
   // :moveit_codedir:`MoveGroupInterface<moveit_ros/planning_interface/move_group_interface/include/moveit/move_group_interface/move_group_interface.h>`
   // class can be easily set up using just the name of the planning group you would like to control and plan for.
   moveit::planning_interface::MoveGroupInterface move_group_interface(node, PLANNING_GROUP);
-  moveit::planning_interface::PlanningSceneInterface planning_scene_interface
+  moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
 
   node->load_scene();
 
-  RCLCPP_INFO(LOGGER, "Add an object into the world");
+  RCLCPP_INFO(logger, "Add an object into the world");
   planning_scene_interface.addCollisionObjects(node->getCollisionObjects());
 
   //node->setHomePoseTarget(move_group_interface);
