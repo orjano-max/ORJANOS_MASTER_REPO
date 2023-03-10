@@ -97,7 +97,7 @@ class ScenePublisher : public rclcpp::Node
           collision_object.header.frame_id = frame_id_;
 
           // Structure object information in a string vector
-          for (int i = 0; i = 8; i++)
+          for (int i = 0; i <= 8; i++)
           {
             std::getline(file,line);
 
