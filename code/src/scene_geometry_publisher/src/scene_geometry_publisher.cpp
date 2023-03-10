@@ -11,25 +11,26 @@ class ScenePublisher : public rclcpp::Node
 {
   public:
 
-    std::string scene_name_ = "noname";
-    std::string file_path_;
-    std::string file_name_ = "scene_geometry.scene";
     std::string frame_id_ = "world";
+    std::string sceneName_ = "noname";
+    std::string fileName_ = "scene_geometry.scene";
+    std::string filePath_;
+    std::fstream file_;
     std::vector<moveit_msgs::msg::CollisionObject> collision_objects_;
 
     ScenePublisher(const rclcpp::NodeOptions & options) : Node("scene_geometry_publisher", options) {
 
-      std::string joint_state_topic_;
-      std::string share_path = ament_index_cpp::get_package_share_directory("husky_group");
+      std::string joint_state_topic;
+      std::string sharePath = ament_index_cpp::get_package_share_directory("husky_group");
 
-      RCLCPP_INFO(get_logger(), "Scene publisher node started.");
+      RCLCPP_INFO(this->get_logger(), "Scene publisher node started.");
 
-      this->get_parameter("joint_state_topic", joint_state_topic_);
+      this->get_parameter("joint_state_topic", joint_state_topic);
+      RCLCPP_INFO(this->get_logger(), "joint_state_topic: %s", joint_state_topic.c_str());
 
-      RCLCPP_INFO(this->get_logger(), "joint_state_topic: %s", joint_state_topic_.c_str());
+      filePath_ = sharePath + "/params/" + fileName_;
 
-      file_path_ = share_path + "/params/" + file_name_;
-
+      readScenefile();
       
     }
 
@@ -50,113 +51,24 @@ class ScenePublisher : public rclcpp::Node
 
     void load_scene()
     {
-      // Read scene geometry from file
 
       // Declare variables
       std::string line;
       std::vector<moveit_msgs::msg::CollisionObject> collision_objects;
+      std::vector<std::string> objectvector;
+      
+      // First line is the scene name
+      std::getline(file_,line);
+      sceneName_ = line;
+      RCLCPP_INFO(get_logger(), "Got Scene Name: %s", sceneName_.c_str());
 
-      // Read the file
-      RCLCPP_INFO(get_logger(), "Loading scene...");
-      std::ifstream file(file_path_);
-      if (!file.is_open())
+      while (line[0] == '*')
       {
-        RCLCPP_INFO(get_logger(), "Unable to open file: %s", file_path_.c_str());
-        return;
+        objectvector = createObjectVector(line);
+        collision_objects.push_back(createObject(objectvector));
       }
 
-      // The first line is scene name and should not be empty
-      if (std::getline(file,line))
-      { 
-        // First line is the scene name
-        scene_name_ = line;
-        RCLCPP_INFO(get_logger(), "Got Scene Name: %s", scene_name_.c_str());
-      }
-      else
-      {
-          // File is empty
-          RCLCPP_INFO(get_logger(), "Scene file is empty!");
-      }
-
-      // Go through file.
-      while (std::getline(file,line))
-      {
-
-        // Jump over irrelevant lines
-        if (line.empty() || line[0] == '#')
-          continue;
-
-        // The character '*' denotes the start of a new object
-        if (line[0] == '*')
-        {
-          moveit_msgs::msg::CollisionObject collision_object;
-          std::vector<std::string> tokens;
-          std::vector<std::string> token;
-          std::string objectId= line.erase(0,2);
-          collision_object.id = objectId;
-          collision_object.header.frame_id = frame_id_;
-
-          // Structure object information in a string vector
-          for (int i = 0; i <= 8; i++)
-          {
-            std::getline(file,line);
-
-            // Populate tokens vector
-            token = split(line, ' ');
-            tokens.insert(tokens.end(), token.begin(), token.end());
-          }
-
-          // Parse object pose
-          geometry_msgs::msg::Pose pose;
-          pose.position.x = std::stod(tokens[0]);
-          pose.position.y = std::stod(tokens[1]);
-          pose.position.z = std::stod(tokens[2]);
-          //RCLCPP_INFO(get_logger(), "Got position of object...");
-          pose.orientation.x = std::stod(tokens[3]);
-          pose.orientation.y = std::stod(tokens[4]);
-          pose.orientation.z = std::stod(tokens[5]);
-          pose.orientation.w = std::stod(tokens[6]);
-          //RCLCPP_INFO(get_logger(), "Got orientation of object...");
-          collision_object.primitive_poses.push_back(pose);
-
-          // Parse object shape and dimensions
-          shape_msgs::msg::SolidPrimitive shape;
-          if (tokens[8] == "box")
-          {
-            shape.type = shape_msgs::msg::SolidPrimitive::BOX;
-            shape.dimensions.resize(3);
-            shape.dimensions[0] = std::stod(tokens[9]);
-            shape.dimensions[1] = std::stod(tokens[10]);
-            shape.dimensions[2] = std::stod(tokens[11]);
-            
-          }
-          else if (tokens[8] == "cylinder")
-          {
-            shape.type = shape_msgs::msg::SolidPrimitive::CYLINDER;
-            shape.dimensions.resize(2);
-            shape.dimensions[0] = std::stod(tokens[10]);
-            shape.dimensions[1] = std::stod(tokens[9]);
-          }
-          else if (tokens[8] == "sphere")
-          {
-            shape.type = shape_msgs::msg::SolidPrimitive::SPHERE;
-            shape.dimensions.resize(1);
-            shape.dimensions[0] = std::stod(tokens[9]);
-          }
-          else
-          {
-            RCLCPP_WARN(get_logger(), "Unknown shape type for object '%s'", collision_object.id.c_str());
-          }
-
-          collision_object.primitives.push_back(shape);
-          collision_object.operation = collision_object.ADD;
-          collision_objects.push_back(collision_object);
-          RCLCPP_INFO_STREAM(get_logger(), "Loaded object: " << collision_object.id);
-        }
-        // End of while loop
-      }
-
-      // Finished going through file, add objects
+      // Finished going through file_, add objects
       collision_objects_ = collision_objects;
 
       // End of function
@@ -170,16 +82,135 @@ class ScenePublisher : public rclcpp::Node
 
   private:
 
-  std::vector<std::string> split(const std::string& str, char delim)
-  {
-    std::vector<std::string> tokens;
-    std::stringstream ss(str);
-    std::string item;
-    while (std::getline(ss, item, delim)) {
-        tokens.push_back(item);
+    std::vector<std::string> split(const std::string& str, char delim)
+    {
+      std::vector<std::string> tokens;
+      std::stringstream ss(str);
+      std::string item;
+      while (std::getline(ss, item, delim)) {
+          tokens.push_back(item);
+      }
+      return tokens;
     }
-    return tokens;
-  }
+
+    void readScenefile(std::string sceneFile = "")
+    {
+      // This function reads the scene file_
+
+      std::string filePath = filePath_;
+
+      // Set custom file path if given
+      if (sceneFile != "")
+      {
+        filePath = sceneFile;
+      }
+
+      // Read the file_
+      RCLCPP_INFO(get_logger(), "Opening File: %s", filePath.c_str());
+
+      file_.open(filePath, std::ios::in);
+
+      if (!file_.is_open())
+      {
+        RCLCPP_WARN(get_logger(), "Unable to open file_: %s", filePath.c_str());
+      }
+    }
+
+    std::vector<std::string> createObjectVector(std::string &line)
+    {
+      std::vector<std::string> objectVector;
+      std::vector<std::string> token;
+    
+      // Object ID is next to *
+      objectVector[0] = line.erase(0,2);
+
+      // Next line
+      std::getline(file_,line);
+
+      // Structure object information in a string vector
+      while (isNumber(token[0]))
+      {
+      // Populate tokens vector
+      token = split(line, ' ');
+      token.insert(objectVector.end(), token.begin(), token.end());
+      std::getline(file_,line);
+      }
+      
+      return objectVector;
+    }
+
+    moveit_msgs::msg::CollisionObject createObject(std::vector<std::string> objectVector)
+    {
+      moveit_msgs::msg::CollisionObject collision_object;
+
+      collision_object.id = objectVector[0];
+      collision_object.header.frame_id = frame_id_;
+
+      // Parse object pose
+      geometry_msgs::msg::Pose pose;
+      pose.position.x = std::stod(objectVector[0]);
+      pose.position.y = std::stod(objectVector[1]);
+      pose.position.z = std::stod(objectVector[2]);
+      //RCLCPP_INFO(get_logger(), "Got position of object...");
+      pose.orientation.x = std::stod(objectVector[3]);
+      pose.orientation.y = std::stod(objectVector[4]);
+      pose.orientation.z = std::stod(objectVector[5]);
+      pose.orientation.w = std::stod(objectVector[6]);
+      //RCLCPP_INFO(get_logger(), "Got orientation of object...");
+      collision_object.primitive_poses.push_back(pose);
+
+      // Parse object shape and dimensions
+      shape_msgs::msg::SolidPrimitive shape;
+      if (objectVector[8] == "box")
+      {
+        shape.type = shape_msgs::msg::SolidPrimitive::BOX;
+        shape.dimensions.resize(3);
+        shape.dimensions[0] = std::stod(objectVector[9]);
+        shape.dimensions[1] = std::stod(objectVector[10]);
+        shape.dimensions[2] = std::stod(objectVector[11]);
+        collision_object.primitives.push_back(shape);
+        collision_object.operation = collision_object.ADD;
+        RCLCPP_INFO_STREAM(get_logger(), "Loaded object: " << collision_object.id);
+
+        return collision_object;
+      }
+      else if (objectVector[8] == "cylinder")
+      {
+        shape.type = shape_msgs::msg::SolidPrimitive::CYLINDER;
+        shape.dimensions.resize(2);
+        shape.dimensions[0] = std::stod(objectVector[10]);
+        shape.dimensions[1] = std::stod(objectVector[9]);
+        collision_object.primitives.push_back(shape);
+        collision_object.operation = collision_object.ADD;
+        RCLCPP_INFO_STREAM(get_logger(), "Loaded object: " << collision_object.id);
+
+        return collision_object;
+      }
+      else if (objectVector[8] == "sphere")
+      {
+        shape.type = shape_msgs::msg::SolidPrimitive::SPHERE;
+        shape.dimensions.resize(1);
+        shape.dimensions[0] = std::stod(objectVector[9]);
+        collision_object.primitives.push_back(shape);
+        collision_object.operation = collision_object.ADD;
+        RCLCPP_INFO_STREAM(get_logger(), "Loaded object: " << collision_object.id);
+
+        return collision_object;
+      }
+      RCLCPP_WARN(get_logger(), "Unknown shape type for object '%s'", collision_object.id.c_str());
+      
+    }
+
+    bool isNumber(const std::string& str) {
+      bool is_number = true;
+      for (char c : str) {
+          if (!isdigit(c)) { // Check if the character is not a digit
+              is_number = false;
+              break;
+          }
+      }
+      return is_number;
+    }
 
 };
 
