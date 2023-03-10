@@ -54,8 +54,6 @@ class ScenePublisher : public rclcpp::Node
 
       // Declare variables
       std::string line;
-      std::vector<std::string> tokens;
-      std::vector<std::string> token;
       std::vector<moveit_msgs::msg::CollisionObject> collision_objects;
 
       // Read the file
@@ -80,107 +78,81 @@ class ScenePublisher : public rclcpp::Node
           RCLCPP_INFO(get_logger(), "Scene file is empty!");
       }
 
-      // Go through file
-      while (std::getline(file, line))
+      // Go through file.
+      while (std::getline(file,line))
       {
+
         // Jump over irrelevant lines
         if (line.empty() || line[0] == '#')
           continue;
 
-        // Remove information about the first object if it has reached the next object
-        if (tokens.size() > 1 && tokens.back() == "*")
-        {
-          tokens.erase(tokens.begin(), tokens.end() - 1);
-          tokens.shrink_to_fit();
-        }
-
-        // Populate tokens vector
-        token = split(line, ' ');
-        tokens.insert(tokens.end(), token.begin(), token.end());
-
-        // Skip scene name
-        if (tokens[0] == scene_name_)
-          continue;
-
-        // File ends with a "."
-        if (tokens[0] == ".")
-          break;
-
-        // Parse object
-        if (tokens.size() >= 2 && tokens[0] == "*")
+        // The character '*' denotes the start of a new object
+        if (line[0] == '*')
         {
           moveit_msgs::msg::CollisionObject collision_object;
+          std::vector<std::string> tokens;
+          std::vector<std::string> token;
+          std::string objectId= line.erase(0,2);
+          collision_object.id = objectId;
           collision_object.header.frame_id = frame_id_;
-          collision_object.id = tokens[1];
+
+          // Structure object information in a string vector
+          for (int i = 0; i = 8; i++)
+          {
+            std::getline(file,line);
+
+            // Populate tokens vector
+            token = split(line, ' ');
+            tokens.insert(tokens.end(), token.begin(), token.end());
+          }
 
           // Parse object pose
-          if (tokens.size() >= 10)
-          {
-            geometry_msgs::msg::Pose pose;
-            pose.position.x = std::stod(tokens[2]);
-            pose.position.y = std::stod(tokens[3]);
-            pose.position.z = std::stod(tokens[4]);
-            //RCLCPP_INFO(get_logger(), "Got position of object...");
+          geometry_msgs::msg::Pose pose;
+          pose.position.x = std::stod(tokens[0]);
+          pose.position.y = std::stod(tokens[1]);
+          pose.position.z = std::stod(tokens[2]);
+          //RCLCPP_INFO(get_logger(), "Got position of object...");
+          pose.orientation.x = std::stod(tokens[3]);
+          pose.orientation.y = std::stod(tokens[4]);
+          pose.orientation.z = std::stod(tokens[5]);
+          pose.orientation.w = std::stod(tokens[6]);
+          //RCLCPP_INFO(get_logger(), "Got orientation of object...");
+          collision_object.primitive_poses.push_back(pose);
 
-            pose.orientation.x = std::stod(tokens[5]);
-            pose.orientation.y = std::stod(tokens[6]);
-            pose.orientation.z = std::stod(tokens[7]);
-            pose.orientation.w = std::stod(tokens[8]);
-            //RCLCPP_INFO(get_logger(), "Got orientation of object...");
-            collision_object.primitive_poses.push_back(pose);
-          }       
           // Parse object shape and dimensions
-          if (tokens.size() >= 26 && tokens[10] == "box")
+          shape_msgs::msg::SolidPrimitive shape;
+          if (tokens[8] == "box")
           {
-            shape_msgs::msg::SolidPrimitive shape;
             shape.type = shape_msgs::msg::SolidPrimitive::BOX;
             shape.dimensions.resize(3);
-            shape.dimensions[0] = std::stod(tokens[11]);
-            shape.dimensions[1] = std::stod(tokens[12]);
-            shape.dimensions[2] = std::stod(tokens[13]);
-            collision_object.primitives.push_back(shape);
-            collision_object.operation = collision_object.ADD;
-            collision_objects.push_back(collision_object);
-            RCLCPP_INFO_STREAM(get_logger(), "Loaded object: " << collision_object.id);
-            tokens.clear();
-            tokens.shrink_to_fit();
-
+            shape.dimensions[0] = std::stod(tokens[9]);
+            shape.dimensions[1] = std::stod(tokens[10]);
+            shape.dimensions[2] = std::stod(tokens[11]);
+            
           }
-          else if (tokens.size() >= 25 && tokens[10] == "cylinder")
+          else if (tokens[8] == "cylinder")
           {
-            shape_msgs::msg::SolidPrimitive shape;
             shape.type = shape_msgs::msg::SolidPrimitive::CYLINDER;
             shape.dimensions.resize(2);
-            shape.dimensions[0] = std::stod(tokens[12]);
-            shape.dimensions[1] = std::stod(tokens[11]);
-            collision_object.primitives.push_back(shape);
-            collision_object.operation = collision_object.ADD;
-            collision_objects.push_back(collision_object);
-            RCLCPP_INFO_STREAM(get_logger(), "Loaded object: " << collision_object.id);
-            tokens.clear();
-            tokens.shrink_to_fit();
+            shape.dimensions[0] = std::stod(tokens[10]);
+            shape.dimensions[1] = std::stod(tokens[9]);
           }
-          else if (tokens.size() >= 24 && tokens[10] == "sphere")
+          else if (tokens[8] == "sphere")
           {
-            shape_msgs::msg::SolidPrimitive shape;
             shape.type = shape_msgs::msg::SolidPrimitive::SPHERE;
             shape.dimensions.resize(1);
-            shape.dimensions[0] = std::stod(tokens[11]);
-            collision_object.primitives.push_back(shape);
-            collision_object.operation = collision_object.ADD;
-            collision_objects.push_back(collision_object);
-            RCLCPP_INFO_STREAM(get_logger(), "Loaded object: " << collision_object.id);
-            tokens.clear();
-            tokens.shrink_to_fit();
+            shape.dimensions[0] = std::stod(tokens[9]);
           }
-          else if (tokens.size() >= 26 && tokens[10] != "sphere" && tokens[10] != "cylinder" && tokens[10] != "box")
+          else
           {
             RCLCPP_WARN(get_logger(), "Unknown shape type for object '%s'", collision_object.id.c_str());
-            tokens.clear();
-            tokens.shrink_to_fit();
           }
-        }
 
+          collision_object.primitives.push_back(shape);
+          collision_object.operation = collision_object.ADD;
+          collision_objects.push_back(collision_object);
+          RCLCPP_INFO_STREAM(get_logger(), "Loaded object: " << collision_object.id);
+        }
         // End of while loop
       }
 
