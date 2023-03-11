@@ -11,17 +11,10 @@ class ScenePublisher : public rclcpp::Node
 {
   public:
 
-    std::string frame_id_ = "world";
-    std::string sceneName_ = "noname";
-    std::string fileName_ = "scene_geometry.scene";
-    std::string filePath_;
-    std::fstream file_;
-    std::vector<moveit_msgs::msg::CollisionObject> collision_objects_;
-
     ScenePublisher(const rclcpp::NodeOptions & options) : Node("scene_geometry_publisher", options) {
 
       std::string joint_state_topic;
-      std::string sharePath = ament_index_cpp::get_package_share_directory("husky_group");
+      std::string sharePath = ament_index_cpp::get_package_share_directory("scene_geometry_publisher");
 
       RCLCPP_INFO(this->get_logger(), "Scene publisher node started.");
 
@@ -34,28 +27,14 @@ class ScenePublisher : public rclcpp::Node
       
     }
 
-    void setHomePoseTarget(moveit::planning_interface::MoveGroupInterface & move_group_interface)
-    {
-      // Set a target Pose
-      auto const home_pose = [] {
-        geometry_msgs::msg::Pose msg;
-        msg.position.x = 0.537;
-        msg.position.y = 0.0;
-        msg.position.z = 0.427;
-        msg.orientation.w = 1;
-        return msg;
-      }();
-
-      move_group_interface.setPoseTarget(home_pose);
-    }
-
     void load_scene()
     {
-
+      // This function loads a scene from a ".scene" file and stores 
+      // the collision object information in the class
       // Declare variables
       std::string line;
-      std::vector<moveit_msgs::msg::CollisionObject> collision_objects;
-      std::vector<std::string> objectvector;
+      std::vector<moveit_msgs::msg::CollisionObject> collisionObjects;
+      std::vector<std::string> objectStringVector;
       
       // First line is the scene name
       std::getline(file_,line);
@@ -64,45 +43,59 @@ class ScenePublisher : public rclcpp::Node
 
       while (line[0] == '*')
       {
-        objectvector = createObjectVector(line);
-        collision_objects.push_back(createObject(objectvector));
+        objectStringVector = createObjectStringVector(line);
+        collisionObjects.push_back(createObject(objectStringVector));
       }
 
       // Finished going through file_, add objects
-      collision_objects_ = collision_objects;
+      collisionObjects_ = collisionObjects;
 
       // End of function
     }
 
     std::vector<moveit_msgs::msg::CollisionObject> getCollisionObjects()
     {
-      // Return the collision objects stored in class
-      return collision_objects_;
+      return collisionObjects_;
     }
 
-  private:
-
-    std::vector<std::string> split(const std::string& str, char delim)
+    std::string getFrameId()
     {
-      std::vector<std::string> tokens;
-      std::stringstream ss(str);
-      std::string item;
-      while (std::getline(ss, item, delim)) {
-          tokens.push_back(item);
-      }
-      return tokens;
+      return frameId_;
     }
 
-    void readScenefile(std::string sceneFile = "")
+    std::string getSceneName()
+    {
+      return sceneName_;
+    }
+
+    std::string getfilePath()
+    {
+      return filePath_;
+    }
+
+    void setFrameId(std::string frameId)
+    {
+      frameId_ = frameId;
+    }
+
+    void setSceneName(std::string sceneName)
+    {
+      sceneName_ = sceneName;
+    }
+
+    void setfilePath(std::string filePath)
+    {
+      filePath_ = filePath;
+    }
+    
+    void readScenefile(std::string filePath = "")
     {
       // This function reads the scene file_
 
-      std::string filePath = filePath_;
-
-      // Set custom file path if given
-      if (sceneFile != "")
+      // Use member variable for file path if none was given
+      if (filePath == "")
       {
-        filePath = sceneFile;
+        filePath = filePath_;
       }
 
       // Read the file_
@@ -116,7 +109,27 @@ class ScenePublisher : public rclcpp::Node
       }
     }
 
-    std::vector<std::string> createObjectVector(std::string &line)
+  private:
+
+    std::string frameId_ = "world";
+    std::string sceneName_ = "noname";
+    std::string fileName_ = "scene_geometry.scene";
+    std::string filePath_;
+    std::fstream file_;
+    std::vector<moveit_msgs::msg::CollisionObject> collisionObjects_;
+
+    std::vector<std::string> split(const std::string& str, char delim)
+    {
+      std::vector<std::string> tokens;
+      std::stringstream ss(str);
+      std::string item;
+      while (std::getline(ss, item, delim)) {
+          tokens.push_back(item);
+      }
+      return tokens;
+    }
+
+    std::vector<std::string> createObjectStringVector(std::string &line)
     {
       std::vector<std::string> objectVector;
       std::vector<std::string> token;
@@ -128,7 +141,7 @@ class ScenePublisher : public rclcpp::Node
       std::getline(file_,line);
 
       // Structure object information in a string vector
-      while (isNumber(token[0]))
+      while (line[0] != '*')
       {
       // Populate tokens vector
       token = split(line, ' ');
@@ -144,7 +157,7 @@ class ScenePublisher : public rclcpp::Node
       moveit_msgs::msg::CollisionObject collision_object;
 
       collision_object.id = objectVector[0];
-      collision_object.header.frame_id = frame_id_;
+      collision_object.header.frame_id = frameId_;
 
       // Parse object pose
       geometry_msgs::msg::Pose pose;
@@ -197,20 +210,11 @@ class ScenePublisher : public rclcpp::Node
 
         return collision_object;
       }
+
       RCLCPP_WARN(get_logger(), "Unknown shape type for object '%s'", collision_object.id.c_str());
       
     }
 
-    bool isNumber(const std::string& str) {
-      bool is_number = true;
-      for (char c : str) {
-          if (!isdigit(c)) { // Check if the character is not a digit
-              is_number = false;
-              break;
-          }
-      }
-      return is_number;
-    }
 
 };
 
@@ -249,7 +253,7 @@ int main(int argc, char* argv[])
   RCLCPP_INFO(logger, "Add an object into the world");
   planning_scene_interface.applyCollisionObjects(node->getCollisionObjects());
 
-
+  /* --------- ALL OF THIS WILL BE REMOVED ------------------
   // Set a target Pose
       auto const target_pose = [] {
         geometry_msgs::msg::Pose msg;
@@ -260,6 +264,22 @@ int main(int argc, char* argv[])
       }();
 
       move_group_interface.setPositionTarget(-0.13, -0.3, 0.342);
+
+
+    void setHomePoseTarget(moveit::planning_interface::MoveGroupInterface & move_group_interface)
+    {
+      // Set a target Pose
+      auto const home_pose = [] {
+        geometry_msgs::msg::Pose msg;
+        msg.position.x = 0.537;
+        msg.position.y = 0.0;
+        msg.position.z = 0.427;
+        msg.orientation.w = 1;
+        return msg;
+      }();
+
+      move_group_interface.setPoseTarget(home_pose);
+    }
   
   
   // Create a plan to that target pose
@@ -278,7 +298,7 @@ int main(int argc, char* argv[])
   {
     RCLCPP_ERROR(logger, "Planning failed!");
   }
-
+     -------------------- -----------------------*/
 
   // Shutdown ROS
   rclcpp::shutdown();
