@@ -172,6 +172,14 @@ def generate_launch_description():
         executable="static_transform_publisher",
         arguments = ["-0.44", "-0.104", "0", "-1.5708", "0", "0", "user_rail_link", "world"],
     )
+
+    launch_scene_geometry_publisher = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(PathJoinSubstitution(
+            [FindPackageShare('scene_geometry_publisher'), 'launch', 'scene_geometry_publisher_launch.py'])),
+            launch_arguments ={
+            'robot_model' : 'vx300',
+            }.items()
+    )
     
 
 
@@ -180,6 +188,7 @@ def generate_launch_description():
     # Launch Interbotix manipulator
     ld.add_action(node_tf_publisher)
     ld.add_action(launch_interbotix_moveit)
+    ld.add_action(launch_scene_geometry_publisher)
 
     # Launch pointcloud to laserscan, imu and lidar
     ld.add_action(node_pointcloud_to_laserscan)

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(hello_moveit)
+project(husky_pick_and_place)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -9,22 +9,24 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(moveit_ros_planning_interface REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(ament_index_cpp REQUIRED)
 
-add_executable(hello_moveit src/hello_moveit.cpp)
-target_include_directories(hello_moveit PUBLIC
+add_executable(husky_pick_and_place src/husky_pick_and_place.cpp)
+target_include_directories(husky_pick_and_place PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
-target_compile_features(hello_moveit PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+target_compile_features(husky_pick_and_place PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 ament_target_dependencies(
-  hello_moveit
+  husky_pick_and_place
   "moveit_ros_planning_interface"
   "rclcpp"
 )
 
-install(TARGETS hello_moveit
+install(TARGETS husky_pick_and_place
   DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY launch DESTINATION share/${PROJECT_NAME})
+install(DIRECTORY params DESTINATION share/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

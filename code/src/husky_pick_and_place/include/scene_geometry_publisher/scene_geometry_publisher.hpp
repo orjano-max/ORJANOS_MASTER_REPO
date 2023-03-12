@@ -18,7 +18,7 @@ class ScenePublisher : public rclcpp::Node
 {
   public:
 
-    ScenePublisher(const rclcpp::NodeOptions & options);
+    ScenePublisher(const rclcpp::NodeOptions & options, std::string sceneFilePath = "");
 
     void load_scene();
 
@@ -28,13 +28,13 @@ class ScenePublisher : public rclcpp::Node
 
     std::string getSceneName();
 
-    std::string getSceneFilePath();
+    std::string getfilePath();
 
     void setFrameId(std::string frameId);
 
     void setSceneName(std::string sceneName);
 
-    void setSceneFilePath(std::string filePath);
+    void setScenefilePath(std::string filePath);
     
     void readScenefile();
 

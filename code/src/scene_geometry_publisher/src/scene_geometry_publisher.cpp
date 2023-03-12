@@ -5,7 +5,12 @@
 //
 // Author: Ørjan Øvsthus
 
-#include "scene_geometry_publisher/scene_geometry_publisher.hpp"
+#include <memory>
+#include <fstream>
+#include <rclcpp/rclcpp.hpp>
+#include <moveit/move_group_interface/move_group_interface.h>
+#include <moveit/planning_scene_interface/planning_scene_interface.h>
+#include "scene_publisher.cpp"
 
 
  int main(int argc, char* argv[])
@@ -27,67 +32,17 @@
   executor.add_node(node);
   std::thread([&executor]() { executor.spin(); }).detach();
   
-  // MoveIt operates on sets of joints called "planning groups" and stores them in an object called
-  // the ``JointModelGroup``. Throughout MoveIt, the terms "planning group" and "joint model group"
-  // are used interchangeably.
-  static const std::string PLANNING_GROUP = "interbotix_arm";
-  
-  // The
-  // :moveit_codedir:`MoveGroupInterface<moveit_ros/planning_interface/move_group_interface/include/moveit/move_group_interface/move_group_interface.h>`
-  // class can be easily set up using just the name of the planning group you would like to control and plan for.
-  moveit::planning_interface::MoveGroupInterface move_group_interface(node, PLANNING_GROUP);
-  moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
 
+  // Read the .scene file at default scene file path. Other paths can be set using "node->setSceneFilePath()"
+  node->readScenefile();
+
+  // Load the information from the .scene file into the node
   node->load_scene();
 
-  RCLCPP_INFO(logger, "Add an object into the world");
+  // Deploy loaded planning scene
+  RCLCPP_INFO(logger, "Adding objects into the world");
+  moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
   planning_scene_interface.applyCollisionObjects(node->getCollisionObjects());
-
-
-  /* // Set a target Pose
-      auto const target_pose = [] {
-        geometry_msgs::msg::Pose msg;
-        msg.position.x = -0.13;
-        msg.position.y = -0.3;
-        msg.position.z = 0.342;
-        return msg;
-      }();
-
-      move_group_interface.setPositionTarget(-0.13, -0.3, 0.342);
-
-
-    void setHomePoseTarget(moveit::planning_interface::MoveGroupInterface & move_group_interface)
-    {
-      // Set a target Pose
-      auto const home_pose = [] {
-        geometry_msgs::msg::Pose msg;
-        msg.position.x = 0.537;
-        msg.position.y = 0.0;
-        msg.position.z = 0.427;
-        msg.orientation.w = 1;
-        return msg;
-      }();
-
-      move_group_interface.setPoseTarget(home_pose);
-    }
-  
-  
-  // Create a plan to that target pose
-  auto const [success, plan] = [&move_group_interface] {
-    moveit::planning_interface::MoveGroupInterface::Plan msg;
-    auto const ok = static_cast<bool>(move_group_interface.plan(msg));
-    return std::make_pair(ok, msg);
-  }();
-
-  // Execute the plan
-  if (success)
-  {
-    move_group_interface.execute(plan);
-  }
-  else
-  {
-    RCLCPP_ERROR(logger, "Planning failed!");
-  } */
 
   // Shutdown ROS
   rclcpp::shutdown();
