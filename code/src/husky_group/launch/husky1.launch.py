@@ -188,7 +188,6 @@ def generate_launch_description():
     # Launch Interbotix manipulator
     ld.add_action(node_tf_publisher)
     ld.add_action(launch_interbotix_moveit)
-    ld.add_action(launch_scene_geometry_publisher)
 
     # Launch pointcloud to laserscan, imu and lidar
     ld.add_action(node_pointcloud_to_laserscan)
@@ -204,6 +203,9 @@ def generate_launch_description():
     ld.add_action(launch_husky_control)
     ld.add_action(launch_husky_teleop_base)
     ld.add_action(launch_husky_teleop_joy)
+
+    # Add collision objects to planning scene
+    ld.add_action(launch_scene_geometry_publisher)
     
     return ld
 

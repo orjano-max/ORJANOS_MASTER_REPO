@@ -142,7 +142,7 @@ def generate_launch_description():
     # Launch Interbotix manipulator
     ld.add_action(launch_interbotix)
     ld.add_action(node_tf_publisher)
-    ld.add_action(launch_scene_geometry_publisher)
+    
 
     # Launch husky
     ld.add_action(node_robot_state_publisher)
@@ -151,6 +151,9 @@ def generate_launch_description():
     ld.add_action(gzserver)
     ld.add_action(gzclient)
     ld.add_action(spawn_robot)
+
+    # Add collision objects to planning scene
+    ld.add_action(launch_scene_geometry_publisher)
 
     
 

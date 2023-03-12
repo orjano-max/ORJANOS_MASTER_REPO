@@ -32,19 +32,23 @@ class ScenePublisher : public rclcpp::Node
       // This function loads a scene from a ".scene" file and stores 
       // the collision object information in the class
       // Declare variables
-      std::string line;
       std::vector<moveit_msgs::msg::CollisionObject> collisionObjects;
       std::vector<std::string> objectStringVector;
+      std::vector<std::string> token;
       
-      // First line is the scene name
-      std::getline(file_,line);
-      sceneName_ = line;
+      // First line_ is the scene name
+      std::getline(file_,line_);
+      sceneName_ = line_;
       RCLCPP_INFO(get_logger(), "Got Scene Name: %s", sceneName_.c_str());
 
-      while (line[0] == '*')
+      // Get next line_
+      std::getline(file_,line_);
+      token = split(line_, ' ');
+      while (token[0] == "*")
       {
-        objectStringVector = createObjectStringVector(line);
+        objectStringVector = createObjectStringVector();
         collisionObjects.push_back(createObject(objectStringVector));
+        token = split(line_, ' ');
       }
 
       // Finished going through file_, add objects
@@ -109,6 +113,7 @@ class ScenePublisher : public rclcpp::Node
     std::string sceneName_ = "noname";
     std::string filePath_;
     std::fstream file_;
+    std::string line_;
     std::vector<moveit_msgs::msg::CollisionObject> collisionObjects_;
 
     std::vector<std::string> split(const std::string& str, char delim)
@@ -122,27 +127,28 @@ class ScenePublisher : public rclcpp::Node
       return tokens;
     }
 
-    std::vector<std::string> createObjectStringVector(std::string &line)
+    std::vector<std::string> createObjectStringVector()
     {
       std::vector<std::string> objectVector;
       std::vector<std::string> token;
     
       // Object ID is next to *
-      objectVector[0] = line.erase(0,2);
+      objectVector.push_back(line_.erase(0,2));
 
-      // Next line
-      std::getline(file_,line);
-
+      // Next line_
+      std::getline(file_,line_);
+      token = split(line_, ' ');
       // Structure object information in a string vector
-      while (line[0] != '*')
+      while (token[0] != "*" && token[0] != ".")
       {
-      // Populate tokens vector
-      token = split(line, ' ');
-      token.insert(objectVector.end(), token.begin(), token.end());
-      std::getline(file_,line);
+      // Populate object vector
+      objectVector.insert(objectVector.end(), token.begin(), token.end());
+      std::getline(file_,line_);
+      token = split(line_, ' ');
       }
-      
+
       return objectVector;
+
     }
 
     moveit_msgs::msg::CollisionObject createObject(std::vector<std::string> objectVector)
@@ -154,52 +160,52 @@ class ScenePublisher : public rclcpp::Node
 
       // Parse object pose
       geometry_msgs::msg::Pose pose;
-      pose.position.x = std::stod(objectVector[0]);
-      pose.position.y = std::stod(objectVector[1]);
-      pose.position.z = std::stod(objectVector[2]);
+      pose.position.x = std::stod(objectVector[1]);
+      pose.position.y = std::stod(objectVector[2]);
+      pose.position.z = std::stod(objectVector[3]);
       //RCLCPP_INFO(get_logger(), "Got position of object...");
-      pose.orientation.x = std::stod(objectVector[3]);
-      pose.orientation.y = std::stod(objectVector[4]);
-      pose.orientation.z = std::stod(objectVector[5]);
-      pose.orientation.w = std::stod(objectVector[6]);
+      pose.orientation.x = std::stod(objectVector[4]);
+      pose.orientation.y = std::stod(objectVector[5]);
+      pose.orientation.z = std::stod(objectVector[6]);
+      pose.orientation.w = std::stod(objectVector[7]);
       //RCLCPP_INFO(get_logger(), "Got orientation of object...");
       collision_object.primitive_poses.push_back(pose);
 
       // Parse object shape and dimensions
       shape_msgs::msg::SolidPrimitive shape;
-      if (objectVector[8] == "box")
+      if (objectVector[9] == "box")
       {
         shape.type = shape_msgs::msg::SolidPrimitive::BOX;
         shape.dimensions.resize(3);
-        shape.dimensions[0] = std::stod(objectVector[9]);
-        shape.dimensions[1] = std::stod(objectVector[10]);
-        shape.dimensions[2] = std::stod(objectVector[11]);
+        shape.dimensions[0] = std::stod(objectVector[10]);
+        shape.dimensions[1] = std::stod(objectVector[11]);
+        shape.dimensions[2] = std::stod(objectVector[12]);
         collision_object.primitives.push_back(shape);
         collision_object.operation = collision_object.ADD;
-        RCLCPP_INFO_STREAM(get_logger(), "Loaded object: " << collision_object.id);
+        RCLCPP_INFO(get_logger(), "Loaded object: %s", collision_object.id.c_str());
 
         return collision_object;
       }
-      else if (objectVector[8] == "cylinder")
+      else if (objectVector[9] == "cylinder")
       {
         shape.type = shape_msgs::msg::SolidPrimitive::CYLINDER;
         shape.dimensions.resize(2);
-        shape.dimensions[0] = std::stod(objectVector[10]);
-        shape.dimensions[1] = std::stod(objectVector[9]);
+        shape.dimensions[0] = std::stod(objectVector[11]);
+        shape.dimensions[1] = std::stod(objectVector[10]);
         collision_object.primitives.push_back(shape);
         collision_object.operation = collision_object.ADD;
-        RCLCPP_INFO_STREAM(get_logger(), "Loaded object: " << collision_object.id);
+        RCLCPP_INFO(get_logger(), "Loaded object: %s", collision_object.id.c_str());
 
         return collision_object;
       }
-      else if (objectVector[8] == "sphere")
+      else if (objectVector[9] == "sphere")
       {
         shape.type = shape_msgs::msg::SolidPrimitive::SPHERE;
         shape.dimensions.resize(1);
-        shape.dimensions[0] = std::stod(objectVector[9]);
+        shape.dimensions[0] = std::stod(objectVector[10]);
         collision_object.primitives.push_back(shape);
         collision_object.operation = collision_object.ADD;
-        RCLCPP_INFO_STREAM(get_logger(), "Loaded object: " << collision_object.id);
+        RCLCPP_INFO(get_logger(), "Loaded object: %s", collision_object.id.c_str());
 
         return collision_object;
       }
