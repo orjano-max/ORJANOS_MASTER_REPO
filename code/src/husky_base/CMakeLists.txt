@@ -46,6 +46,7 @@ add_library(
   src/horizon_legacy/linux_serial.cpp
 )
 
+
 target_include_directories(
   husky_hardware
   PRIVATE
