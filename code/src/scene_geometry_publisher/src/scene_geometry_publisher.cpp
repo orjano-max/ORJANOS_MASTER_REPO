@@ -44,7 +44,7 @@
   planning_scene_interface.applyCollisionObjects(node->getCollisionObjects());
 
 
-  // Set a target Pose
+  /* // Set a target Pose
       auto const target_pose = [] {
         geometry_msgs::msg::Pose msg;
         msg.position.x = -0.13;
@@ -87,7 +87,7 @@
   else
   {
     RCLCPP_ERROR(logger, "Planning failed!");
-  }
+  } */
 
   // Shutdown ROS
   rclcpp::shutdown();
