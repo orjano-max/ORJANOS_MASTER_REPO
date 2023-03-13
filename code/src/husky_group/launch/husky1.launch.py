@@ -167,7 +167,7 @@ def generate_launch_description():
     )
 
     # Static transform that places the interbotics robot on the husky
-    node_tf_publisher = Node(
+    node_tf_manipulator = Node(
         package="tf2_ros",
         executable="static_transform_publisher",
         arguments = ["-0.44", "-0.104", "0", "-1.5708", "0", "0", "user_rail_link", "world"],
@@ -180,20 +180,27 @@ def generate_launch_description():
             'robot_model' : 'vx300',
             }.items()
     )
+
+    # Static transform that places the interbotics robot on the husky
+    node_tf_realsense = Node(
+        package="tf2_ros",
+        executable="static_transform_publisher",
+        arguments = ["0", "0", "0.05", "0", "0", "0", "vx300/ee_gripper_link", "camera_link"],
+    )
     
 
 
     ld = LaunchDescription()
     
     # Launch Interbotix manipulator
-    ld.add_action(node_tf_publisher)
+    ld.add_action(node_tf_manipulator)
     ld.add_action(launch_interbotix_moveit)
+    ld.add_action(node_tf_realsense)
 
     # Launch pointcloud to laserscan, imu and lidar
     ld.add_action(node_pointcloud_to_laserscan)
     ld.add_action(node_um7_imu)
     ld.add_action(launch_ouster_lidar)
-
 
     # Launch Husky UGV
     ld.add_action(node_robot_state_publisher)
@@ -203,7 +210,7 @@ def generate_launch_description():
     ld.add_action(launch_husky_control)
     ld.add_action(launch_husky_teleop_base)
     ld.add_action(launch_husky_teleop_joy)
-
+    
     # Add collision objects to planning scene
     ld.add_action(launch_scene_geometry_publisher)
     
