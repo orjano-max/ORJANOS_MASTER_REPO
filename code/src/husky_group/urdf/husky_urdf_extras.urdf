@@ -64,4 +64,15 @@
     <origin xyz="-0.0635 0 0.610" rpy="0 0 0"/>
   </joint>
 
+   <!-- REALSENSE CAMERA LINK. ØØ. 19.09.22 -->
+  <link name="camera_link">
+    
+  </link>
+
+  <joint name="realsense_joint" type="fixed">
+    <parent link="vx300/ee_gripper_link"/>
+    <child link="camera_link"/>
+    <origin xyz="0 0 0.05" rpy="0 0 0"/>
+  </joint>
+
 </robot>
