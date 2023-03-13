@@ -56,19 +56,11 @@ int main(int argc, char* argv[])
   // class can be easily set up using just the name of the planning group you would like to control and plan for.
   moveit::planning_interface::MoveGroupInterface move_group_interface(node, PLANNING_GROUP);
 
-  // Set a target Pose
-  /* auto const target_pose = [] {
-    geometry_msgs::msg::Pose msg;
-    msg.position.x = -0.13;
-    msg.position.y = -0.3;
-    msg.position.z = 0.342;
-    return msg;
-  }();
 
-  move_group_interface.setPositionTarget(-0.13, -0.3, 0.342); */
+  move_group_interface.setPositionTarget(-0.13, -0.3, 0.342);
 
 
-  setHomePoseTarget(move_group_interface);
+  //setHomePoseTarget(move_group_interface);
   
   
   // Create a plan to that target pose

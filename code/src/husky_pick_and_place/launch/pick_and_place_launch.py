@@ -186,10 +186,10 @@ def launch_setup(context, *args, **kwargs):
     ]
 
 
-    scene_geometry_publisher_node = Node(
-        name="scene_geometry_publisher",
-        package="scene_geometry_publisher",
-        executable="scene_geometry_publisher",
+    husky_pick_and_place_node = Node(
+        name="husky_pick_and_place",
+        package="husky_pick_and_place",
+        executable="husky_pick_and_place",
         output="screen",
         parameters=[
             {'joint_state_topic': f'/{robot_name_launch_arg.perform(context)}/joint_states' },
@@ -208,7 +208,7 @@ def launch_setup(context, *args, **kwargs):
     )
 
     return [
-        scene_geometry_publisher_node,
+        husky_pick_and_place_node,
     ]
 
 
