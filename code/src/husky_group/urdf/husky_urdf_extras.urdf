@@ -55,7 +55,19 @@
 
  <!-- OUSTER LIDAR LINK. ØØ. 19.09.22 -->
   <link name="lidar_link">
-    
+    <visual>
+      <origin
+        xyz="0 0 0.0255"
+        rpy="0 0 0" />
+      <geometry>
+       <cylinder radius="0.039" length="0.03"/>
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0 0 0 1" />
+      </material>
+    </visual>
   </link>
 
   <joint name="lidar_joint" type="fixed">
@@ -63,4 +75,5 @@
     <child link="lidar_link"/>
     <origin xyz="-0.0635 0 0.610" rpy="0 0 0"/>
   </joint>
+
 </robot>
