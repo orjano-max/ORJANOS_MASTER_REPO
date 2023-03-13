@@ -185,119 +185,11 @@ def launch_setup(context, *args, **kwargs):
         ),
     ]
 
-    move_group_node = Node(
-        package='moveit_ros_move_group',
-        executable='move_group',
-        # namespace=robot_name_launch_arg,
-        parameters=[
-            {
-                'planning_scene_monitor_options': {
-                    'robot_description':
-                        'robot_description',
-                    'joint_state_topic':
-                        f'/{robot_name_launch_arg.perform(context)}/joint_states',
-                },
-                'use_sim_time': use_sim_time_param,
-            },
-            robot_description,
-            robot_description_semantic,
-            kinematics_config,
-            ompl_planning_pipeline_config,
-            trajectory_execution_parameters,
-            moveit_controllers,
-            planning_scene_monitor_parameters,
-            joint_limits,
-            sensor_parameters,
-        ],
-        remappings=remappings,
-        output={'both': 'screen'},
-    )
 
-    moveit_rviz_node = Node(
-        condition=IfCondition(use_moveit_rviz_launch_arg),
-        package='rviz2',
-        executable='rviz2',
-        name='rviz2',
-        # namespace=robot_name_launch_arg,
-        arguments=[
-            '-d', rviz_config_file_launch_arg,
-            '-f', rviz_frame_launch_arg,
-        ],
-        parameters=[
-            robot_description,
-            robot_description_semantic,
-            ompl_planning_pipeline_config,
-            kinematics_config,
-            {'use_sim_time': use_sim_time_param},
-        ],
-        remappings=remappings,
-        output={'both': 'log'},
-    )
-
-    xsarm_ros_control_launch_include = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([
-            PathJoinSubstitution([
-                FindPackageShare('interbotix_xsarm_ros_control'),
-                'launch',
-                'xsarm_ros_control.launch.py'
-            ])
-        ]),
-        launch_arguments={
-            'robot_model': robot_model_launch_arg,
-            'robot_name': robot_name_launch_arg,
-            'base_link_frame': base_link_frame_launch_arg,
-            'show_ar_tag': show_ar_tag_launch_arg,
-            'show_gripper_bar': 'true',
-            'show_gripper_fingers': 'true',
-            'use_world_frame': use_world_frame_launch_arg,
-            'external_urdf_loc': external_urdf_loc_launch_arg,
-            'use_rviz': 'false',
-            'mode_configs': mode_configs_launch_arg,
-            'hardware_type': hardware_type_launch_arg,
-            'robot_description': robot_description_launch_arg,
-            'use_sim_time': use_sim_time_param,
-            'xs_driver_logging_level': xs_driver_logging_level_launch_arg,
-        }.items(),
-        condition=IfCondition(
-            PythonExpression(
-                ['"', hardware_type_launch_arg, '"', " in ('actual', 'fake')"]
-            )
-        ),
-    )
-
-    xsarm_gz_classic_launch_include = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([
-            PathJoinSubstitution([
-                FindPackageShare('interbotix_xsarm_sim'),
-                'launch',
-                'xsarm_gz_classic.launch.py'
-            ])
-        ]),
-        launch_arguments={
-            'robot_model': robot_model_launch_arg,
-            'robot_name': robot_name_launch_arg,
-            'base_link_frame': base_link_frame_launch_arg,
-            'show_ar_tag': show_ar_tag_launch_arg,
-            'show_gripper_bar': 'true',
-            'show_gripper_fingers': 'true',
-            'use_world_frame': use_world_frame_launch_arg,
-            'external_urdf_loc': external_urdf_loc_launch_arg,
-            'use_rviz': 'false',
-            'world_filepath': world_filepath_launch_arg,
-            'hardware_type': hardware_type_launch_arg,
-            'robot_description': robot_description_launch_arg,
-            'use_sim_time': use_sim_time_param,
-        }.items(),
-        condition=LaunchConfigurationEquals(
-            launch_configuration_name='hardware_type',
-            expected_value='gz_classic'
-        ),
-    )
-
-    hello_moveit_node = Node(
-        name="hello_moveit",
-        package="hello_moveit",
-        executable="hello_moveit",
+    husky_pick_and_place_node = Node(
+        name="husky_pick_and_place",
+        package="husky_pick_and_place",
+        executable="husky_pick_and_place",
         output="screen",
         parameters=[
             {'joint_state_topic': f'/{robot_name_launch_arg.perform(context)}/joint_states' },
@@ -316,11 +208,7 @@ def launch_setup(context, *args, **kwargs):
     )
 
     return [
-        #move_group_node,
-        #moveit_rviz_node,
-        #xsarm_ros_control_launch_include,
-        #xsarm_gz_classic_launch_include,
-        hello_moveit_node,
+        husky_pick_and_place_node,
     ]
 
 

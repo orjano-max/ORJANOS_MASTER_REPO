@@ -63,5 +63,4 @@
     <child link="lidar_link"/>
     <origin xyz="-0.0635 0 0.610" rpy="0 0 0"/>
   </joint>
-
 </robot>

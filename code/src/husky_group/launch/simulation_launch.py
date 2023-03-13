@@ -127,12 +127,22 @@ def generate_launch_description():
         arguments = ["-0.44", "-0.104", "0", "-1.5708", "0", "0", "user_rail_link", "world"],
     )
 
+    launch_scene_geometry_publisher = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(PathJoinSubstitution(
+            [FindPackageShare('scene_geometry_publisher'), 'launch', 'scene_geometry_publisher_launch.py'])),
+            launch_arguments ={
+            'robot_model' : 'vx300',
+            'hardware_type' : 'fake'
+            }.items()
+    )
+
     
 
     ld = LaunchDescription(ARGUMENTS)
     # Launch Interbotix manipulator
     ld.add_action(launch_interbotix)
     ld.add_action(node_tf_publisher)
+    
 
     # Launch husky
     ld.add_action(node_robot_state_publisher)
@@ -141,6 +151,9 @@ def generate_launch_description():
     ld.add_action(gzserver)
     ld.add_action(gzclient)
     ld.add_action(spawn_robot)
+
+    # Add collision objects to planning scene
+    ld.add_action(launch_scene_geometry_publisher)
 
     
 

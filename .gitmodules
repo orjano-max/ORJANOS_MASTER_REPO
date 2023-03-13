@@ -1,0 +1,4 @@
+[submodule "realsense-ros"]
+	path = code/src/realsense-ros
+	url = https://github.com/IntelRealSense/realsense-ros
+  branch = ros2-development
