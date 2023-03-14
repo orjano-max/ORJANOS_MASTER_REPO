@@ -75,5 +75,33 @@
     <child link="lidar_link"/>
     <origin xyz="-0.0635 0 0.610" rpy="0 0 0"/>
   </joint>
+  
+  <!-- Realsense camera link -->
+  <link
+    name="camera_link">
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://husky_group/meshes/realsense_assembly.STL" />
+      </geometry>
+      <material
+        name="Black">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://husky_group/meshes/realsense_assembly.STL" />
+      </geometry>
+    </collision>
+  </link>
 
 </robot>
