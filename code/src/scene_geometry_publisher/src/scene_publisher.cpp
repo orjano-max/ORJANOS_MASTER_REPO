@@ -54,6 +54,8 @@ class ScenePublisher : public rclcpp::Node
       // Finished going through file_, add objects
       collisionObjects_ = collisionObjects;
 
+      line_.clear();
+
       // End of function
     }
 
@@ -95,26 +97,19 @@ class ScenePublisher : public rclcpp::Node
     void readScenefile()
     {
       // This function opens a file and stores it in the "file_" member variable
+      std::fstream file;
 
       // Open the file_ in reading mode
       RCLCPP_INFO(get_logger(), "Opening File: %s", filePath_.c_str());
 
-      file_.open(filePath_, std::ios::in);
+      file.open(filePath_, std::ios::in);
 
       if (!file_.is_open())
       {
         RCLCPP_WARN(get_logger(), "Unable to open file_: %s", filePath_.c_str());
       }
-    }
 
-    moveit_msgs::msg::CollisionObject createMeshObject(std::string stlFilePath, std::string ObjectId)
-    {
-      moveit_msgs::msg::CollisionObject meshObject;
-
-      meshObject.id = ObjectId;
-      meshObject.header.frame_id = frameId_;
-
-
+      
     }
 
   private:
@@ -160,6 +155,7 @@ class ScenePublisher : public rclcpp::Node
       return objectVector;
 
     }
+
 
     moveit_msgs::msg::CollisionObject createObject(std::vector<std::string> objectVector)
     {
@@ -221,11 +217,38 @@ class ScenePublisher : public rclcpp::Node
       }
       else if (objectVector[9] == "mesh")
       {
-        shape_msgs::msg::Mesh* mesh;
-        
+        shape_msgs::msg::Mesh mesh;
+        geometry_msgs::msg::Point points;
+        std::array<uint32_t, 3UL> indices;
+        shape_msgs::msg::MeshTriangle triangles;
 
-        mesh->s
-        objectVector[0, 12];
+        // Parsing vertices
+        for (int i = 10; i == std::stoi(objectVector[10]) + 10; i += 3)
+        {
+          
+          points.set__x(std::stod(objectVector[10+i]));
+          points.set__y(std::stod(objectVector[11+i]));
+          points.set__z(std::stod(objectVector[12+i]));
+          mesh.vertices.push_back(points);
+        }
+
+        // Parsing triangles
+        for (int i = std::stoi(objectVector[10]) + 10; i == std::stoi(objectVector[11]) + 10; i += 3)
+        {
+        
+          indices[0] = std::stoul(objectVector[10+i]);
+          indices[1] = std::stoul(objectVector[11+i]);
+          indices[3] = std::stoul(objectVector[12+i]);
+          
+          triangles.vertex_indices = indices;
+          mesh.triangles.push_back(triangles);
+        }
+
+        collision_object.meshes.push_back(mesh);
+        collision_object.operation = collision_object.ADD;
+        RCLCPP_INFO(get_logger(), "Loaded object: %s", collision_object.id.c_str());
+
+        return collision_object;
         
       }
 

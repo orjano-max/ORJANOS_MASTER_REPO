@@ -44,7 +44,39 @@
   moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
   planning_scene_interface.applyCollisionObjects(node->getCollisionObjects());
 
-  
+  // ------------
+  // Now we will load the realsense camera assembly and attatch it to the gripper
+  // ----------- 
+  // Set frame id to gripper link
+  std::string frameId = "vx300/gripper_link";
+  node->setFrameId(frameId);
+ 
+  // Set path to the realsense.scene file
+  std::string packagePath = ament_index_cpp::get_package_share_directory("scene_geometry_publisher");
+  node->setSceneFilePath(packagePath +  "/params/realsense.scene");
+
+  // Read the realsense scene file
+  node->readScenefile();
+
+  // Load the information from the .scene file into the node
+  node->load_scene();
+
+  // Deploy loaded objects to the robot
+  RCLCPP_INFO(logger, "Applying objects onto the robot");
+  std::vector<moveit_msgs::msg::CollisionObject> collisionObjects = node->getCollisionObjects();
+  std::vector<moveit_msgs::msg::AttachedCollisionObject> attachedObjects;
+
+  for (int i = 0; i == static_cast<int>(collisionObjects.size()); i++)
+  {
+    moveit_msgs::msg::AttachedCollisionObject attachedObject;
+    attachedObject.object = collisionObjects[i];
+    attachedObject.link_name = node->getFrameId();
+    attachedObjects.push_back(attachedObject);
+  }
+
+  planning_scene_interface.applyAttachedCollisionObjects(attachedObjects);
+
+
 
   // Shutdown ROS
   rclcpp::shutdown();
