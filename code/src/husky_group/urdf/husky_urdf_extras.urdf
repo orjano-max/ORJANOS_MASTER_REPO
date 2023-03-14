@@ -81,6 +81,11 @@
     </collision>
   </link>
 
+  <link name="vx300/ee_gripper_link">
+
+  </link>
+
+
   <joint name="camera_joint" type="fixed">
     <parent link="vx300/ee_gripper_link"/>
     <child link="camera_link"/>
