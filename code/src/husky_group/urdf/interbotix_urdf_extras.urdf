@@ -39,9 +39,12 @@
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
-      <geometry>
+      <!-- <geometry>
         <mesh
           filename="package://husky_group/meshes/camera_link.STL" />
+      </geometry> -->
+      <geometry>
+       <cylinder radius="0.039" length="0.03"/>
       </geometry>
     </collision>
   </link>
