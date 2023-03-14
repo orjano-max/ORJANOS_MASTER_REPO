@@ -33,8 +33,12 @@ def generate_launch_description():
         'localization.yaml'],
     )
 
-    urdf_extras_path = PathJoinSubstitution(
+    husky_urdf_extras_path = PathJoinSubstitution(
                 [FindPackageShare("husky_group"), "urdf", "husky_urdf_extras.urdf"]
+                )
+    
+    interbotix_urdf_extras_path = PathJoinSubstitution(
+                [FindPackageShare("husky_group"), "urdf", "interbotix_urdf_extras.urdf"]
                 )
     
 
@@ -51,7 +55,7 @@ def generate_launch_description():
             " ",
             "prefix:=''",
             " ",
-            "urdf_extras:=",urdf_extras_path
+            "urdf_extras:=",husky_urdf_extras_path
         ]
     )
 
@@ -163,6 +167,7 @@ def generate_launch_description():
             launch_arguments ={
             'robot_model' : 'vx300',
             'use_moveit_rviz' : 'false',
+            'external_urdf_loc' : interbotix_urdf_extras_path,
             }.items()
     )
 
@@ -181,19 +186,19 @@ def generate_launch_description():
             }.items()
     )
 
-     # Static transform that places the interbotics robot on the husky
+    """  # Static transform that places the interbotics robot on the husky
     node_tf_realsense = Node(
         package="tf2_ros",
         executable="static_transform_publisher",
         arguments = ["0", "0", "0.05", "0", "0", "0", "vx300/ee_gripper_link", "camera_link"],
-    )
+    ) """
     
 
 
     ld = LaunchDescription()
     
     # Launch Interbotix manipulator
-    ld.add_action(node_tf_realsense)
+    #ld.add_action(node_tf_realsense)
     ld.add_action(node_tf_manipulator)
     ld.add_action(launch_interbotix_moveit)
 

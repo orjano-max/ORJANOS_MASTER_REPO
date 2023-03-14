@@ -1,0 +1,48 @@
+<robot>
+  <!-- Interbotix Urdf Extras -->
+  <!-- 
+  Addons to the Interbotix vx300 is added in this file. 
+  This file is passed when launching the husky and addons described here will be added to the husky
+    -->
+  <!-- Realsense camera link -->
+  <link
+    name="camera_link">
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <!-- <geometry>
+        <mesh
+          filename="package://husky_group/meshes/realsense_assembly.STL" />
+      </geometry> -->
+      <geometry>
+       <cylinder radius="0.039" length="0.03"/>
+      </geometry>
+      <material
+        name="Black">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <!-- <geometry>
+        <mesh
+          filename="package://husky_group/meshes/realsense_assembly.STL" />
+      </geometry> -->
+      <geometry>
+       <cylinder radius="0.039" length="0.03"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="realsense_joint" type="fixed">
+    <parent link="$(arg robot_name)/gripper_link"/>
+    <child link="camera_link"/>
+    <origin xyz="0 0 0.1" rpy="0 0 0"/>
+  </joint>
+
+
+</robot>
