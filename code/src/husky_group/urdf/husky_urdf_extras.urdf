@@ -28,7 +28,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="file://$(find husky_group)/meshes/frame_link.STL" />
+          filename="package://husky_group/meshes/frame_link.STL" />
       </geometry>
       <material
         name="">
@@ -42,7 +42,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="file://$(find husky_group)/meshes/frame_link.STL" />
+          filename="package://husky_group/meshes/frame_link.STL" />
       </geometry>
     </collision>
   </link>
