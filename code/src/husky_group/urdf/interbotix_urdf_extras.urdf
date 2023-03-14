@@ -7,19 +7,30 @@
   <!-- Realsense camera link -->
   <link
     name="camera_link">
+    <inertial>
+      <origin
+        xyz="0.020453 0.002211 0.022599"
+        rpy="0 0 0" />
+      <mass
+        value="0.064463" />
+      <inertia
+        ixx="4.6905E-05"
+        ixy="5.6231E-07"
+        ixz="-1.1304E-06"
+        iyy="1.1434E-05"
+        iyz="-1.1573E-07"
+        izz="4.5979E-05" />
+    </inertial>
     <visual>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://husky_group/meshes/Realsense_assembly.STL" />
+          filename="package://husky_group/meshes/camera_link.STL" />
       </geometry>
-      <!-- <geometry>
-       <cylinder radius="0.039" length="0.03"/>
-      </geometry> -->
       <material
-        name="Black">
+        name="">
         <color
           rgba="1 1 1 1" />
       </material>
@@ -30,11 +41,8 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://husky_group/meshes/Realsense_assembly.STL" />
+          filename="package://husky_group/meshes/camera_link.STL" />
       </geometry>
-      <!-- <geometry>
-       <cylinder radius="0.039" length="0.03"/>
-      </geometry> -->
     </collision>
   </link>
 
