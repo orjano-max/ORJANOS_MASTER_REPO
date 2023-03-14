@@ -53,40 +53,6 @@
     <origin xyz="-0.01 0 0.01" rpy="0 0 0"/>
   </joint>
 
-  <!-- Realsense camera link -->
-  <link
-    name="camera_link">
-    <visual>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
-      <!-- <geometry>
-        <mesh
-          filename="package://husky_group/meshes/realsense_assembly.STL" />
-      </geometry> -->
-      <geometry>
-       <cylinder radius="0.039" length="0.03"/>
-      </geometry>
-      <material
-        name="Black">
-        <color
-          rgba="1 1 1 1" />
-      </material>
-    </visual>
-    <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
-      <!-- <geometry>
-        <mesh
-          filename="package://husky_group/meshes/realsense_assembly.STL" />
-      </geometry> -->
-      <geometry>
-       <cylinder radius="0.039" length="0.03"/>
-      </geometry>
-    </collision>
-  </link>
-
    <!-- OUSTER LIDAR LINK. ØØ. 19.09.22 -->
   <link name="lidar_link">
     <visual>
