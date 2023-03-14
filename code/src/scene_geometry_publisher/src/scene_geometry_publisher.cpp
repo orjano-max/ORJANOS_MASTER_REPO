@@ -44,6 +44,8 @@
   moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
   planning_scene_interface.applyCollisionObjects(node->getCollisionObjects());
 
+  
+
   // Shutdown ROS
   rclcpp::shutdown();
   return 0;

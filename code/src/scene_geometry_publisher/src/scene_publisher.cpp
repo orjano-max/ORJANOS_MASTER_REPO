@@ -107,6 +107,16 @@ class ScenePublisher : public rclcpp::Node
       }
     }
 
+    moveit_msgs::msg::CollisionObject createMeshObject(std::string stlFilePath, std::string ObjectId)
+    {
+      moveit_msgs::msg::CollisionObject meshObject;
+
+      meshObject.id = ObjectId;
+      meshObject.header.frame_id = frameId_;
+
+
+    }
+
   private:
 
     std::string frameId_ = "world";
@@ -208,6 +218,15 @@ class ScenePublisher : public rclcpp::Node
         RCLCPP_INFO(get_logger(), "Loaded object: %s", collision_object.id.c_str());
 
         return collision_object;
+      }
+      else if (objectVector[9] == "mesh")
+      {
+        shape_msgs::msg::Mesh* mesh;
+        
+
+        mesh->s
+        objectVector[0, 12];
+        
       }
 
       RCLCPP_WARN(get_logger(), "Unknown shape type for object '%s'", collision_object.id.c_str());
