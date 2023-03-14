@@ -27,7 +27,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://husky_group/meshes/camera_link.STL" />
+          filename="package://husky_group/meshes/camera_link.stl" />
       </geometry>
       <material
         name="">
@@ -41,7 +41,7 @@
         rpy="0 0 0" />
       <!-- <geometry>
         <mesh
-          filename="package://husky_group/meshes/camera_link.STL" />
+          filename="package://husky_group/meshes/camera_link.stl" />
       </geometry> -->
       <geometry>
        <cylinder radius="0.039" length="0.03"/>
