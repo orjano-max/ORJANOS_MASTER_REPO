@@ -181,12 +181,12 @@ def generate_launch_description():
             }.items()
     )
 
-    """  # Static transform that places the interbotics robot on the husky
+     # Static transform that places the interbotics robot on the husky
     node_tf_realsense = Node(
         package="tf2_ros",
         executable="static_transform_publisher",
         arguments = ["0", "0", "0.05", "0", "0", "0", "vx300/ee_gripper_link", "camera_link"],
-    ) """
+    )
     
 
 
@@ -195,7 +195,7 @@ def generate_launch_description():
     # Launch Interbotix manipulator
     ld.add_action(node_tf_manipulator)
     ld.add_action(launch_interbotix_moveit)
-    #ld.add_action(node_tf_realsense)
+    ld.add_action(node_tf_realsense)
 
     # Launch pointcloud to laserscan, imu and lidar
     ld.add_action(node_pointcloud_to_laserscan)

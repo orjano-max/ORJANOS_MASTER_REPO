@@ -54,8 +54,6 @@
   </joint>
 
   <!-- Realsense camera link -->
-  <link name="vx300/ee_gripper_link" />
-
   <link
     name="camera_link">
     <visual>
@@ -82,13 +80,6 @@
       </geometry>
     </collision>
   </link>
-
-
-  <joint name="camera_joint" type="fixed">
-    <parent link="vx300/ee_gripper_link"/>
-    <child link="camera_link"/>
-    <origin xyz="0 0 0.05" rpy="0 0 0"/>
-  </joint>
 
    <!-- OUSTER LIDAR LINK. ØØ. 19.09.22 -->
   <link name="lidar_link">
