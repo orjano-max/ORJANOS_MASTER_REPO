@@ -181,12 +181,12 @@ def generate_launch_description():
             }.items()
     )
 
-    # Static transform that places the interbotics robot on the husky
+    """  # Static transform that places the interbotics robot on the husky
     node_tf_realsense = Node(
         package="tf2_ros",
         executable="static_transform_publisher",
         arguments = ["0", "0", "0.05", "0", "0", "0", "vx300/ee_gripper_link", "camera_link"],
-    )
+    ) """
     
 
 
