@@ -27,24 +27,21 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://husky_group/meshes/camera_link.stl" />
+          filename="package://husky_group/meshes/camera_link.STL" />
       </geometry>
       <material
         name="">
         <color
-          rgba="1 1 1 1" />
+          rgba="0.1 0.1 0.1 1" />
       </material>
     </visual>
     <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
-      <!-- <geometry>
+      <geometry>
         <mesh
           filename="package://husky_group/meshes/camera_link.stl" />
-      </geometry> -->
-      <geometry>
-       <cylinder radius="0.039" length="0.03"/>
       </geometry>
     </collision>
   </link>
@@ -52,7 +49,7 @@
   <joint name="realsense_joint" type="fixed">
     <parent link="$(arg robot_name)/gripper_link"/>
     <child link="camera_link"/>
-    <origin xyz="0 0 0.1" rpy="0 0 0"/>
+    <origin xyz="0.028 0 0.035" rpy="0 0 0"/>
   </joint>
 
 
