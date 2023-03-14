@@ -38,12 +38,12 @@ def launch_setup(context, *args, **kwargs):
     external_urdf_loc_launch_arg = LaunchConfiguration('external_urdf_loc')
     mode_configs_launch_arg = LaunchConfiguration('mode_configs')
     use_moveit_rviz_launch_arg = LaunchConfiguration('use_moveit_rviz')
-    rviz_frame_launch_arg = LaunchConfiguration('rviz_frame')
-    rviz_config_file_launch_arg = LaunchConfiguration('rviz_config_file')
     world_filepath_launch_arg = LaunchConfiguration('world_filepath')
     robot_description_launch_arg = LaunchConfiguration('robot_description')
     hardware_type_launch_arg = LaunchConfiguration('hardware_type')
     xs_driver_logging_level_launch_arg = LaunchConfiguration('xs_driver_logging_level')
+    rviz_frame = 'odom'
+    rviz_config_file = PathJoinSubstitution([FindPackageShare('husky_group'), 'params', 'rviz_config.rviz'])
 
 
     # sets use_sim_time parameter to 'true' if using gazebo hardware
@@ -109,8 +109,8 @@ def launch_setup(context, *args, **kwargs):
         name='rviz2',
         # namespace=robot_name_launch_arg,
         arguments=[
-            '-d', rviz_config_file_launch_arg,
-            '-f', rviz_frame_launch_arg,
+            '-d', rviz_config_file,
+            '-f', rviz_frame,
         ],
         parameters=[
             robot_description,
@@ -178,27 +178,6 @@ def generate_launch_description():
             default_value='true',
             choices=('true', 'false'),
             description="launches RViz with MoveIt's RViz configuration/",
-        )
-    )
-    declared_arguments.append(
-        DeclareLaunchArgument(
-            'rviz_frame',
-            default_value='world',
-            description=(
-                'defines the fixed frame parameter in RViz. Note that if `use_world_frame` is '
-                '`false`, this parameter should be changed to a frame that exists.'
-            ),
-        )
-    )
-    declared_arguments.append(
-        DeclareLaunchArgument(
-            'rviz_config_file',
-            default_value=PathJoinSubstitution([
-                FindPackageShare('interbotix_xsarm_moveit'),
-                'rviz',
-                'xsarm_moveit.rviz'
-            ]),
-            description='file path to the config file RViz should load.',
         )
     )
     declared_arguments.append(
