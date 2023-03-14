@@ -195,7 +195,7 @@ def generate_launch_description():
     # Launch Interbotix manipulator
     ld.add_action(node_tf_manipulator)
     ld.add_action(launch_interbotix_moveit)
-    ld.add_action(node_tf_realsense)
+    #ld.add_action(node_tf_realsense)
 
     # Launch pointcloud to laserscan, imu and lidar
     ld.add_action(node_pointcloud_to_laserscan)
