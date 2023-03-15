@@ -2,23 +2,26 @@ import os
 from symbol import parameters
 import math
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
+from launch.conditions import IfCondition
+from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, GroupAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import Command, FindExecutable, PathJoinSubstitution, LaunchConfiguration
+from launch.substitutions import Command, FindExecutable, PathJoinSubstitution
 from launch_ros.actions import Node
-from launch_ros.substitutions import FindPackageShare
+from launch_ros.substitutions import FindPackageShare, LaunchConfiguration
+
+ARGUMENTS = [
+    DeclareLaunchArgument('use_manipulator', default_value='false',
+                          description='Wether or not to use the interbotix manipulator'),
+]
 
 os.environ["HUSKY_TOP_PLATE_ENABLED"] = "false"
 os.environ["HUSKY_IMU_XYZ"] = "0 0 0"
 os.environ["HUSKY_IMU_RPY"] = "0 0 0"
 
 def generate_launch_description():
-    # Get parameters
-    """ params = PathJoinSubstitution(
-        [FindPackageShare('husky_group'),
-        'params',
-        'params.yaml'],
-    ) """
+    
+    #Declare "use_manipulator" argument
+    use_manipulator = LaunchConfiguration('use_manipulator')
 
     # Get LIDAR parameters
     lidar_params = PathJoinSubstitution(
@@ -159,6 +162,10 @@ def generate_launch_description():
         'use_inf': True,
         'inf_epsilon': 1.0,
         }]
+    )
+
+    GroupAction(
+        condition=IfCondition(use_manipulator)
     )
 
     launch_interbotix_moveit = IncludeLaunchDescription(
