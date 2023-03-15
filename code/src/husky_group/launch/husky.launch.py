@@ -7,7 +7,8 @@ from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, Grou
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command, FindExecutable, PathJoinSubstitution
 from launch_ros.actions import Node
-from launch_ros.substitutions import FindPackageShare, LaunchConfiguration
+from launch_ros.substitutions import FindPackageShare
+from launch.substitutions import LaunchConfiguration
 
 ARGUMENTS = [
     DeclareLaunchArgument('use_manipulator', default_value='false',
@@ -164,9 +165,12 @@ def generate_launch_description():
         }]
     )
 
+
+    '''
     GroupAction(
         condition=IfCondition(use_manipulator)
     )
+    '''
 
     launch_interbotix_moveit = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(PathJoinSubstitution(
