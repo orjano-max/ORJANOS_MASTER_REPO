@@ -19,18 +19,13 @@
 	path = code/src/apriltag_msgs
 	url = https://github.com/christianrauch/apriltag_msgs
 	
-[submodule "code/src/apriltag_msgs"]
-	path = code/src/apriltag_msgs
-	url = https://github.com/christianrauch/apriltag_msgs
-	
 [submodule "code/src/vision_opencv"]
 	path = code/src/vision_opencv
 	url = https://github.com/ros-perception/vision_opencv
 	branch = galactic
+	
 [submodule "code/src/apriltag_ros"]
 	path = code/src/apriltag_ros
 	url = https://github.com/AprilRobotics/apriltag_ros
 	branch = ros2
-[submodule "code/src/-b"]
-	path = code/src/-b
-	url = https://github.com/ros-perception/vision_opencv
+
