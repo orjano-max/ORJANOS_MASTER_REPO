@@ -15,11 +15,6 @@
 	path = code/src/um7
 	url = https://github.com/mikeferguson/um7
 	
-[submodule "code/src/apriltag"]
-	path = code/src/apriltag
-	url = https://github.com/AprilRobotics/apriltag_ros
-	branch = ros2
-	
 [submodule "code/src/apriltag_msgs"]
 	path = code/src/apriltag_msgs
 	url = https://github.com/christianrauch/apriltag_msgs
@@ -35,3 +30,7 @@
 [submodule "code/src/apriltag_ros"]
 	path = code/src/apriltag_ros
 	url = https://github.com/AprilRobotics/apriltag_ros
+	branch = ros2
+[submodule "code/src/-b"]
+	path = code/src/-b
+	url = https://github.com/ros-perception/vision_opencv
