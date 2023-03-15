@@ -178,7 +178,7 @@ class ScenePublisher : public rclcpp::Node
       pose.orientation.z = std::stod(objectVector[6]);
       pose.orientation.w = std::stod(objectVector[7]);
       //RCLCPP_INFO(get_logger(), "Got orientation of object...");
-      collision_object.primitive_poses.push_back(pose);
+      
 
       // Parse object shape and dimensions
       shape_msgs::msg::SolidPrimitive shape;
@@ -189,7 +189,9 @@ class ScenePublisher : public rclcpp::Node
         shape.dimensions[0] = std::stod(objectVector[10]);
         shape.dimensions[1] = std::stod(objectVector[11]);
         shape.dimensions[2] = std::stod(objectVector[12]);
+
         collision_object.primitives.push_back(shape);
+        collision_object.primitive_poses.push_back(pose);
         collision_object.operation = collision_object.ADD;
         RCLCPP_INFO(get_logger(), "Loaded object: %s", collision_object.id.c_str());
 
@@ -201,7 +203,9 @@ class ScenePublisher : public rclcpp::Node
         shape.dimensions.resize(2);
         shape.dimensions[0] = std::stod(objectVector[11]);
         shape.dimensions[1] = std::stod(objectVector[10]);
+
         collision_object.primitives.push_back(shape);
+        collision_object.primitive_poses.push_back(pose);
         collision_object.operation = collision_object.ADD;
         RCLCPP_INFO(get_logger(), "Loaded object: %s", collision_object.id.c_str());
 
@@ -212,7 +216,9 @@ class ScenePublisher : public rclcpp::Node
         shape.type = shape_msgs::msg::SolidPrimitive::SPHERE;
         shape.dimensions.resize(1);
         shape.dimensions[0] = std::stod(objectVector[10]);
+
         collision_object.primitives.push_back(shape);
+        collision_object.primitive_poses.push_back(pose);
         collision_object.operation = collision_object.ADD;
         RCLCPP_INFO(get_logger(), "Loaded object: %s", collision_object.id.c_str());
 
@@ -234,6 +240,7 @@ class ScenePublisher : public rclcpp::Node
         int lastTrianglePos = firstTrianglePos+nrOfTriangles*3 - 1;
 
         
+        /* 
         RCLCPP_INFO(get_logger(), "First point value: %s", objectVector[firstPointPos].c_str());
         RCLCPP_INFO(get_logger(), "At position: %i", firstPointPos);
         RCLCPP_INFO(get_logger(), "Last point value: %s", objectVector[lastPointPos].c_str());
@@ -242,7 +249,8 @@ class ScenePublisher : public rclcpp::Node
         RCLCPP_INFO(get_logger(), "First triangle value: %s", objectVector[firstTrianglePos].c_str());
         RCLCPP_INFO(get_logger(), "At position: %i", firstTrianglePos);
         RCLCPP_INFO(get_logger(), "Last triangle value: %s", objectVector[lastTrianglePos].c_str());
-        RCLCPP_INFO(get_logger(), "At position: %i", lastTrianglePos);
+        RCLCPP_INFO(get_logger(), "At position: %i", lastTrianglePos); 
+        */
        
 
         // Parsing vertices
@@ -254,8 +262,11 @@ class ScenePublisher : public rclcpp::Node
           points.set__z(std::stod(objectVector[i+2]));
           mesh.vertices.push_back(points);
         }
+
+        /* 
         RCLCPP_INFO(get_logger(), "First value in point vector: %f", mesh.vertices.front().x);
         RCLCPP_INFO(get_logger(), "Last value in point vector: %f", mesh.vertices.back().z);
+        */
 
         // Parsing triangles
         for (int i = firstTrianglePos; i < lastTrianglePos; i += 3)
@@ -269,9 +280,11 @@ class ScenePublisher : public rclcpp::Node
           mesh.triangles.push_back(triangles);
         }
 
+        /* 
         RCLCPP_INFO(get_logger(), "First value in triangle vector: %i", mesh.triangles.front().vertex_indices[0]);
         RCLCPP_INFO(get_logger(), "Last value in triangle vector: %i", mesh.triangles.back().vertex_indices[2]);
-
+         */
+        collision_object.mesh_poses.push_back(pose);
         collision_object.meshes.push_back(mesh);
         collision_object.operation = collision_object.ADD;
         RCLCPP_INFO(get_logger(), "Loaded object: %s", collision_object.id.c_str());

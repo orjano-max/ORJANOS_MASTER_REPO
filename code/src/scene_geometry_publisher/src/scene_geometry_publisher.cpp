@@ -66,11 +66,13 @@
   std::vector<moveit_msgs::msg::CollisionObject> collisionObjects = node->getCollisionObjects();
   std::vector<moveit_msgs::msg::AttachedCollisionObject> attachedObjects;
 
-  for (int i = 0; i <= static_cast<int>(collisionObjects.size()); i++)
+  for (int i = 0; i < static_cast<int>(collisionObjects.size()); i++)
   {
     moveit_msgs::msg::AttachedCollisionObject attachedObject;
     attachedObject.object = collisionObjects[i];
     attachedObject.link_name = node->getFrameId();
+    attachedObject.object.operation = attachedObject.object.ADD;
+    attachedObject.touch_links = std::vector<std::string>{attachedObject.link_name};
     attachedObjects.push_back(attachedObject);
   }
 
