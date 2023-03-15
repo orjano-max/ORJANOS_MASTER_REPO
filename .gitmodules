@@ -2,3 +2,6 @@
 	path = code/src/realsense-ros
 	url = https://github.com/IntelRealSense/realsense-ros
   branch = ros2-development
+[submodule "code/src/uia_master_husky"]
+	path = code/src/uia_master_husky
+	url = https://github.com/orjano-max/uia_master_husky
