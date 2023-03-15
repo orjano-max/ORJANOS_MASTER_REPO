@@ -1,7 +1,9 @@
 // This file is the executable in the scene_geometry_publisher node.
-// It contains an implementation of the scene_geometry_publisher class,
+// It contains an implementation of the scene_geometry_publisher class
 // where a scene is read from a .scene file contained in the "params" folder of
-// the scene_geometry_publisher ros package.
+// the scene_geometry_publisher ros package and collision objects are published to the planning scene.
+// It also illustrates how collision objects can be read from a .scene file and published as an
+// AttatchedCollision object to the end effector of a robot.
 //
 // Author: Ørjan Øvsthus
 
