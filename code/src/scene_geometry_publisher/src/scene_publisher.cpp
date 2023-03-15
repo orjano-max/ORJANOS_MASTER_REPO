@@ -97,12 +97,15 @@ class ScenePublisher : public rclcpp::Node
     void readScenefile()
     {
       // This function opens a file and stores it in the "file_" member variable
-      std::fstream file;
+
+      // In case there already is a file open
+      file_.close();
+
 
       // Open the file_ in reading mode
       RCLCPP_INFO(get_logger(), "Opening File: %s", filePath_.c_str());
 
-      file.open(filePath_, std::ios::in);
+      file_.open(filePath_, std::ios::in);
 
       if (!file_.is_open())
       {
@@ -222,27 +225,52 @@ class ScenePublisher : public rclcpp::Node
         std::array<uint32_t, 3UL> indices;
         shape_msgs::msg::MeshTriangle triangles;
 
+        int nrOfPoints = std::stoi(objectVector[10]);
+        int nrOfTriangles = std::stoi(objectVector[11]);
+
+        int firstPointPos = 12;
+        int lastPointPos = firstPointPos + nrOfPoints*3 - 1;
+        int firstTrianglePos = lastPointPos+1;
+        int lastTrianglePos = firstTrianglePos+nrOfTriangles*3 - 1;
+
+        
+        RCLCPP_INFO(get_logger(), "First point value: %s", objectVector[firstPointPos].c_str());
+        RCLCPP_INFO(get_logger(), "At position: %i", firstPointPos);
+        RCLCPP_INFO(get_logger(), "Last point value: %s", objectVector[lastPointPos].c_str());
+        RCLCPP_INFO(get_logger(), "At position: %i", lastPointPos);
+
+        RCLCPP_INFO(get_logger(), "First triangle value: %s", objectVector[firstTrianglePos].c_str());
+        RCLCPP_INFO(get_logger(), "At position: %i", firstTrianglePos);
+        RCLCPP_INFO(get_logger(), "Last triangle value: %s", objectVector[lastTrianglePos].c_str());
+        RCLCPP_INFO(get_logger(), "At position: %i", lastTrianglePos);
+       
+
         // Parsing vertices
-        for (int i = 10; i == std::stoi(objectVector[10]) + 10; i += 3)
+        for (int i = firstPointPos; i < lastPointPos; i += 3)
         {
           
-          points.set__x(std::stod(objectVector[10+i]));
-          points.set__y(std::stod(objectVector[11+i]));
-          points.set__z(std::stod(objectVector[12+i]));
+          points.set__x(std::stod(objectVector[i]));
+          points.set__y(std::stod(objectVector[i+1]));
+          points.set__z(std::stod(objectVector[i+2]));
           mesh.vertices.push_back(points);
         }
+        RCLCPP_INFO(get_logger(), "First value in point vector: %f", mesh.vertices.front().x);
+        RCLCPP_INFO(get_logger(), "Last value in point vector: %f", mesh.vertices.back().z);
 
         // Parsing triangles
-        for (int i = std::stoi(objectVector[10]) + 10; i == std::stoi(objectVector[11]) + 10; i += 3)
+        for (int i = firstTrianglePos; i < lastTrianglePos; i += 3)
         {
         
-          indices[0] = std::stoul(objectVector[10+i]);
-          indices[1] = std::stoul(objectVector[11+i]);
-          indices[3] = std::stoul(objectVector[12+i]);
+          indices[0] = std::stoul(objectVector[i]);
+          indices[1] = std::stoul(objectVector[i+1]);
+          indices[2] = std::stoul(objectVector[i+2]);
           
           triangles.vertex_indices = indices;
           mesh.triangles.push_back(triangles);
         }
+
+        RCLCPP_INFO(get_logger(), "First value in triangle vector: %i", mesh.triangles.front().vertex_indices[0]);
+        RCLCPP_INFO(get_logger(), "Last value in triangle vector: %i", mesh.triangles.back().vertex_indices[2]);
 
         collision_object.meshes.push_back(mesh);
         collision_object.operation = collision_object.ADD;
