@@ -6,3 +6,9 @@
 [submodule "code/src/uia_master_husky"]
 	path = code/src/uia_master_husky
 	url = https://github.com/orjano-max/uia_master_husky
+[submodule "code/src/serial"]
+	path = code/src/serial
+	url = https://github.com/mikeferguson/serial
+[submodule "code/src/um7"]
+	path = code/src/um7
+	url = https://github.com/mikeferguson/um7
