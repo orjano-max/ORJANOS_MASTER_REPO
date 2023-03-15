@@ -32,3 +32,6 @@
 	path = code/src/vision_opencv
 	url = https://github.com/ros-perception/vision_opencv
 	branch = galactic
+[submodule "code/src/apriltag_ros"]
+	path = code/src/apriltag_ros
+	url = https://github.com/AprilRobotics/apriltag_ros
