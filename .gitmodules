@@ -16,3 +16,6 @@
 	path = code/src/apriltag
 	url = https://github.com/AprilRobotics/apriltag
 
+[submodule "code/src/uia_husky_0776"]
+	path = code/src/uia_husky_0776
+	url = https://github.com/orjano-max/uia_husky_0776
