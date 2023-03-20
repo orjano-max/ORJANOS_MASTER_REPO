@@ -27,3 +27,10 @@
 [submodule "code/src/apriltag"]
 	path = code/src/apriltag
 	url = https://github.com/AprilRobotics/apriltag
+
+[submodule "code/src/apriltag_ros"]
+	path = code/src/apriltag_ros
+	url = https://github.com/christianrauch/apriltag_ros
+[submodule "code/src/--force"]
+	path = code/src/--force
+	url = https://github.com/christianrauch/apriltag_ros
