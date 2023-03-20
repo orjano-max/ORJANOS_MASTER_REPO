@@ -33,7 +33,7 @@ install(TARGETS scene_geometry_publisher
   DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY launch DESTINATION share/${PROJECT_NAME})
-install(DIRECTORY params DESTINATION share/${PROJECT_NAME})
+install(DIRECTORY scenes DESTINATION share/${PROJECT_NAME})
 #install(DIRECTORY include DESTINATION share/${PROJECT_NAME})
 
 if(BUILD_TESTING)

@@ -35,7 +35,7 @@ def generate_launch_description():
     # Launch the husky robot using the husky_uia uia_master_husky repo
     launch_husky_base = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(PathJoinSubstitution(
-        [FindPackageShare("ros2_ouster"), 'launch', 'os1_launch.py'])),
+        [FindPackageShare("husky_base"), 'launch', 'base_launch.py'])),
         launch_arguments ={
             "urdf_extras" : urdf_extras_path,
             "localization_params" : localization_params,

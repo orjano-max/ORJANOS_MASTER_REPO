@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>husky_group</name>
+  <version>1.0.8</version>
+  <description>Package for husky group</description>
+  <author email="orjano18@uia.no">Ørjan Øvsthus</author>
+  <maintainer email="orjano18@uia.no">Ørjan Øvsthus</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>husky_group</depend>
+  <depend>interbotix_xsarm_moveit</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

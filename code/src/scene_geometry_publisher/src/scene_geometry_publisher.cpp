@@ -55,7 +55,7 @@
  
   // Set path to the realsense.scene file
   std::string packagePath = ament_index_cpp::get_package_share_directory("scene_geometry_publisher");
-  node->setSceneFilePath(packagePath +  "/params/realsense.scene");
+  node->setSceneFilePath(packagePath +  "/scenes/realsense.scene");
 
   // Read the realsense scene file
   node->readScenefile();

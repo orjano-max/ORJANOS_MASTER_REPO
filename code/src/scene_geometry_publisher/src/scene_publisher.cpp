@@ -23,7 +23,7 @@ class ScenePublisher : public rclcpp::Node
 
       
       // Set default file path
-      this->setSceneFilePath(sharePath + "/params/scene_geometry.scene");
+      this->setSceneFilePath(sharePath + "/scenes/scene_geometry.scene");
       
     }
 
