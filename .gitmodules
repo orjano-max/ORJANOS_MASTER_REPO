@@ -16,3 +16,6 @@
 	path = code/src/apriltag
 	url = https://github.com/AprilRobotics/apriltag
 
+[submodule "code/src/husky-master"]
+	path = code/src/husky-master
+	url = https://gitlab.com/mas514-husky_group/husky-master
