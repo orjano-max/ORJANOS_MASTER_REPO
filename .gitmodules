@@ -26,8 +26,7 @@
 	
 [submodule "code/src/apriltag_ros"]
 	path = code/src/apriltag_ros
-	url = https://github.com/AprilRobotics/apriltag_ros
-	branch = ros2
+	url = https://github.com/christianrauch/apriltag_ros
 
 [submodule "code/src/apriltag"]
 	path = code/src/apriltag
