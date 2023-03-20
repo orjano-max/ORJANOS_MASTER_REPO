@@ -17,13 +17,13 @@ ARGUMENTS = [
 def generate_launch_description():
     
     interbotix_urdf_extras_path = PathJoinSubstitution(
-                [FindPackageShare("husky_interbotix"), "urdf", "sim_interbotix_urdf_extras.urdf"]
+                [FindPackageShare("husky_interbotix"), "urdf", "interbotix_urdf_extras.urdf"]
     )
     
     # Launch the husky robot using the husky_uia uia_master_husky repo
     launch_husky_simulation = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(PathJoinSubstitution(
-        [FindPackageShare("husky_group"), 'launch', 'sim_husky_launch.py'])),
+        [FindPackageShare("husky_group"), 'launch', 'sim_husky.launch.py'])),
     )
     
     launch_interbotix_moveit = IncludeLaunchDescription(
@@ -31,8 +31,8 @@ def generate_launch_description():
             [FindPackageShare('interbotix_xsarm_moveit'), 'launch', 'xsarm_moveit.launch.py'])),
             launch_arguments ={
             'robot_model' : 'vx300',
-            'use_moveit_rviz' : 'false',
             'external_urdf_loc' : interbotix_urdf_extras_path,
+            'use_moveit_rviz' : 'false',
             'hardware_type' : 'fake',
             }.items()
     )
@@ -54,6 +54,15 @@ def generate_launch_description():
             }.items()
     )
 
+    launch_rviz = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(PathJoinSubstitution(
+            [FindPackageShare('husky_interbotix'), 'launch', 'rviz_moveit_launch.py'])),
+            launch_arguments ={
+            'robot_model' : 'vx300',
+            'hardware_type' : 'fake'
+            }.items()
+    )
+
     ld = LaunchDescription(ARGUMENTS)    
 
     # Launch Interbotix arm with moveit
@@ -64,5 +73,8 @@ def generate_launch_description():
 
     # Launch husky
     ld.add_action(launch_husky_simulation)
+
+    # Launch rviz
+    ld.add_action(launch_rviz)
     
     return ld

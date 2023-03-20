@@ -42,8 +42,13 @@ def launch_setup(context, *args, **kwargs):
     robot_description_launch_arg = LaunchConfiguration('robot_description')
     hardware_type_launch_arg = LaunchConfiguration('hardware_type')
     xs_driver_logging_level_launch_arg = LaunchConfiguration('xs_driver_logging_level')
-    rviz_frame = 'odom'
-    rviz_config_file = PathJoinSubstitution([FindPackageShare('husky_group'), 'params', 'rviz_config.rviz'])
+
+    rviz_frame = 'base_footprint'
+
+    rviz_config_file = PathJoinSubstitution([
+        FindPackageShare('husky_interbotix'), 
+        'rviz', 
+        'rviz_config.rviz'])
 
 
     # sets use_sim_time parameter to 'true' if using gazebo hardware
