@@ -17,7 +17,7 @@ ARGUMENTS = [
 def generate_launch_description():
     
     interbotix_urdf_extras_path = PathJoinSubstitution(
-                [FindPackageShare("husky_interbotix"), "urdf", "interbotix_urdf_extras.urdf"]
+                [FindPackageShare("husky_interbotix"), "urdf", "sim_interbotix_urdf_extras.urdf"]
     )
     
     # Launch the husky robot using the husky_uia uia_master_husky repo
