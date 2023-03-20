@@ -15,8 +15,6 @@
   <depend>husky_base</depend>
   <depend>ros2_ouster</depend>
   <depend>pointcloud_to_laserscan</depend>
-  <depend>scene_geometry_publisher</depend>
-  
 
 
   <export>
