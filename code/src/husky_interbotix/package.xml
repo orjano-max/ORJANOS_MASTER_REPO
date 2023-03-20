@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>husky_group</name>
+  <name>husky_interbotix</name>
   <version>1.0.8</version>
   <description>Package for husky group</description>
   <author email="orjano18@uia.no">Ørjan Øvsthus</author>

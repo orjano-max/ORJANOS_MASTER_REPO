@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(husky_group)
+project(husky_interbotix)
 
 find_package(ament_cmake REQUIRED)
 
