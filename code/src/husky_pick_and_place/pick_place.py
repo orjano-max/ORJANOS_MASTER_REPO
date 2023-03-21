@@ -67,7 +67,7 @@ def main():
 
 
     # pick up all the objects and drop them in a virtual basket in front of the robot
-    x, y, z = 0.4, 0.0, 0.3
+    x, y, z = 0.7, 0.0, 0.3
     print(x, y, z)
     bot.arm.set_ee_pose_components(x=x, y=y, z=z+0.05, pitch=0.5)
     bot.arm.set_ee_pose_components(x=x, y=y, z=z, pitch=0.5)
