@@ -19,6 +19,12 @@ Go into cloned git folder
 ~~~bash
 cd ORJANOS_MASTER_REPO
 ~~~
+
+Update the submodules of this repo, there are alot of them
+~~~bash
+git submodule uptade --init --recursive
+~~~
+
 Run the following commands:
 
 ~~~bash
