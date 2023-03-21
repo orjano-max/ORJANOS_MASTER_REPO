@@ -49,11 +49,12 @@ def generate_launch_description():
 
     args, unknown = parser.parse_known_args(sys.argv[4:])
 
-    husky_group_dir = "/home/orjan/git/ORJANOS_MASTER_REPO/code/params"
+    husky_interbotix_dir = get_package_share_directory('husky_interbotix')
 
     # get path to params file
     params_path = os.path.join(
-        husky_group_dir,
+        husky_interbotix_dir,
+        'params',
         'params.yaml'
     )
 

@@ -9,4 +9,4 @@
       image_width: 640
       image_height: 480
       camera_name: "camera"
-      camera_info_url: "file:///home/orjan/git/ORJANOS_MASTER_REPO/code/params/camera_info.yaml"
+      camera_info_url: "package://husky_interbotix/params/camera_info.yaml"
