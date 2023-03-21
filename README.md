@@ -27,4 +27,20 @@ sudo cp 99-interbotix-udev.rules /etc/udev/rules.d/
 sudo udevadm control --reload-rules && sudo udevadm trigger
 ~~~
 
-Build the workspace using colcon build
+Go back to the root folder of the git repository
+
+~~~bash
+cd ORJANOS_MASTER_REPO
+~~~
+
+Run rosdep
+
+~~~bash
+rosdep install --from-path code/src --ignore-src --rosdistro galactic -y
+~~~
+
+Build
+
+~~~bash
+colcon build
+~~~
