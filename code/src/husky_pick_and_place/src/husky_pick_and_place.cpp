@@ -74,11 +74,14 @@ int main(int argc, char* argv[])
   if (success)
   {
     move_group_interface.execute(plan);
+
   }
   else
   {
     RCLCPP_ERROR(logger, "Planning failed!");
   }
+
+
 
   // Shutdown ROS
   rclcpp::shutdown();
