@@ -28,8 +28,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from interbotix_perception_modules.armtag import InterbotixArmTagInterface
-from interbotix_perception_modules.pointcloud import InterbotixPointCloudInterface
 from interbotix_xs_modules.xs_robot.arm import InterbotixManipulatorXS
 
 """
