@@ -45,7 +45,7 @@ Then change to this directory and type:
     python3 pick_place.py
 """
 
-ROBOT_MODEL = 'wx200'
+ROBOT_MODEL = 'vx300'
 ROBOT_NAME = ROBOT_MODEL
 REF_FRAME = 'camera_color_optical_frame'
 ARM_TAG_FRAME = f'{ROBOT_NAME}/ar_tag_link'
