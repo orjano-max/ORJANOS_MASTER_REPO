@@ -33,3 +33,8 @@
 [submodule "code/src/interbotix_ros_manipulators"]
 	path = code/src/interbotix_ros_manipulators
 	url = https://github.com/orjano-max/interbotix_ros_manipulators
+
+[submodule "code/src/apriltag_ros"]
+	path = code/src/apriltag_ros
+	url = https://github.com/wep21/apriltag_ros
+	branch = ros2-port
