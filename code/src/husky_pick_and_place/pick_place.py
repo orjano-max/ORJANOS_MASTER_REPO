@@ -60,13 +60,6 @@ def main():
         robot_model=ROBOT_MODEL,
         robot_name=ROBOT_NAME,
     )
-    pcl = InterbotixPointCloudInterface(node_inf=bot.core)
-    armtag = InterbotixArmTagInterface(
-        ref_frame=REF_FRAME,
-        arm_tag_frame=ARM_TAG_FRAME,
-        arm_base_frame=ARM_BASE_FRAME,
-        node_inf=bot.core
-    )
 
     # set initial arm and gripper pose
     bot.arm.go_to_sleep_pose()
