@@ -55,7 +55,6 @@ CATKIN_IGNORE
 #-- Gitignore for vscode ---
 
 .vscode/*
-!.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
@@ -66,3 +65,4 @@ CATKIN_IGNORE
 
 # Built Visual Studio Code Extensions
 *.vsix
+
