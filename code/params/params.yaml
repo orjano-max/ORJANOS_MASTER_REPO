@@ -1,12 +1,12 @@
 /**:
     ros__parameters:
-      video_device: "/dev/video20"
+      video_device: "/dev/video16"
       framerate: 30.0
       io_method: "mmap"
-      frame_id: "camera"
+      frame_id: "camera_link"
       pixel_format: "yuyv"
       color_format: "yuv422p"
       image_width: 640
       image_height: 480
-      camera_name: "realsense_camera"
-      camera_info_url: "file:///home/orjan/git/husky-master/params/camera_info.yaml"
+      camera_name: "camera"
+      camera_info_url: "file:///home/orjan/git/ORJANOS_MASTER_REPO/code/params/camera_info.yaml"
