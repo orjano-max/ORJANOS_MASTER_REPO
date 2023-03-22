@@ -1,12 +1,12 @@
 <launch>
   <arg name="launch_prefix" default="" /> <!-- set to value="gdbserver localhost:10000" for remote debugging -->
-  <arg name="camera_name" default="camera/color" />
-  <arg name="image_topic" default="image_raw" />
+  <arg name="camera_name" default="camera" />
+  <arg name="image_topic" default="color/image_raw" />
 
   <node pkg="apriltag_ros" exec="apriltag_ros_continuous_detector_node" name="apriltag_ros_continuous_detector_node" output="screen" launch-prefix="$(var launch_prefix)" >
     <!-- Remap topics from those used in code to those on the ROS network -->
     <remap from="~/image_rect" to="$(var camera_name)/$(var image_topic)" />
-    <remap from="~/camera_info" to="$(var camera_name)camera_info" />
+    <remap from="~/camera_info" to="$(var camera_name)/color/camera_info" />
 
     <!-- Set parameters -->
     <param from="$(find-pkg-share husky_interbotix)/params/settings.param.yaml" />
