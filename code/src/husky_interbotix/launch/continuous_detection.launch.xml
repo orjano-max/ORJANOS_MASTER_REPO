@@ -1,7 +1,7 @@
 <launch>
   <arg name="launch_prefix" default="" /> <!-- set to value="gdbserver localhost:10000" for remote debugging -->
   <arg name="camera_name" default="camera" />
-  <arg name="image_topic" default="image_raw" />
+  <arg name="image_topic" default="color/image_raw" />
 
   <node pkg="apriltag_ros" exec="apriltag_ros_continuous_detector_node" name="apriltag_ros_continuous_detector_node" output="screen" launch-prefix="$(var launch_prefix)" >
     <!-- Remap topics from those used in code to those on the ROS network -->
