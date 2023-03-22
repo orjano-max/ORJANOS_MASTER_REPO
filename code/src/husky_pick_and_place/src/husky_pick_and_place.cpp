@@ -26,6 +26,7 @@ void setHomePoseTarget(moveit::planning_interface::MoveGroupInterface & move_gro
   move_group_interface.setPoseTarget(home_pose);
 }
 
+static const rclcpp::Logger LOGGER = rclcpp::get_logger("husky_pick_and_place");
 
 int main(int argc, char* argv[])
 {
@@ -38,7 +39,6 @@ int main(int argc, char* argv[])
   auto node = std::make_shared<rclcpp::Node>("husky_pick_and_place",options);
   
   // Create a ROS logger
-  auto const logger = rclcpp::get_logger("husky_pick_and_place");
 
   // We spin up a SingleThreadedExecutor for the current state monitor to get information
   // about the robot's state.
@@ -56,31 +56,116 @@ int main(int argc, char* argv[])
   // class can be easily set up using just the name of the planning group you would like to control and plan for.
   moveit::planning_interface::MoveGroupInterface move_group_interface(node, PLANNING_GROUP);
 
+  // Raw pointers are frequently used to refer to the planning group for improved performance.
+  const moveit::core::JointModelGroup* joint_model_group =
+      move_group_interface.getCurrentState()->getJointModelGroup(PLANNING_GROUP);
 
-  move_group_interface.setPositionTarget(-0.13, -0.3, 0.342);
+  // We can print the name of the reference frame for this robot.
+  RCLCPP_INFO(LOGGER, "Planning frame: %s", move_group_interface.getPlanningFrame().c_str());
 
+  // We can also print the name of the end-effector link for this group.
+  RCLCPP_INFO(LOGGER, "End effector link: %s", move_group_interface.getEndEffectorLink().c_str());
 
-  //setHomePoseTarget(move_group_interface);
+  // We can get a list of all the groups in the robot:
+  RCLCPP_INFO(LOGGER, "Available Planning Groups:");
+  std::copy(move_group_interface.getJointModelGroupNames().begin(), move_group_interface.getJointModelGroupNames().end(),
+            std::ostream_iterator<std::string>(std::cout, ", "));
+
   
+  // .. _move_group_interface-planning-to-pose-goal:
+  //
+  // Planning to a Pose goal
+  // ^^^^^^^^^^^^^^^^^^^^^^^
+  // We can plan a motion for this group to a desired pose for the
+  // end-effector.
+  geometry_msgs::msg::Pose target_pose1;
+  target_pose1.orientation.w = 1.0;
+  target_pose1.position.x = 0.4;
+  target_pose1.position.y = 0.0;
+  target_pose1.position.z = 0.5;
+  move_group_interface.setPoseTarget(target_pose1);
+
+  // Now, we call the planner to compute the plan and visualize it.
+  // Note that we are just planning, not asking move_group
+  // to actually move the robot.
+  moveit::planning_interface::MoveGroupInterface::Plan my_plan;
+
+  bool success = (move_group_interface.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+
+  if (success)
+  {
+    move_group_interface.move();
+  }
+  else
+  {
+    RCLCPP_INFO(LOGGER, "Planning Failed!");
+  }
+
+  // We will reuse the old goal that we had and plan to it.
+  // Note that this will only work if the current state already
+  // satisfies the path constraints. So we need to set the start
+  // state to a new pose.
+  moveit::core::RobotState start_state(*move_group_interface.getCurrentState());
+  geometry_msgs::msg::Pose start_pose2;
+  start_pose2.orientation.w = 1.0;
+  start_pose2.position.x = 0.7;
+  start_pose2.position.y = 0.0;
+  start_pose2.position.z = 0.8;
+  start_state.setFromIK(joint_model_group, start_pose2);
+  move_group_interface.setStartState(start_state);
+
+  // Cartesian Paths
+  // ^^^^^^^^^^^^^^^
+  // You can plan a Cartesian path directly by specifying a list of waypoints
+  // for the end-effector to go through. Note that we are starting
+  // from the new start state above.  The initial pose (start state) does not
+  // need to be added to the waypoint list but adding it can help with visualizations
+  std::vector<geometry_msgs::msg::Pose> waypoints;
+  waypoints.push_back(start_pose2);
+
+  geometry_msgs::msg::Pose target_pose3 = start_pose2;
+
+  target_pose3.position.z -= 0.2;
+  waypoints.push_back(target_pose3);  // down
+
+  target_pose3.position.y -= 0.2;
+  waypoints.push_back(target_pose3);  // right
+
+  target_pose3.position.z += 0.2;
+  target_pose3.position.y += 0.2;
+  target_pose3.position.x -= 0.2;
+  waypoints.push_back(target_pose3);  // up and left
+
+  // We want the Cartesian path to be interpolated at a resolution of 1 cm
+  // which is why we will specify 0.01 as the max step in Cartesian
+  // translation.  We will specify the jump threshold as 0.0, effectively disabling it.
+  // Warning - disabling the jump threshold while operating real hardware can cause
+  // large unpredictable motions of redundant joints and could be a safety issue
+  moveit_msgs::msg::RobotTrajectory trajectory;
+  const double jump_threshold = 0.0;
+  const double eef_step = 0.01;
+  moveit_msgs::msg::MoveItErrorCodes errorCodes;
+  const bool avoidCollisions = true;
+  double fraction = move_group_interface.computeCartesianPath(waypoints, eef_step, jump_threshold, trajectory);
   
+
+  // Cartesian motions should often be slow, e.g. when approaching objects. The speed of Cartesian
+  // plans cannot currently be set through the maxVelocityScalingFactor, but requires you to time
+  // the trajectory manually, as described `here <https://groups.google.com/forum/#!topic/moveit-users/MOoFxy2exT4>`_.
+  // Pull requests are welcome.
+  //
+  // You can execute a trajectory like this.
+
+  move_group_interface.execute(trajectory);
+
+  /* 
   // Create a plan to that target pose
   auto const [success, plan] = [&move_group_interface] {
     moveit::planning_interface::MoveGroupInterface::Plan msg;
     auto const ok = static_cast<bool>(move_group_interface.plan(msg));
     return std::make_pair(ok, msg);
   }();
-
-  // Execute the plan
-  if (success)
-  {
-    move_group_interface.execute(plan);
-
-  }
-  else
-  {
-    RCLCPP_ERROR(logger, "Planning failed!");
-  }
-
+ */
 
 
   // Shutdown ROS
