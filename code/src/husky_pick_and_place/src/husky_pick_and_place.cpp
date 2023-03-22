@@ -45,16 +45,22 @@ int main(int argc, char* argv[])
   rclcpp::executors::SingleThreadedExecutor executor;
   executor.add_node(node);
   std::thread([&executor]() { executor.spin(); }).detach();
+
+  // We can print the name of the reference frame for this robot.
+  RCLCPP_INFO(LOGGER, "Joint state topic in node: %s", node->get_parameter("joint_state_topic").as_string().c_str());
   
   // MoveIt operates on sets of joints called "planning groups" and stores them in an object called
   // the ``JointModelGroup``. Throughout MoveIt, the terms "planning group" and "joint model group"
   // are used interchangeably.
   static const std::string PLANNING_GROUP = "interbotix_arm";
   
+  std::string robot_description = "vx300/robot_description";
+  moveit::planning_interface::MoveGroupInterface::Options opt(PLANNING_GROUP, robot_description);
+
   // The
   // :moveit_codedir:`MoveGroupInterface<moveit_ros/planning_interface/move_group_interface/include/moveit/move_group_interface/move_group_interface.h>`
   // class can be easily set up using just the name of the planning group you would like to control and plan for.
-  moveit::planning_interface::MoveGroupInterface move_group_interface(node, PLANNING_GROUP);
+  moveit::planning_interface::MoveGroupInterface move_group_interface(node,opt);
 
   // Raw pointers are frequently used to refer to the planning group for improved performance.
   const moveit::core::JointModelGroup* joint_model_group =
@@ -98,7 +104,7 @@ int main(int argc, char* argv[])
   }
   else
   {
-    RCLCPP_INFO(LOGGER, "Planning Failed!");
+    RCLCPP_ERROR(LOGGER, "Planning Failed!");
   }
 
   // We will reuse the old goal that we had and plan to it.
@@ -145,7 +151,6 @@ int main(int argc, char* argv[])
   const double jump_threshold = 0.0;
   const double eef_step = 0.01;
   moveit_msgs::msg::MoveItErrorCodes errorCodes;
-  const bool avoidCollisions = true;
   double fraction = move_group_interface.computeCartesianPath(waypoints, eef_step, jump_threshold, trajectory);
   
 
@@ -156,7 +161,16 @@ int main(int argc, char* argv[])
   //
   // You can execute a trajectory like this.
 
-  move_group_interface.execute(trajectory);
+  if (fraction == -1.0)
+  {
+    RCLCPP_ERROR(LOGGER, "Waypoint planning Failed!");
+  }
+  else
+  {
+    RCLCPP_INFO(LOGGER, "Waypoint planning success! Fraction value: %f", fraction);
+    move_group_interface.execute(trajectory);
+  }
+  
 
   /* 
   // Create a plan to that target pose
