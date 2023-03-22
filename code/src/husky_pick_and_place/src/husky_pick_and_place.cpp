@@ -35,8 +35,10 @@ int main(int argc, char* argv[])
 
   rclcpp::NodeOptions options;
   options.automatically_declare_parameters_from_overrides(true);
-  options.parameter_overrides({{"joint_state_topic", "vx300/joint_states"}});
-  auto node = std::make_shared<rclcpp::Node>("husky_pick_and_place",options);
+  auto node = std::make_shared<rclcpp::Node>("husky_pick_and_place","vx300",options);
+
+
+  RCLCPP_INFO(LOGGER, "Joint state topic in node: %s", static_cast<std::string>(node->get_namespace()).c_str());
   
   // Create a ROS logger
 
@@ -53,14 +55,11 @@ int main(int argc, char* argv[])
   // the ``JointModelGroup``. Throughout MoveIt, the terms "planning group" and "joint model group"
   // are used interchangeably.
   static const std::string PLANNING_GROUP = "interbotix_arm";
-  
-  std::string robot_description = "vx300/robot_description";
-  moveit::planning_interface::MoveGroupInterface::Options opt(PLANNING_GROUP, robot_description);
 
   // The
   // :moveit_codedir:`MoveGroupInterface<moveit_ros/planning_interface/move_group_interface/include/moveit/move_group_interface/move_group_interface.h>`
   // class can be easily set up using just the name of the planning group you would like to control and plan for.
-  moveit::planning_interface::MoveGroupInterface move_group_interface(node,opt);
+  moveit::planning_interface::MoveGroupInterface move_group_interface(node, PLANNING_GROUP);
 
   // Raw pointers are frequently used to refer to the planning group for improved performance.
   const moveit::core::JointModelGroup* joint_model_group =
