@@ -11,6 +11,7 @@
 #include <moveit/move_group_interface/move_group_interface.h>
 
 
+
 void setHomePoseTarget(moveit::planning_interface::MoveGroupInterface & move_group_interface)
 {
   // Set a target Pose
@@ -26,6 +27,8 @@ void setHomePoseTarget(moveit::planning_interface::MoveGroupInterface & move_gro
   move_group_interface.setPoseTarget(home_pose);
 }
 
+
+
 static const rclcpp::Logger LOGGER = rclcpp::get_logger("husky_pick_and_place");
 
 int main(int argc, char* argv[])
@@ -39,7 +42,7 @@ int main(int argc, char* argv[])
 
 
   RCLCPP_INFO(LOGGER, "Joint state topic in node: %s", static_cast<std::string>(node->get_namespace()).c_str());
-  
+
   // Create a ROS logger
 
   // We spin up a SingleThreadedExecutor for the current state monitor to get information

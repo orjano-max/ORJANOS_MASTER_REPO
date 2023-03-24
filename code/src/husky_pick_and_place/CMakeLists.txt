@@ -11,7 +11,7 @@ find_package(moveit_ros_planning_interface REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(ament_index_cpp REQUIRED)
 
-add_executable(husky_pick_and_place src/husky_pick_and_place.cpp)
+add_executable(husky_pick_and_place src/pick_and_place.cpp)
 target_include_directories(husky_pick_and_place PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
