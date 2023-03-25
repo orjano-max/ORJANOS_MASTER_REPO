@@ -46,35 +46,45 @@ class PickAndPlace
       // 1. Starting at search position
       this->goToSearchPos();
 
-      geometry_msgs::msg::PoseStamped current_pose;
+      geometry_msgs::msg::PoseStamped current_pose = move_group_interface_arm_->getCurrentPose();
 
-      // 2. Place the TCP (Tool Center Point, the tip of the robot) over the thingy 
-      /* 
-      geometry_msgs::msg::PoseStamped current_pose;
-      current_pose = move_group_interface_arm_->getCurrentPose();
-
-      tf2::Quaternion qCurrent;  
-      qCurrent.setX(current_pose.pose.orientation.x);
-      qCurrent.setY(current_pose.pose.orientation.y);
-      qCurrent.setZ(current_pose.pose.orientation.z);
-      qCurrent.setW(current_pose.pose.orientation.w);
-
-      tf2::Quaternion qRot;
-      qRot.setRPY(3.141592/2, 0, 0);
-      
-      tf2::Quaternion qNew = qRot*qCurrent;
-      qNew.normalize(); 
-      */
-      
+      // 2. Place the TCP (Tool Center Point, the tip of the robot) over the thingy      
       geometry_msgs::msg::Pose target_pose1;
-      target_pose1.orientation.w = 1;
+      target_pose1.orientation = current_pose.pose.orientation;
       target_pose1.position.x = object_pose.pose.position.x - 0.05;
       target_pose1.position.y = object_pose.pose.position.y;
-      target_pose1.position.z = object_pose.pose.position.z + 0.2;
+      target_pose1.position.z = object_pose.pose.position.z + 0.1;
       move_group_interface_arm_->setPoseTarget(target_pose1);
       
-      bool success = (move_group_interface_arm_->plan(my_plan_arm) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+      RCLCPP_INFO(node_->get_logger(), "Object pose");
+      RCLCPP_INFO(node_->get_logger(), "X: %f", object_pose.pose.position.x);
+      RCLCPP_INFO(node_->get_logger(), "Y: %f", object_pose.pose.position.y);
+      RCLCPP_INFO(node_->get_logger(), "Z: %f", object_pose.pose.position.z);
+      RCLCPP_INFO(node_->get_logger(), "Xrot: %f", object_pose.pose.orientation.x);
+      RCLCPP_INFO(node_->get_logger(), "Yrot: %f", object_pose.pose.orientation.y);
+      RCLCPP_INFO(node_->get_logger(), "Zrot: %f", object_pose.pose.orientation.z);
+      RCLCPP_INFO(node_->get_logger(), "W: %f", object_pose.pose.orientation.w);
+      RCLCPP_INFO(node_->get_logger(), "Current pose");
+      RCLCPP_INFO(node_->get_logger(), "X: %f", current_pose.pose.position.x);
+      RCLCPP_INFO(node_->get_logger(), "Y: %f", current_pose.pose.position.y);
+      RCLCPP_INFO(node_->get_logger(), "Z: %f", current_pose.pose.position.z);
+      RCLCPP_INFO(node_->get_logger(), "Xrot: %f", current_pose.pose.orientation.x);
+      RCLCPP_INFO(node_->get_logger(), "Yrot: %f", current_pose.pose.orientation.y);
+      RCLCPP_INFO(node_->get_logger(), "Zrot: %f", current_pose.pose.orientation.z);
+      RCLCPP_INFO(node_->get_logger(), "W: %f", current_pose.pose.orientation.w);
+      RCLCPP_INFO(node_->get_logger(), "Target pose");
+      RCLCPP_INFO(node_->get_logger(), "X: %f", target_pose1.position.x);
+      RCLCPP_INFO(node_->get_logger(), "Y: %f", target_pose1.position.y);
+      RCLCPP_INFO(node_->get_logger(), "Z: %f", target_pose1.position.z);
+      RCLCPP_INFO(node_->get_logger(), "Xrot: %f", target_pose1.orientation.x);
+      RCLCPP_INFO(node_->get_logger(), "Yrot: %f", target_pose1.orientation.y);
+      RCLCPP_INFO(node_->get_logger(), "Zrot: %f", target_pose1.orientation.z);
+      RCLCPP_INFO(node_->get_logger(), "W: %f", target_pose1.orientation.w);
       
+
+      bool success = (move_group_interface_arm_->plan(my_plan_arm) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+
+            
       if (success)
       {
         move_group_interface_arm_->move();
@@ -150,19 +160,9 @@ class PickAndPlace
       move_group_interface_arm_->setPoseTarget(target_pose4);
 
 
-      // 5. Move to home position
-      move_group_interface_arm_->setJointValueTarget(move_group_interface_arm_->getNamedTargetValues("Home"));
-      
-      success = (move_group_interface_arm_->plan(my_plan_arm) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
-      
-      if (success)
-      {
-        move_group_interface_arm_->move();
-      }
-      else
-      {
-        RCLCPP_ERROR(node_->get_logger(), "Planning Failed!");
-      }
+      // 5. Move to search position, it is nice for holding stuff
+      this->goToSearchPos();
+    
       
     }
 
@@ -172,11 +172,40 @@ class PickAndPlace
       moveit::planning_interface::MoveGroupInterface::Plan my_plan_gripper;
 
       // 2. Place the TCP (Tool Center Point, the tip of the robot) on over the release pos 
-      geometry_msgs::msg::Point target_pos1;
-      target_pos1.x = 0.0;
-      target_pos1.y = -0.5;
-      target_pos1.z = 0.4;
-      move_group_interface_arm_->setPositionTarget(target_pos1.x, target_pos1.y, target_pos1.z);
+      geometry_msgs::msg::Pose target_pose1;
+      
+      geometry_msgs::msg::PoseStamped current_pose;
+      current_pose = move_group_interface_arm_->getCurrentPose();
+
+      tf2::Quaternion qCurrent;  
+      qCurrent.setX(current_pose.pose.orientation.x);
+      qCurrent.setY(current_pose.pose.orientation.y);
+      qCurrent.setZ(current_pose.pose.orientation.z);
+      qCurrent.setW(current_pose.pose.orientation.w);
+
+      tf2::Quaternion qRot;
+      qRot.setRPY(0, 0, -3.141592/2);
+      
+      tf2::Quaternion qNew = qRot*qCurrent;
+      qNew.normalize(); 
+     
+      target_pose1.position.x = 0.0;
+      target_pose1.position.y = -0.5;
+      target_pose1.position.z = 0.4;
+      target_pose1.orientation.x = qNew.getX();
+      target_pose1.orientation.y = qNew.getY();
+      target_pose1.orientation.z = qNew.getZ();
+      target_pose1.orientation.w = qNew.getW();
+      move_group_interface_arm_->setPoseTarget(target_pose1);
+
+      RCLCPP_INFO(node_->get_logger(), "Target pose");
+      RCLCPP_INFO(node_->get_logger(), "X: %f", target_pose1.position.x);
+      RCLCPP_INFO(node_->get_logger(), "Y: %f", target_pose1.position.y);
+      RCLCPP_INFO(node_->get_logger(), "Z: %f", target_pose1.position.z);
+      RCLCPP_INFO(node_->get_logger(), "Xrot: %f", target_pose1.orientation.x);
+      RCLCPP_INFO(node_->get_logger(), "Yrot: %f", target_pose1.orientation.y);
+      RCLCPP_INFO(node_->get_logger(), "Zrot: %f", target_pose1.orientation.z);
+      RCLCPP_INFO(node_->get_logger(), "W: %f", target_pose1.orientation.w);
       
       bool success = (move_group_interface_arm_->plan(my_plan_arm) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
       
@@ -190,7 +219,6 @@ class PickAndPlace
       }
 
        // 3. Set the thingy down
-      geometry_msgs::msg::PoseStamped current_pose;
       current_pose = move_group_interface_arm_->getCurrentPose();
       
       geometry_msgs::msg::Pose target_pose2;
@@ -226,7 +254,7 @@ class PickAndPlace
       }
 
       // 2. Place the TCP (Tool Center Point, the tip of the robot) over the release pos 
-      move_group_interface_arm_->setPositionTarget(target_pos1.x, target_pos1.y, target_pos1.z);
+      move_group_interface_arm_->setPoseTarget(target_pose1);
       
       success = (move_group_interface_arm_->plan(my_plan_arm) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
       
