@@ -10,7 +10,144 @@
 #include <rclcpp/rclcpp.hpp>
 #include <moveit/move_group_interface/move_group_interface.h>
 
+void pickObject()
+{
+  moveit::planning_interface::MoveGroupInterface::Plan my_plan_arm;
+  moveit::planning_interface::MoveGroupInterface::Plan my_plan_gripper;
+ 
+  // 1. Move to home position
+  move_group_interface_arm.setJointValueTarget(move_group_interface_arm.getNamedTargetValues("Home"));
+  
+  bool success = (move_group_interface_arm.plan(my_plan_arm) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+  
+  if (success)
+  {
+    move_group_interface_arm.move();
+  }
+  else
+  {
+    RCLCPP_ERROR(LOGGER, "Planning Failed!");
+  }
 
+
+
+  // 2. Place the TCP (Tool Center Point, the tip of the robot) on top of the thingy 
+  geometry_msgs::msg::PoseStamped current_pose;
+  current_pose = move_group_interface_arm.getCurrentPose();
+
+  tf2::Quaternion qCurrent;  
+  qCurrent.setX(current_pose.pose.orientation.x);
+  qCurrent.setY(current_pose.pose.orientation.y);
+  qCurrent.setZ(current_pose.pose.orientation.z);
+  qCurrent.setW(current_pose.pose.orientation.w);
+
+  tf2::Quaternion qRot;
+  qRot.setRPY(3.141592/2, 0, 0);
+  
+  tf2::Quaternion qNew = qRot*qCurrent;
+  qNew.normalize();
+  
+  geometry_msgs::msg::Pose target_pose1;
+  target_pose1.orientation.x = qNew.getX();
+  target_pose1.orientation.y = qNew.getY();
+  target_pose1.orientation.z = qNew.getZ();
+  target_pose1.orientation.w = qNew.getW();
+  target_pose1.position.x = current_pose.pose.position.x + 0.2;
+  target_pose1.position.y = current_pose.pose.position.y;
+  target_pose1.position.z = current_pose.pose.position.z - 0.2;
+  move_group_interface_arm.setPoseTarget(target_pose1);
+  
+  success = (move_group_interface_arm.plan(my_plan_arm) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+  
+  if (success)
+  {
+    move_group_interface_arm.move();
+  }
+  else
+  {
+    RCLCPP_ERROR(LOGGER, "Planning Failed!");
+  }
+
+  // 3. Place the TCP (Tool Center Point, the tip of the robot) on the thingy 
+  current_pose = move_group_interface_arm.getCurrentPose();
+  
+  geometry_msgs::msg::Pose target_pose2;
+  
+  target_pose2.orientation = current_pose.pose.orientation;
+  target_pose2.position.x = current_pose.pose.position.x;
+  target_pose2.position.y = current_pose.pose.position.y;
+  target_pose2.position.z = current_pose.pose.position.z - 0.2;
+  move_group_interface_arm.setPoseTarget(target_pose2);
+  
+  success = (move_group_interface_arm.plan(my_plan_arm) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+  
+  if (success)
+  {
+    move_group_interface_arm.move();
+  }
+  else
+  {
+    RCLCPP_ERROR(LOGGER, "Planning Failed!");
+  }
+
+  // 4. Grasp the thingy
+  move_group_interface_gripper.setJointValueTarget(move_group_interface_gripper.getNamedTargetValues("Grasping"));
+
+  success = (move_group_interface_gripper.plan(my_plan_gripper) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+  
+  if (success)
+  {
+    move_group_interface_gripper.move();
+  }
+  else
+  {
+    RCLCPP_ERROR(LOGGER, "Planning Failed for Grasping!");
+  }
+
+
+  // 5. Move to home position
+  move_group_interface_arm.setJointValueTarget(move_group_interface_arm.getNamedTargetValues("Home"));
+  
+  success = (move_group_interface_arm.plan(my_plan_arm) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+  
+  if (success)
+  {
+    move_group_interface_arm.move();
+  }
+  else
+  {
+    RCLCPP_ERROR(LOGGER, "Planning Failed!");
+  }
+
+  // 6. Release the thingy
+  move_group_interface_gripper.setJointValueTarget(move_group_interface_gripper.getNamedTargetValues("Released"));
+
+  success = (move_group_interface_gripper.plan(my_plan_gripper) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+  
+  if (success)
+  {
+    move_group_interface_gripper.move();
+  }
+  else
+  {
+    RCLCPP_ERROR(LOGGER, "Planning Failed!");
+  }
+
+
+  // 7. Move to sleep position
+  move_group_interface_arm.setJointValueTarget(move_group_interface_arm.getNamedTargetValues("Sleep"));
+  
+  success = (move_group_interface_arm.plan(my_plan_arm) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+  
+  if (success)
+  {
+    move_group_interface_arm.move();
+  }
+  else
+  {
+    RCLCPP_ERROR(LOGGER, "Planning Failed!");
+  }
+}
 
 
 static const rclcpp::Logger LOGGER = rclcpp::get_logger("husky_pick_and_place");
@@ -61,127 +198,8 @@ int main(int argc, char* argv[])
             std::ostream_iterator<std::string>(std::cout, ", "));
 
 
-  moveit::planning_interface::MoveGroupInterface::Plan my_plan_arm;
-  moveit::planning_interface::MoveGroupInterface::Plan my_plan_gripper;
- 
-  // 1. Move to home position
-  move_group_interface_arm.setJointValueTarget(move_group_interface_arm.getNamedTargetValues("Home"));
-  
-  bool success = (move_group_interface_arm.plan(my_plan_arm) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
-  
-  if (success)
-  {
-    move_group_interface_arm.move();
-  }
-  else
-  {
-    RCLCPP_ERROR(LOGGER, "Planning Failed!");
-  }
-
-
-
-  // 2. Place the TCP (Tool Center Point, the tip of the robot) to the side of the thingy 
-  geometry_msgs::msg::PoseStamped current_pose;
-  current_pose = move_group_interface_arm.getCurrentPose();
-  
-  geometry_msgs::msg::Pose target_pose1;
-  
-  target_pose1.orientation = current_pose.pose.orientation;
-  target_pose1.position.x = current_pose.pose.position.x + 0.2;
-  target_pose1.position.y = current_pose.pose.position.y;
-  target_pose1.position.z = current_pose.pose.position.z - 0.2;
-  move_group_interface_arm.setPoseTarget(target_pose1);
-  
-  success = (move_group_interface_arm.plan(my_plan_arm) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
-  
-  if (success)
-  {
-    move_group_interface_arm.move();
-  }
-  else
-  {
-    RCLCPP_ERROR(LOGGER, "Planning Failed!");
-  }
-
-  // 3. Place the TCP (Tool Center Point, the tip of the robot) on the thingy 
-  current_pose = move_group_interface_arm.getCurrentPose();
-  
-  geometry_msgs::msg::Pose target_pose2;
-  
-  target_pose2.orientation = current_pose.pose.orientation;
-  target_pose2.position.x = current_pose.pose.position.x + 0.2;
-  target_pose2.position.y = current_pose.pose.position.y;
-  target_pose2.position.z = current_pose.pose.position.z;
-  move_group_interface_arm.setPoseTarget(target_pose2);
-  
-  success = (move_group_interface_arm.plan(my_plan_arm) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
-  
-  if (success)
-  {
-    move_group_interface_arm.move();
-  }
-  else
-  {
-    RCLCPP_ERROR(LOGGER, "Planning Failed!");
-  }
-
-  // 4. Grasp the thingy
-  move_group_interface_gripper.setJointValueTarget(move_group_interface_gripper.getNamedTargetValues("Grasping"));
-
-  success = (move_group_interface_gripper.plan(my_plan_gripper) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
-  
-  if (success)
-  {
-    move_group_interface_gripper.move();
-  }
-  else
-  {
-    RCLCPP_ERROR(LOGGER, "Planning Failed!");
-  }
-
-
-  // 5. Move to home position
-  move_group_interface_arm.setJointValueTarget(move_group_interface_arm.getNamedTargetValues("Home"));
-  
-  success = (move_group_interface_arm.plan(my_plan_arm) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
-  
-  if (success)
-  {
-    move_group_interface_arm.move();
-  }
-  else
-  {
-    RCLCPP_ERROR(LOGGER, "Planning Failed!");
-  }
-
-  // 6. Release the thingy
-  move_group_interface_gripper.setJointValueTarget(move_group_interface_gripper.getNamedTargetValues("Released"));
-
-  success = (move_group_interface_gripper.plan(my_plan_gripper) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
-  
-  if (success)
-  {
-    move_group_interface_gripper.move();
-  }
-  else
-  {
-    RCLCPP_ERROR(LOGGER, "Planning Failed!");
-  }
-
-
-  // 7. Move to sleep position
-  move_group_interface_arm.setJointValueTarget(move_group_interface_arm.getNamedTargetValues("Sleep"));
-  
-  success = (move_group_interface_arm.plan(my_plan_arm) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
-  
-  if (success)
-  {
-    move_group_interface_arm.move();
-  }
-  else
-  {
-    RCLCPP_ERROR(LOGGER, "Planning Failed!");
-  }
+  // Pick the object
+  pickObject();
   
 
 
