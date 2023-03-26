@@ -189,7 +189,7 @@ def launch_setup(context, *args, **kwargs):
     husky_pick_and_place_node = Node(
         name="husky_pick_and_place",
         package="husky_pick_and_place",
-        executable="husky_pick_and_place",
+        executable="pick_node",
         output="screen",
         parameters=[
             {'joint_state_topic': f'/{robot_name_launch_arg.perform(context)}/joint_states' },
