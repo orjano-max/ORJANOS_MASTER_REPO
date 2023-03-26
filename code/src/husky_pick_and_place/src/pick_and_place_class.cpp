@@ -244,7 +244,7 @@ class PickAndPlace
       object_pose_.pose.orientation.w = transform.transform.rotation.w;
     }
 
-    void planAndExecute(std::shared_ptr<moveit::planning_interface::MoveGroupInterface> move_group_interface, moveit::planning_interface::MoveGroupInterface::Plan &plan)
+    void planAndExecute(std::shared_ptr<moveit::planning_interface::MoveGroupInterface> &move_group_interface, moveit::planning_interface::MoveGroupInterface::Plan &plan)
     {
       
       bool success = (move_group_interface->plan(plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
