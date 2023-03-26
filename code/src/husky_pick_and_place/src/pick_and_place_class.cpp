@@ -163,7 +163,7 @@ class PickAndPlace
       target_pose1.position.z = 0.45;
       move_group_interface_arm_->setPoseTarget(target_pose1);
       
-      planAndExecuteArm()
+      planAndExecuteArm();
     
     }
 
