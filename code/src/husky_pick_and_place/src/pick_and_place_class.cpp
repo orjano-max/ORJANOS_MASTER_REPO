@@ -48,6 +48,13 @@ class PickAndPlace
       target_pose_inspect.position.y = object_pose_.pose.position.y - 0.1*sin(qYaw);
       target_pose_inspect.position.z = object_pose_.pose.position.z + 0.2;
       move_group_interface_arm_->setPoseTarget(target_pose_inspect);
+
+      RCLCPP_INFO(node_->get_logger(), "Object Pose for: %s", tag_frame.c_str());
+      RCLCPP_INFO(node_->get_logger(), "At pos:");
+      RCLCPP_INFO(node_->get_logger(), "X: %f", object_pose_.pose.position.x);
+      RCLCPP_INFO(node_->get_logger(), "Y: %f", object_pose_.pose.position.y);
+      RCLCPP_INFO(node_->get_logger(), "Z: %f", object_pose_.pose.position.z);
+
       //planAndExecuteArm();
       bool success = (move_group_interface_arm_->plan(my_plan_arm_) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
       
@@ -295,7 +302,7 @@ class PickAndPlace
       double denumerator = pose.position.x;
       if (denumerator == 0) // Avoiding division by zero
       {
-        denumerator = denumerator+0.0000001;
+        denumerator = denumerator+0.000001;
       }
       double yaw = atan(pose.position.y/denumerator); 
 
