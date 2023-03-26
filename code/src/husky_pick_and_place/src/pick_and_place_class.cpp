@@ -46,11 +46,11 @@ class PickAndPlace
       target_pose_inspect.position.y = object_pose_.pose.position.y - 0.1*sin(qYaw);
       target_pose_inspect.position.z = object_pose_.pose.position.z + 0.2;
       move_group_interface_arm_->setPoseTarget(target_pose_inspect);
-      planAndExecute(move_group_interface_arm_, my_plan_arm_);
+      planAndExecuteArm();
 
       // Open gripper
       move_group_interface_gripper_->setJointValueTarget(move_group_interface_gripper_->getNamedTargetValues("Released"));
-      planAndExecute(move_group_interface_gripper_, my_plan_gripper_);
+      planAndExecuteGripper();
 
       // --- Double check the position of the thingy ---
       searchForObjectFrame();
@@ -60,7 +60,7 @@ class PickAndPlace
       above_pose_object.orientation = target_pose_inspect.orientation;
       above_pose_object.position = object_pose_.pose.position;
       above_pose_object.position.z = object_pose_.pose.position.z + 0.2;
-      planAndExecute(move_group_interface_arm_, my_plan_arm_);
+      planAndExecuteArm();
 
       // Place the TCP (Tool Center Point, the tip of the robot) at the thingy
       
@@ -69,11 +69,11 @@ class PickAndPlace
       target_pose_at_object.position = object_pose_.pose.position;
       target_pose_at_object.position.z = object_pose_.pose.position.z + 0.05;
       move_group_interface_arm_->setPoseTarget(target_pose_at_object);
-      planAndExecute(move_group_interface_arm_, my_plan_arm_);
+      planAndExecuteArm();
 
       // Grasp the thingy
       move_group_interface_gripper_->setJointValueTarget(move_group_interface_gripper_->getNamedTargetValues("Grasping"));
-      planAndExecute(move_group_interface_gripper_, my_plan_gripper_);
+      planAndExecuteGripper();
 
       // Lift the thingy
       geometry_msgs::msg::Pose target_pose_lift_object;
@@ -81,7 +81,7 @@ class PickAndPlace
       target_pose_lift_object.position = object_pose_.pose.position;
       target_pose_lift_object.position.z = object_pose_.pose.position.z + 0.2;
       move_group_interface_arm_->setPoseTarget(target_pose_lift_object);
-      planAndExecute(move_group_interface_arm_, my_plan_arm_);
+      planAndExecuteArm();
 
 
       //  Move to holding position, it is nice for holding stuff
@@ -110,39 +110,39 @@ class PickAndPlace
       // Place the TCP (Tool Center Point, the tip of the robot) over the place pos 
       geometry_msgs::msg::Pose above_pose = place_pose;
       above_pose.position.z += 0.2;
-      planAndExecute(move_group_interface_arm_, my_plan_arm_);
+      planAndExecuteArm();
 
        // Set the thingy down
       move_group_interface_arm_->setPoseTarget(place_pose);
-      planAndExecute(move_group_interface_arm_, my_plan_arm_);
+      planAndExecuteArm();
       
       // Release the thingy
       move_group_interface_gripper_->setJointValueTarget(move_group_interface_gripper_->getNamedTargetValues("Released"));
-      planAndExecute(move_group_interface_gripper_, my_plan_gripper_);
+      planAndExecuteGripper();
 
       // 2. Move the TCP (Tool Center Point, the tip of the robot) a little back
       geometry_msgs::msg::Pose move_away_pose = place_pose;
       move_away_pose.position.x = place_pose.position.x - 0.1*cos(placePoseYaw);
       move_away_pose.position.y = place_pose.position.y - 0.1*sin(placePoseYaw);
-      planAndExecute(move_group_interface_arm_, my_plan_arm_);
+      move_group_interface_arm_->setPoseTarget(move_away_pose);
+      planAndExecuteArm();
 
       // Place the TCP (Tool Center Point, the tip of the robot) over the release pos 
       geometry_msgs::msg::Pose above_move_away_pose = move_away_pose;
       above_move_away_pose.position.z += 0.2;
       move_group_interface_arm_->setPoseTarget(above_move_away_pose);
-      planAndExecute(move_group_interface_arm_, my_plan_arm_);
+      planAndExecuteArm();
 
       // Move to sleep position
       move_group_interface_arm_->setJointValueTarget(move_group_interface_arm_->getNamedTargetValues("Sleep"));
-      planAndExecute(move_group_interface_arm_, my_plan_arm_);
+      planAndExecuteArm();
     }
 
     void goToHomePos()
     {
       // Move to home position
       move_group_interface_arm_->setJointValueTarget(move_group_interface_arm_->getNamedTargetValues("Home"));
-      
-      planAndExecute(move_group_interface_arm_, my_plan_arm_);
+      planAndExecuteArm();
     }
 
     void goToSearchPos()
@@ -163,7 +163,7 @@ class PickAndPlace
       target_pose1.position.z = 0.45;
       move_group_interface_arm_->setPoseTarget(target_pose1);
       
-      planAndExecute(move_group_interface_arm_, my_plan_arm_);
+      planAndExecuteArm()
     
     }
 
@@ -178,7 +178,7 @@ class PickAndPlace
       target_pose1.position.z = 0.5;
       move_group_interface_arm_->setPoseTarget(target_pose1);
       
-      planAndExecute(move_group_interface_arm_, my_plan_arm_);
+      planAndExecuteArm();
     
     }
 
@@ -244,14 +244,29 @@ class PickAndPlace
       object_pose_.pose.orientation.w = transform.transform.rotation.w;
     }
 
-    void planAndExecute(std::shared_ptr<moveit::planning_interface::MoveGroupInterface> &move_group_interface, moveit::planning_interface::MoveGroupInterface::Plan &plan)
+    void planAndExecuteArm()
     {
       
-      bool success = (move_group_interface->plan(plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+      bool success = (move_group_interface_arm_->plan(my_plan_arm_) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
       
       if (success)
       {
-        move_group_interface->move();
+        move_group_interface_arm_->move();
+      }
+      else
+      {
+        RCLCPP_ERROR(node_->get_logger(), "Planning Failed!");
+      }
+    }
+
+    void planAndExecuteGripper()
+    {
+      
+      bool success = (move_group_interface_gripper_->plan(my_plan_gripper_) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+      
+      if (success)
+      {
+        move_group_interface_gripper_->move();
       }
       else
       {
