@@ -264,7 +264,7 @@ class PickAndPlace
     {
       
       bool success = (move_group_interface_gripper_->plan(my_plan_gripper_) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
-      
+
       if (success)
       {
         move_group_interface_gripper_->move();
