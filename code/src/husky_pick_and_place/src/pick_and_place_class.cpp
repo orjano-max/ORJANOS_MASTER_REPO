@@ -33,20 +33,20 @@ class PickAndPlace
 
       //  Place the TCP (Tool Center Point, the tip of the robot) over the thingy, but a little shifted
       double qYaw = computeYawAngle(object_pose_.pose);
-      double qYawd = qYaw*180/pi;
-      RCLCPP_INFO(node_->get_logger(),"Yaw angle: %f", qYawd);
       tf2::Quaternion qRot;
       qRot.setRPY(0, pi/2, qYaw);
       qRot.normalize();
 
       geometry_msgs::msg::Pose target_pose_inspect;
+      double heightAbove = 0.3; // Height above when inspecting object
+      double shift = 0.1;       // Shift when inspecting object
       target_pose_inspect.orientation.x = qRot.getX();
       target_pose_inspect.orientation.y = qRot.getY();
       target_pose_inspect.orientation.z = qRot.getZ();
       target_pose_inspect.orientation.w = qRot.getW();
-      target_pose_inspect.position.x = object_pose_.pose.position.x - 0.1*cos(qYaw);
-      target_pose_inspect.position.y = object_pose_.pose.position.y - 0.1*sin(qYaw);
-      target_pose_inspect.position.z = object_pose_.pose.position.z + 0.2;
+      target_pose_inspect.position.x = object_pose_.pose.position.x - shift*cos(qYaw);
+      target_pose_inspect.position.y = object_pose_.pose.position.y - shift*sin(qYaw);
+      target_pose_inspect.position.z = object_pose_.pose.position.z + heightAbove;
       move_group_interface_arm_->setPoseTarget(target_pose_inspect);
       planAndExecuteArm();
 
@@ -95,19 +95,23 @@ class PickAndPlace
     {
       // Define the place pose
       geometry_msgs::msg::Pose place_pose;
-      tf2::Quaternion qRot;
-      qRot.setRPY(0, pi/2, -pi/2);
-      qRot.normalize();
-      place_pose.position.x = 0.0;
-      place_pose.position.y = -0.5;
+      place_pose.position.x = 0.2;
+      place_pose.position.y = -0.4;
       place_pose.position.z = -0.1;
+
+      // Computing yaw angle of end effector at place position 
+      double qYaw = computeYawAngle(place_pose);
+
+      // Defining the orientation of the end effector
+      tf2::Quaternion qRot;
+      qRot.setRPY(0, pi/2, qYaw);
+      qRot.normalize();
       place_pose.orientation.x = qRot.getX();
       place_pose.orientation.y = qRot.getY();
       place_pose.orientation.z = qRot.getZ();
       place_pose.orientation.w = qRot.getW();
 
-      // Computing yaw angle of end effector at place position 
-      double placePoseYaw = computeYawAngle(place_pose);
+      
 
       // Place the TCP (Tool Center Point, the tip of the robot) over the place pos 
       geometry_msgs::msg::Pose above_pose = place_pose;
@@ -123,17 +127,22 @@ class PickAndPlace
       move_group_interface_gripper_->setJointValueTarget(move_group_interface_gripper_->getNamedTargetValues("Released"));
       planAndExecuteGripper();
 
-      // 2. Move the TCP (Tool Center Point, the tip of the robot) a little back
-      geometry_msgs::msg::Pose move_away_pose = place_pose;
-      move_away_pose.position.x = place_pose.position.x - 0.1*cos(placePoseYaw);
-      move_away_pose.position.y = place_pose.position.y - 0.1*sin(placePoseYaw);
+      // Move the TCP (Tool Center Point, the tip of the robot) a little back
+      /* geometry_msgs::msg::Pose move_away_pose = place_pose;
+      double distance = 0.1;
+      move_away_pose.position.x = place_pose.position.x - distance*cos(placePoseYaw);
+      move_away_pose.position.y = place_pose.position.y - distance*sin(placePoseYaw);
       move_group_interface_arm_->setPoseTarget(move_away_pose);
-      planAndExecuteArm();
+      planAndExecuteArm(); 
 
       // Place the TCP (Tool Center Point, the tip of the robot) over the release pos 
       geometry_msgs::msg::Pose above_move_away_pose = move_away_pose;
       above_move_away_pose.position.z += 0.2;
       move_group_interface_arm_->setPoseTarget(above_move_away_pose);
+      planAndExecuteArm();*/
+
+      // Go up to above release position
+      move_group_interface_arm_->setPoseTarget(above_pose);
       planAndExecuteArm();
 
       // Move to sleep position
