@@ -16,6 +16,7 @@ class PickAndPlace
 
     std::shared_ptr<moveit::planning_interface::MoveGroupInterface> move_group_interface_arm_;
     std::shared_ptr<moveit::planning_interface::MoveGroupInterface> move_group_interface_gripper_;
+    const float pi = std::atan(1)*4.0;
 
     PickAndPlace(rclcpp::Node::SharedPtr node, std::string PLANNING_GROUP_ARM = "interbotix_arm", std::string PLANNING_GROUP_GRIPPER = "interbotix_gripper")
       : node_(node), PLANNING_GROUP_ARM_(PLANNING_GROUP_ARM), PLANNING_GROUP_GRIPPER_(PLANNING_GROUP_GRIPPER)
@@ -29,7 +30,8 @@ class PickAndPlace
 
       }
     
-  
+    
+
 
     void pickObject(geometry_msgs::msg::Transform &transform)
     {
@@ -407,6 +409,7 @@ int main(int argc, char* argv[])
     RCLCPP_INFO(LOGGER, "X: %f", transform.transform.translation.x);
     RCLCPP_INFO(LOGGER, "Y: %f", transform.transform.translation.y);
     RCLCPP_INFO(LOGGER, "Z: %f", transform.transform.translation.z);
+    RCLCPP_INFO(LOGGER, "pi:%f", pick_and_place_class.pi);
     // Pick the object
     pick_and_place_class.pickObject(transform.transform);
 
