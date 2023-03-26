@@ -96,6 +96,19 @@ class PickAndPlace
         RCLCPP_ERROR(node_->get_logger(), "Planning Failed!");
       }
 
+      move_group_interface_gripper_->setJointValueTarget(move_group_interface_gripper_->getNamedTargetValues("Released"));
+
+      success = (move_group_interface_gripper_->plan(my_plan_gripper) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+      
+      if (success)
+      {
+        move_group_interface_gripper_->move();
+      }
+      else
+      {
+        RCLCPP_ERROR(node_->get_logger(), "Planning Failed for Grasping!");
+      }
+
       // --- Double check the position of the thingy ---
       searchForObjectFrame();
 
