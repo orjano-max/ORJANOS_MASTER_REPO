@@ -160,7 +160,7 @@ class PickAndPlace
       target_pose1.orientation.w = qRot.getW();
       target_pose1.position.x = 0;
       target_pose1.position.y = 0;
-      target_pose1.position.z = 0.5;
+      target_pose1.position.z = 0.45;
       move_group_interface_arm_->setPoseTarget(target_pose1);
       
       planAndExecute(move_group_interface_arm_, my_plan_arm_);
