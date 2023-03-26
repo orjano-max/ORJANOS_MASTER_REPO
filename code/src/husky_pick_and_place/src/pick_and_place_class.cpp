@@ -49,7 +49,7 @@ class PickAndPlace
       target_pose_inspect.position.z = object_pose_.pose.position.z + 0.2;
       move_group_interface_arm_->setPoseTarget(target_pose_inspect);
 
-      RCLCPP_INFO(node_->get_logger(), "Object Pose for: %s", tag_frame.c_str());
+      RCLCPP_INFO(node_->get_logger(), "Object Pose");
       RCLCPP_INFO(node_->get_logger(), "At pos:");
       RCLCPP_INFO(node_->get_logger(), "X: %f", object_pose_.pose.position.x);
       RCLCPP_INFO(node_->get_logger(), "Y: %f", object_pose_.pose.position.y);
