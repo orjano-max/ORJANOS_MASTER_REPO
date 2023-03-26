@@ -98,7 +98,7 @@ class PickAndPlace
       qRot.normalize();
       place_pose.position.x = 0.0;
       place_pose.position.y = -0.5;
-      place_pose.position.z = 0.1;
+      place_pose.position.z = -0.1;
       place_pose.orientation.x = qRot.getX();
       place_pose.orientation.y = qRot.getY();
       place_pose.orientation.z = qRot.getZ();
@@ -110,6 +110,7 @@ class PickAndPlace
       // Place the TCP (Tool Center Point, the tip of the robot) over the place pos 
       geometry_msgs::msg::Pose above_pose = place_pose;
       above_pose.position.z += 0.2;
+      move_group_interface_arm_->setPoseTarget(above_pose);
       planAndExecuteArm();
 
        // Set the thingy down
