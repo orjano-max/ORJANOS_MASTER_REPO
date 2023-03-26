@@ -48,24 +48,7 @@ class PickAndPlace
       target_pose_inspect.position.y = object_pose_.pose.position.y - 0.1*sin(qYaw);
       target_pose_inspect.position.z = object_pose_.pose.position.z + 0.2;
       move_group_interface_arm_->setPoseTarget(target_pose_inspect);
-
-      RCLCPP_INFO(node_->get_logger(), "Object Pose");
-      RCLCPP_INFO(node_->get_logger(), "At pos:");
-      RCLCPP_INFO(node_->get_logger(), "X: %f", object_pose_.pose.position.x);
-      RCLCPP_INFO(node_->get_logger(), "Y: %f", object_pose_.pose.position.y);
-      RCLCPP_INFO(node_->get_logger(), "Z: %f", object_pose_.pose.position.z);
-
-      //planAndExecuteArm();
-      bool success = (move_group_interface_arm_->plan(my_plan_arm_) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
-      
-      if (success)
-      {
-        move_group_interface_arm_->move();
-      }
-      else
-      {
-        RCLCPP_ERROR(node_->get_logger(), "Planning Failed!");
-      }
+      planAndExecuteArm();
 
       // Open gripper
       move_group_interface_gripper_->setJointValueTarget(move_group_interface_gripper_->getNamedTargetValues("Released"));
