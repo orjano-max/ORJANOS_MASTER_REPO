@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
     // Parameter not passed, declare param
     node->declare_parameter("tag_id", "case");
   }
-  node->declare_parameter("tag_id", "tag_0");
+  
   static const rclcpp::Logger LOGGER = node->get_logger();
 
   // We spin up a SingleThreadedExecutor for the current state monitor to get information
