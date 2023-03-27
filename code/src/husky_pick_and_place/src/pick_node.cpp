@@ -55,6 +55,12 @@ int main(int argc, char* argv[])
   options.automatically_declare_parameters_from_overrides(true);
 
   auto node = std::make_shared<rclcpp::Node>("pick_node", manipulator_namespace, options);
+
+  if (node->get_parameter("tag_id").get_type() == rclcpp::ParameterType::PARAMETER_NOT_SET)
+  {
+    // Parameter not passed, declare param
+    node->declare_parameter("tag_id", "case");
+  }
   node->declare_parameter("tag_id", "tag_0");
   static const rclcpp::Logger LOGGER = node->get_logger();
 
