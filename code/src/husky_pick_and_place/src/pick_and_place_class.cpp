@@ -179,7 +179,7 @@ class PickAndPlace
     
     }
 
-    void searchForObjectFrame(const double timeout = 10.0)
+    bool searchForObjectFrame(const double timeout = 10.0)
     {
       // Create tf2 buffer and transform listener
       std::shared_ptr<tf2_ros::TransformListener> tf_listener{nullptr};
@@ -212,7 +212,8 @@ class PickAndPlace
         double elapsed_time = (rclcpp::Clock().now() - start_time).seconds();
         if (elapsed_time >= timeout) {
             // Timeout reached, return false
-            return;
+            RCLCPP_ERROR(node_->get_logger(), "Timeaout reached while looking for tag!");
+            return false;
         }
       }
 
@@ -226,8 +227,9 @@ class PickAndPlace
         RCLCPP_INFO(node_->get_logger(), "Z: %f", transform.transform.translation.z);
 
         setObjectPoseFromTransform(transform);
-
       }
+
+      return frame_available;
     }
 
     void setObjectPoseFromTransform(geometry_msgs::msg::TransformStamped transform)

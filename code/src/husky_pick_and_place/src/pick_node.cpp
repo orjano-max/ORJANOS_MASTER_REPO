@@ -37,6 +37,8 @@
 // ROS
 #include <rclcpp/rclcpp.hpp>
 
+#include "std_msgs/msg/bool.h"
+
 // MoveIt
 #include <moveit/planning_scene_interface/planning_scene_interface.h>
 #include <moveit/move_group_interface/move_group_interface.h>
@@ -93,39 +95,20 @@ int main(int argc, char* argv[])
   geometry_msgs::msg::TransformStamped transform;
   // Tag frame is the same as tag_id
   std::string tag_frame = node->get_parameter("tag_id").as_string();
-  
+
+  // Subscribe to the pick signal topic
+  rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr signal_sub;
+  signal_sub = node->create_subscription<std_msgs::msg::Bool>(
+                "signal_topic", 10, std::bind(&MyNode::signal_callback, node, std::placeholders::_1));
+
   RCLCPP_INFO(LOGGER, "Looking for: %s", tag_frame.c_str());
-  while (rclcpp::ok() && !frame_available) 
-  {
-      try 
-      {
-          std::string planning_frame = pick_and_place_class.move_group_interface_arm_->getPlanningFrame();
-          transform = tf_buffer->lookupTransform(planning_frame, tag_frame, tf2::TimePointZero);
-          frame_available = true;
-      } catch (tf2::TransformException& ex) 
-      {
-          // Frame not available yet, wait and try again
-          rclcpp::sleep_for(std::chrono::milliseconds(100));
-      }
-  }
-
-  if (frame_available)
-  {
-    // Extract the pose from the transform
-    RCLCPP_INFO(LOGGER, "Found tag: %s", tag_frame.c_str());
-    RCLCPP_INFO(LOGGER, "At pos:");
-    RCLCPP_INFO(LOGGER, "X: %f", transform.transform.translation.x);
-    RCLCPP_INFO(LOGGER, "Y: %f", transform.transform.translation.y);
-    RCLCPP_INFO(LOGGER, "Z: %f", transform.transform.translation.z);
-    // Set object pose
-    pick_and_place_class.setObjectPoseFromTransform(transform);
-
-    // Pick the object
-    pick_and_place_class.pickObject();
-
-  }
-
   
+  bool target_found = pick_and_place_class.searchForObjectFrame(100.0);
+
+  if (target_found)
+  {
+    pick_and_place_class.pickObject();
+  }
   
 
   // Shutdown ROS
