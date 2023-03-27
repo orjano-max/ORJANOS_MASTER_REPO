@@ -22,7 +22,7 @@ cd ORJANOS_MASTER_REPO
 
 Update the submodules of this repo, there are alot of them
 ~~~bash
-git submodule uptade --init --recursive
+git submodule update --init --recursive
 ~~~
 
 Run the following commands:
@@ -43,6 +43,12 @@ Run rosdep
 
 ~~~bash
 rosdep install --from-path code/src --ignore-src --rosdistro galactic -y
+~~~
+
+Install python-modern-robotics, somehow, this package is not a part of the interbotix rosdep
+
+~~~bash
+pip install modern-robotics
 ~~~
 
 Build

@@ -21,13 +21,16 @@
     #   ...
     #
     standalone_tags:
-      tag_names: ["tag_0", "tag_3"]
-      tag_3:
-        id: 3
-        size: 1.0
+      tag_names: ["tag_0", "bottle", "case"]
       tag_0:
         id: 0
         size: 0.135
+      case:
+        id: 1
+        size: 0.0344
+      bottle:
+        id: 2
+        size: 0.0344
 
     # ## Tag bundle definitions
     # ### Remarks

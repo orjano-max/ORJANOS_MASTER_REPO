@@ -1,28 +1,22 @@
+from symbol import parameters
 import math
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch_xml.launch_description_sources import XMLLaunchDescriptionSource
 from launch.substitutions import PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
-
+     
     interbotix_urdf_extras_path = PathJoinSubstitution(
                 [FindPackageShare("husky_interbotix"), "urdf", "interbotix_urdf_extras.urdf"]
     )
-          
-    # Launch Realsense camera
-    launch_realsense_camera = IncludeLaunchDescription(
+     
+    # Launch the husky robot using the husky_uia uia_master_husky repo
+    launch_husky = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(PathJoinSubstitution(
-            [FindPackageShare('realsense2_camera'), 'launch', 'rs_launch.py']))
-    )
-
-    # Launch continuous detection
-    launch_apriltag_continuous_detection = IncludeLaunchDescription(
-        XMLLaunchDescriptionSource(PathJoinSubstitution(
-            [FindPackageShare('husky_interbotix'), 'launch', 'continuous_detection.launch.xml'])),
+        [FindPackageShare("husky_group"), 'launch', 'husky.launch.py'])),
     )
 
     launch_interbotix_moveit = IncludeLaunchDescription(
@@ -61,10 +55,10 @@ def generate_launch_description():
     # Publish scene
     ld.add_action(launch_scene_geometry_publisher)
 
-    # Launch Realsense camera
-    ld.add_action(launch_realsense_camera)
+    # Launch husky
+    ld.add_action(launch_husky)
 
-    # Launch Apriltag
-    ld.add_action(launch_apriltag_continuous_detection)
+    
 
     return ld
+
