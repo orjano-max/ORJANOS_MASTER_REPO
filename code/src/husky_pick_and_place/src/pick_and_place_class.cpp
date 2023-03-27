@@ -111,8 +111,6 @@ class PickAndPlace
       place_pose.orientation.z = qRot.getZ();
       place_pose.orientation.w = qRot.getW();
 
-      
-
       // Place the TCP (Tool Center Point, the tip of the robot) over the place pos 
       geometry_msgs::msg::Pose above_pose = place_pose;
       above_pose.position.z += 0.2;
@@ -126,20 +124,6 @@ class PickAndPlace
       // Release the thingy
       move_group_interface_gripper_->setJointValueTarget(move_group_interface_gripper_->getNamedTargetValues("Released"));
       planAndExecuteGripper();
-
-      // Move the TCP (Tool Center Point, the tip of the robot) a little back
-      /* geometry_msgs::msg::Pose move_away_pose = place_pose;
-      double distance = 0.1;
-      move_away_pose.position.x = place_pose.position.x - distance*cos(placePoseYaw);
-      move_away_pose.position.y = place_pose.position.y - distance*sin(placePoseYaw);
-      move_group_interface_arm_->setPoseTarget(move_away_pose);
-      planAndExecuteArm(); 
-
-      // Place the TCP (Tool Center Point, the tip of the robot) over the release pos 
-      geometry_msgs::msg::Pose above_move_away_pose = move_away_pose;
-      above_move_away_pose.position.z += 0.2;
-      move_group_interface_arm_->setPoseTarget(above_move_away_pose);
-      planAndExecuteArm();*/
 
       // Go up to above release position
       move_group_interface_arm_->setPoseTarget(above_pose);
