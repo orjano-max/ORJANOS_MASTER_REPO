@@ -74,7 +74,8 @@ class PickAndPlace
       planAndExecuteArm();
 
       // Grasp the thingy
-      move_group_interface_gripper_->setJointValueTarget(move_group_interface_gripper_->getNamedTargetValues("Grasping"));
+      std::string graspPose = "Grasping_" + node_->get_parameter("tag_id").as_string();
+      move_group_interface_gripper_->setJointValueTarget(move_group_interface_gripper_->getNamedTargetValues(graspPose));
       planAndExecuteGripper();
 
       // Lift the thingy

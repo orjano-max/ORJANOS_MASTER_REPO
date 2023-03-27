@@ -16,4 +16,9 @@
         <joint name="wrist_rotate" value="0" />
     </group_state>
 
+    <group_state name="Grasping_case" group="interbotix_gripper">
+        <joint name="left_finger" value="0.0285" />
+        <joint name="right_finger" value="-0.0285" />
+    </group_state>
+
 </robot>
