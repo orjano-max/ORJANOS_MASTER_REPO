@@ -47,6 +47,7 @@
 
 
 
+
 int main(int argc, char* argv[])
 {
   // Initialize ROS and create the Node
@@ -69,16 +70,13 @@ int main(int argc, char* argv[])
 
   auto action_callback = [](const std_msgs::msg::String::SharedPtr msg) 
   {
-  
-  RCLCPP_INFO(LOGGER, "Got action: %s", msg->data.c_str());
-
+    RCLCPP_INFO(rclcpp::get_logger("pick_node"), "Got action: %s", msg->data.c_str());
   };
 
-  auto action_subscription = node->create_subscription<std_msgs::msg::String>(
-  "action",
-  10,  // QoS history depth
-  action_callback
-  );
+  rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription;
+
+  subscription = node->create_subscription<std_msgs::msg::String>(
+    "action", 10, action_callback);
   
 
   // We spin up a SingleThreadedExecutor for the current state monitor to get information
