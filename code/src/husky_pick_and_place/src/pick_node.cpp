@@ -67,11 +67,12 @@ int main(int argc, char* argv[])
 
   static const rclcpp::Logger LOGGER = node->get_logger();
 
-  auto action_callback = [](const std_msgs::msg::String::SharedPtr msg) {
+  auto action_callback = [](const std_msgs::msg::String::SharedPtr msg) 
+  {
   
   RCLCPP_INFO(LOGGER, "Got action: %s", msg->data.c_str());
 
-};
+  };
 
   auto action_subscription = node->create_subscription<std_msgs::msg::String>(
   "action",
