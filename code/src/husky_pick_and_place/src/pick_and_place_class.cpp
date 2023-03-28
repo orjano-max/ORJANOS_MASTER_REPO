@@ -39,7 +39,7 @@ class PickAndPlace
         rclcpp::spin_some(node_->shared_from_this());
       }
       // do something when "pick" is received
-      RCLCPP_INFO(get_logger(), "Received '%s' command", message_data_.c_str());
+      RCLCPP_INFO(node_->get_logger(), "Received '%s' command", message_data_.c_str());
     }
 
     void topic_callback(const std_msgs::msg::String::SharedPtr msg)
