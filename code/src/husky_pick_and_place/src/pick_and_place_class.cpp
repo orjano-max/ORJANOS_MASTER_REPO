@@ -34,7 +34,7 @@ class PickAndPlace
     
     void waitForCommand()
     {
-      while (rclcpp::ok() && message_data_ !="")
+      while (rclcpp::ok() && message_data_ =="")
       {
         rclcpp::spin_some(node_->shared_from_this());
       }
