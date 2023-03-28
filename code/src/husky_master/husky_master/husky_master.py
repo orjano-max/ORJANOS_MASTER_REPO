@@ -41,7 +41,7 @@ class MinimalPublisher(Node):
         self.get_logger().info('Publishing: "%s"' % msg.data)
         self.i += 1
 
-
+""" 
 def while_pos ():
     print ( 'fun ')
     nav = BasicNavigator()
@@ -56,7 +56,7 @@ def while_pos ():
         x_euler , y_euler , z_euler = tf_transformations.euler_from_quaternion( [pose.orientation.x , pose.orientation.y , pose.orientation.z , pose.orientation.w] )
         print ('x_pos = ',x_pos,'y_pos = ', y_pos ,'z_euler = ', z_euler, "\n \n")
     
-
+ """
 
 
 def main(): 
