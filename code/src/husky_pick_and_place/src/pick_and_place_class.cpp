@@ -23,25 +23,25 @@ class PickAndPlace
     PickAndPlace(rclcpp::Node::SharedPtr node, std::string PLANNING_GROUP_ARM = "interbotix_arm", std::string PLANNING_GROUP_GRIPPER = "interbotix_gripper")
       : node_(node), PLANNING_GROUP_ARM_(PLANNING_GROUP_ARM), PLANNING_GROUP_GRIPPER_(PLANNING_GROUP_GRIPPER)
       {
+        
+        subscription_ = node_->create_subscription<std_msgs::msg::String>(
+           "manipulator_command", 10, std::bind(&PickAndPlace::topic_callback, this, std::placeholders::_1));
+
         move_group_interface_arm_ = std::make_shared<moveit::planning_interface::MoveGroupInterface>(node_, PLANNING_GROUP_ARM_);
         move_group_interface_gripper_ = std::make_shared<moveit::planning_interface::MoveGroupInterface>(node_, PLANNING_GROUP_GRIPPER_);
-
         
       }
     
     
     void waitForCommand()
     {
-      subscription_ = node_->create_subscription<std_msgs::msg::String>(
-          "manipulator_command", 10, std::bind(&PickAndPlace::topic_callback, this, std::placeholders::_1));
 
       while (rclcpp::ok() && message_data_ =="")
       {
+        
         // No message on topic, wait and try again
         rclcpp::sleep_for(std::chrono::milliseconds(100));
-        // Subscribe to the "manipulator_command" topic
-        subscription_ = node_->create_subscription<std_msgs::msg::String>(
-          "manipulator_command", 10, std::bind(&PickAndPlace::topic_callback, this, std::placeholders::_1));
+
       }
 
     }
