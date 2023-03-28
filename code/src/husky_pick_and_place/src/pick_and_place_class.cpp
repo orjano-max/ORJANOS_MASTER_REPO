@@ -25,19 +25,27 @@ class PickAndPlace
       {
         move_group_interface_arm_ = std::make_shared<moveit::planning_interface::MoveGroupInterface>(node_, PLANNING_GROUP_ARM_);
         move_group_interface_gripper_ = std::make_shared<moveit::planning_interface::MoveGroupInterface>(node_, PLANNING_GROUP_GRIPPER_);
+
+        // Subscribe to the "manipulator_command" topic
+        subscription_ = node_->create_subscription<std_msgs::msg::String>(
+          "manipulator_command", 10, std::bind(&PickAndPlace::topic_callback, this, std::placeholders::_1));
       }
     
     
-    void subscribeToCommand()
+    void waitForCommand()
     {
-      // Subscribe to the "manipulator_command" topic
-      subscription_ = node_->create_subscription<std_msgs::msg::String>(
-          "manipulator_command", 10, std::bind(&PickAndPlace::topic_callback, this, std::placeholders::_1));
+      while (rclcpp::ok() && message_data_ !="")
+      {
+        rclcpp::spin_some(node_->shared_from_this());
+      }
+      // do something when "pick" is received
+      RCLCPP_INFO(get_logger(), "Received '%s' command", message_data_.c_str());
     }
 
     void topic_callback(const std_msgs::msg::String::SharedPtr msg)
     {
       RCLCPP_INFO(node_->get_logger(), "I heard: '%s'", msg->data.c_str());
+
       message_data_ = msg->data;
     }
 
@@ -302,6 +310,7 @@ class PickAndPlace
     }
 
   private:
+    bool is_picking_;
     std::string message_data_;
     rclcpp::Node::SharedPtr node_;
     std::string PLANNING_GROUP_ARM_;

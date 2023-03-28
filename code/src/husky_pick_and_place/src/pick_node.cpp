@@ -97,7 +97,7 @@ int main(int argc, char* argv[])
   std::string tag_frame = node->get_parameter("tag_id").as_string();
 
   
-  pick_and_place_class.subscribeToCommand();
+  pick_and_place_class.waitForCommand();
 
 
   /* RCLCPP_INFO(LOGGER, "Looking for: %s", tag_frame.c_str());
