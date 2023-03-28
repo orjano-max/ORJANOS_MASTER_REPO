@@ -36,9 +36,9 @@ class PickAndPlace
     void waitForCommand()
     {
 
-      while (rclcpp::ok() && message_data_ =="")
+      while (rclcpp::ok() && message_data_ !="")
       {
-        
+        rclcpp::spin_some(node_->shared_from_this());
         // No message on topic, wait and try again
         rclcpp::sleep_for(std::chrono::milliseconds(100));
 
