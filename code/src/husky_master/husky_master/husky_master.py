@@ -11,7 +11,7 @@ from rclpy.node import Node
 from std_msgs.msg import String 
 import time
 
-def create_pose_stamped( nav , position_x , position_y , orientation_z): 
+""" def create_pose_stamped( nav , position_x , position_y , orientation_z): 
     q_x , q_y , q_z , q_w = tf_transformations.quaternion_from_euler( 0.0 , 0.0 , orientation_z )
     pose = PoseStamped()
     pose.header.frame_id = 'map'
@@ -23,7 +23,7 @@ def create_pose_stamped( nav , position_x , position_y , orientation_z):
     pose.pose.orientation.y = q_y
     pose.pose.orientation.z = q_z
     pose.pose.orientation.w = q_w
-    return pose
+    return pose """
 
 class MinimalPublisher(Node):
 
