@@ -80,7 +80,6 @@ int main(int argc, char* argv[])
   action_callback
   );
   
-  
 
   // We spin up a SingleThreadedExecutor for the current state monitor to get information
   // about the robot's state.
@@ -98,7 +97,7 @@ int main(int argc, char* argv[])
   RCLCPP_INFO(LOGGER, "End effector link: %s", pick_and_place_class.move_group_interface_arm_->getEndEffectorLink().c_str());
 
   // Go to position for scanning
-  pick_and_place_class.goToSearchPos();
+  //pick_and_place_class.goToSearchPos();
 
   // Create tf2 buffer and transform listener
   std::shared_ptr<tf2_ros::TransformListener> tf_listener{nullptr};
@@ -113,15 +112,12 @@ int main(int argc, char* argv[])
   std::string tag_frame = node->get_parameter("tag_id").as_string();
 
   
- RCLCPP_INFO(LOGGER, "Waiting for pick or place command...");
-  while (rclcpp::ok())
-  {
-    // Wait for the next message to arrive
-    rclcpp::sleep_for(std::chrono::milliseconds(1000));
-  }
+  RCLCPP_INFO(LOGGER, "Waiting for pick or place command...");
 
+  
 
-  // Shutdown ROS
+  // // Join the executor thread before shutting down the node
+  executor.cancel();
   rclcpp::shutdown();
   return 0;
 } 
