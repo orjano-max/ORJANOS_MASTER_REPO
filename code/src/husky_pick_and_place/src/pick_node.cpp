@@ -83,9 +83,9 @@ int main(int argc, char* argv[])
 
   // We spin up a SingleThreadedExecutor for the current state monitor to get information
   // about the robot's state.
-  rclcpp::executors::SingleThreadedExecutor executor;
+  /* rclcpp::executors::SingleThreadedExecutor executor;
   executor.add_node(node);
-  std::thread([&executor]() { executor.spin(); }).detach();
+  std::thread([&executor]() { executor.spin(); }).detach(); */
 
   // Initiating the pick and place class
   PickAndPlace pick_and_place_class = PickAndPlace(node);
@@ -114,10 +114,11 @@ int main(int argc, char* argv[])
   
   RCLCPP_INFO(LOGGER, "Waiting for pick or place command...");
 
-  
+  rclcpp::spin(node);
 
   // // Join the executor thread before shutting down the node
-  executor.cancel();
+  //executor.cancel();
+
   rclcpp::shutdown();
   return 0;
 } 
