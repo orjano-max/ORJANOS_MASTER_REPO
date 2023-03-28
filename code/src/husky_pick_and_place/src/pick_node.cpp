@@ -95,7 +95,7 @@ int main(int argc, char* argv[])
   rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription;
 
   node->create_subscription<std_msgs::msg::String>(
-      "topic", 10, std::bind(&topic_callback, node, std::placeholders::_1, LOGGER, node));
+      "action", 10, std::bind(&topic_callback, node, std::placeholders::_1, LOGGER, node));
   
 
   // We spin up a SingleThreadedExecutor for the current state monitor to get information
