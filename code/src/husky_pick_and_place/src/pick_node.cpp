@@ -46,14 +46,14 @@
 
 #include "pick_and_place_class.cpp"
 
-/* class MinimalSubscriber : public rclcpp::Node
+class MinimalSubscriber : public rclcpp::Node
 {
   public:
     MinimalSubscriber()
     : Node("minimal_subscriber")
     {
       subscription_ = this->create_subscription<std_msgs::msg::String>(
-      "topic", 10, std::bind(&MinimalSubscriber::topic_callback, this, std::placeholders::_1));
+      "action", 10, std::bind(&MinimalSubscriber::topic_callback, this, std::placeholders::_1));
     }
 
   private:
@@ -62,13 +62,9 @@
       RCLCPP_INFO(this->get_logger(), "I heard: '%s'", msg.data.c_str());
     }
     rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
-}; */
+};
 
 
-void topic_callback(const std_msgs::msg::String & msg, rclcpp::Logger &logger)
-{
-  RCLCPP_INFO(logger, "I heard: '%s'", msg.data.c_str());
-}
 
 
 int main(int argc, char* argv[])
@@ -81,21 +77,20 @@ int main(int argc, char* argv[])
   rclcpp::NodeOptions options;
   options.automatically_declare_parameters_from_overrides(true);
 
-  auto node = std::make_shared<rclcpp::Node>("pick_node", manipulator_namespace, options);
+  /* auto node = std::make_shared<rclcpp::Node>("pick_node", manipulator_namespace, options);
 
   if (node->get_parameter("tag_id").get_type() == rclcpp::ParameterType::PARAMETER_NOT_SET)
   {
     // Parameter not passed, declare param
     node->declare_parameter("tag_id", "case");
-  }
-
-  static const rclcpp::Logger LOGGER = node->get_logger();
+  } */
 
 
-  rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription;
 
-  node->create_subscription<std_msgs::msg::String>(
-      "action", 10, std::bind(&topic_callback, std::placeholders::_1, node->get_logger()));
+  //static const rclcpp::Logger LOGGER = node->get_logger();
+
+
+
   
 
   // We spin up a SingleThreadedExecutor for the current state monitor to get information
@@ -129,9 +124,9 @@ int main(int argc, char* argv[])
   std::string tag_frame = node->get_parameter("tag_id").as_string(); */
 
   
-  RCLCPP_INFO(LOGGER, "Waiting for pick or place command...");
+  //RCLCPP_INFO(LOGGER, "Waiting for pick or place command...");
 
-  rclcpp::spin(node);
+  rclcpp::spin(std::make_shared<MinimalSubscriber>());
 
   // // Join the executor thread before shutting down the node
   //executor.cancel();
