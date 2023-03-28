@@ -65,7 +65,7 @@
 }; */
 
 
-void topic_callback(const std_msgs::msg::String & msg, rclcpp::Logger &logger, rclcpp::Node::SharedPtr node)
+void topic_callback(const std_msgs::msg::String & msg, rclcpp::Logger &logger)
 {
   RCLCPP_INFO(logger, "I heard: '%s'", msg.data.c_str());
 }
@@ -95,7 +95,7 @@ int main(int argc, char* argv[])
   rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription;
 
   node->create_subscription<std_msgs::msg::String>(
-      "action", 10, std::bind(&topic_callback, node, std::placeholders::_1, LOGGER, node));
+      "action", 10, std::bind(&topic_callback, std::placeholders::_1, node->get_logger()));
   
 
   // We spin up a SingleThreadedExecutor for the current state monitor to get information
