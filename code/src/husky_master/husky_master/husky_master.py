@@ -11,25 +11,11 @@ from rclpy.node import Node
 from std_msgs.msg import String 
 import time
 
-""" def create_pose_stamped( nav , position_x , position_y , orientation_z): 
-    q_x , q_y , q_z , q_w = tf_transformations.quaternion_from_euler( 0.0 , 0.0 , orientation_z )
-    pose = PoseStamped()
-    pose.header.frame_id = 'map'
-    pose.header.stamp = nav.get_clock().now().to_msg()
-    pose.pose.position.x = position_x
-    pose.pose.position.y = position_y
-    pose.pose.position.z = 0.0
-    pose.pose.orientation.x = q_x
-    pose.pose.orientation.y = q_y
-    pose.pose.orientation.z = q_z
-    pose.pose.orientation.w = q_w
-    return pose """
-
 class MinimalPublisher(Node):
 
     def __init__(self):
         super().__init__('minimal_publisher')
-        self.publisher_ = self.create_publisher(String, 'manipulator_command', 10)
+        self.publisher_ = self.create_publisher(String, 'topic', 10)
         timer_period = 0.5  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
         self.i = 0
@@ -41,47 +27,18 @@ class MinimalPublisher(Node):
         self.get_logger().info('Publishing: "%s"' % msg.data)
         self.i += 1
 
-""" 
-def while_pos ():
-    print ( 'fun ')
-    nav = BasicNavigator()
-    if nav.isTaskComplete():
-        time.sleep(1.0)
 
-    while not nav.isTaskComplete() : 
-        print('while')
-        pose = nav.getFeedback().current_pose.pose
-        x_pos = nav.getFeedback().current_pose.pose.position.x
-        y_pos = pose.position.y
-        x_euler , y_euler , z_euler = tf_transformations.euler_from_quaternion( [pose.orientation.x , pose.orientation.y , pose.orientation.z , pose.orientation.w] )
-        print ('x_pos = ',x_pos,'y_pos = ', y_pos ,'z_euler = ', z_euler, "\n \n")
-    
- """
+def main(args=None):
+    rclpy.init(args=args)
 
+    minimal_publisher = MinimalPublisher()
 
-def main(): 
-    rclpy.init()
-    #nav = BasicNavigator()
+    rclpy.spin(minimal_publisher)
 
-    # --- Set initial pose 
-    #initial_pose = create_pose_stamped( nav , -1.997726 , -0.499904 , 0.091122)
-    #nav.setInitialPose( initial_pose )
-
-    # --- Wait for Nav2 
-    #nav.waitUntilNav2Active()
-
-    # --- Send Nav2 goal 
-    #goal_pose = create_pose_stamped(nav , 2.0 , 0.0 , 3.14)
-    #nav.goToPose(goal_pose)
-    
-    #while_pos()
-    #print(nav.getResult())
-
-    manipulator_commander = MinimalPublisher
-
-    rclpy.spin(manipulator_commander)
-
-    # --- Shutdown
+    # Destroy the node explicitly
+    # (optional - otherwise it will be done automatically
+    # when the garbage collector destroys the node object)
+    minimal_publisher.destroy_node()
     rclpy.shutdown()
 
 if __name__ == '__main__' : 
