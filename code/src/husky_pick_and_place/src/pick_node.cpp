@@ -46,6 +46,7 @@
 #include "pick_and_place_class.cpp"
 
 
+
 int main(int argc, char* argv[])
 {
   // Initialize ROS and create the Node
@@ -63,8 +64,22 @@ int main(int argc, char* argv[])
     // Parameter not passed, declare param
     node->declare_parameter("tag_id", "case");
   }
-  
+
   static const rclcpp::Logger LOGGER = node->get_logger();
+
+  auto action_callback = [](const std_msgs::msg::String::SharedPtr msg) {
+  
+  RCLCPP_INFO(LOGGER, "Got action: %s", msg->data.c_str());
+
+};
+
+  auto action_subscription = node->create_subscription<std_msgs::msg::String>(
+  "action",
+  10,  // QoS history depth
+  action_callback
+  );
+  
+  
 
   // We spin up a SingleThreadedExecutor for the current state monitor to get information
   // about the robot's state.
@@ -97,18 +112,14 @@ int main(int argc, char* argv[])
   std::string tag_frame = node->get_parameter("tag_id").as_string();
 
   
-  pick_and_place_class.waitForCommand();
-
-
-  /* RCLCPP_INFO(LOGGER, "Looking for: %s", tag_frame.c_str());
-  
-  bool target_found = pick_and_place_class.searchForObjectFrame(100.0);
-
-  if (target_found)
+ RCLCPP_INFO(LOGGER, "Waiting for pick or place command...");
+  while (rclcpp::ok())
   {
-    pick_and_place_class.pickObject();
-  } */
-  
+    // Wait for the next message to arrive
+    rclcpp::spin_some(node);
+    rclcpp::sleep_for(std::chrono::milliseconds(1000));
+  }
+
 
   // Shutdown ROS
   rclcpp::shutdown();
