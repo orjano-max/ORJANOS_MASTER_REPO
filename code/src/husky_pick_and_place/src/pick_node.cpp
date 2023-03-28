@@ -116,7 +116,6 @@ int main(int argc, char* argv[])
   while (rclcpp::ok())
   {
     // Wait for the next message to arrive
-    rclcpp::spin_some(node);
     rclcpp::sleep_for(std::chrono::milliseconds(1000));
   }
 
