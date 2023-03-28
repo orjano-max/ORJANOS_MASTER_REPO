@@ -67,7 +67,7 @@
 
 void topic_callback(const std_msgs::msg::String & msg, rclcpp::Logger &logger, rclcpp::Node::SharedPtr node)
 {
-  RCLCPP_INFO(node->get_logger(), "I heard: '%s'", msg.data.c_str());
+  RCLCPP_INFO(logger, "I heard: '%s'", msg.data.c_str());
 }
 
 
