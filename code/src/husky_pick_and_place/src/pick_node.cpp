@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
   executor.add_node(node);
   std::thread([&executor]() { executor.spin(); }).detach(); */
 
-  // Initiating the pick and place class
+  /* // Initiating the pick and place class
   PickAndPlace pick_and_place_class = PickAndPlace(node);
   
   // Print the name of the reference frame for this robot.
@@ -109,7 +109,7 @@ int main(int argc, char* argv[])
   bool frame_available = false;
   geometry_msgs::msg::TransformStamped transform;
   // Tag frame is the same as tag_id
-  std::string tag_frame = node->get_parameter("tag_id").as_string();
+  std::string tag_frame = node->get_parameter("tag_id").as_string(); */
 
   
   RCLCPP_INFO(LOGGER, "Waiting for pick or place command...");
