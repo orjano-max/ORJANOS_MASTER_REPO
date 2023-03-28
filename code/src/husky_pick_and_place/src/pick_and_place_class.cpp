@@ -12,24 +12,30 @@
 #include <tf2_ros/transform_listener.h>
 
 
-class PickAndPlace
+class PickAndPlace : public rclcpp::Node
 {
   public:
 
+    PickAndPlace(std::string move_group_namespace, const rclcpp::NodeOptions & options) 
+    : Node("pick_and_place_node", move_group_namespace, options)
+    {
+
+      // Check if this parameter is set
+      if (this->get_parameter("tag_id").get_type() == rclcpp::ParameterType::PARAMETER_NOT_SET)
+      {
+        // Parameter not passed, declare param
+        this->declare_parameter("tag_id", "case");
+      }
+
+      // Create a subscription to listen for the topic "action"
+      subscription_ = this->create_subscription<std_msgs::msg::String>(
+      "action", 10, std::bind(&PickAndPlace::action_callback, this, std::placeholders::_1));
+
+    }
+    
     std::shared_ptr<moveit::planning_interface::MoveGroupInterface> move_group_interface_arm_;
     std::shared_ptr<moveit::planning_interface::MoveGroupInterface> move_group_interface_gripper_;
     const float pi = std::atan(1)*4.0;
-
-    PickAndPlace(rclcpp::Node::SharedPtr node, std::string PLANNING_GROUP_ARM = "interbotix_arm", std::string PLANNING_GROUP_GRIPPER = "interbotix_gripper")
-      : node_(node), PLANNING_GROUP_ARM_(PLANNING_GROUP_ARM), PLANNING_GROUP_GRIPPER_(PLANNING_GROUP_GRIPPER)
-      {
-        
-        move_group_interface_arm_ = std::make_shared<moveit::planning_interface::MoveGroupInterface>(node_, PLANNING_GROUP_ARM_);
-        move_group_interface_gripper_ = std::make_shared<moveit::planning_interface::MoveGroupInterface>(node_, PLANNING_GROUP_GRIPPER_);
-        
-      }
-    
-    
 
     void pickObject()
     {
@@ -301,6 +307,11 @@ class PickAndPlace
     moveit::planning_interface::MoveGroupInterface::Plan my_plan_arm_;
     moveit::planning_interface::MoveGroupInterface::Plan my_plan_gripper_;
     rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
+
+    void action_callback(const std_msgs::msg::String & msg) const
+    {
+      RCLCPP_INFO(this->get_logger(), "I heard: '%s'", msg.data.c_str());
+    }
     
     
 };

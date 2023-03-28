@@ -46,7 +46,7 @@
 
 #include "pick_and_place_class.cpp"
 
-class MinimalSubscriber : public rclcpp::Node
+/* class MinimalSubscriber : public rclcpp::Node
 {
   public:
     MinimalSubscriber()
@@ -62,7 +62,7 @@ class MinimalSubscriber : public rclcpp::Node
       RCLCPP_INFO(this->get_logger(), "I heard: '%s'", msg.data.c_str());
     }
     rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
-};
+}; */
 
 
 
@@ -73,17 +73,21 @@ int main(int argc, char* argv[])
   rclcpp::init(argc, argv);
   
   static const std::string manipulator_namespace = "vx300";
+  static const std::string PLANNING_GROUP_ARM = "interbotix_arm";
+  static const std::string PLANNING_GROUP_GRIPPER = "interbotix_gripper";
 
   rclcpp::NodeOptions options;
   options.automatically_declare_parameters_from_overrides(true);
+  auto node = std::make_shared<PickAndPlace>(manipulator_namespace, options);
 
-  /* auto node = std::make_shared<rclcpp::Node>("pick_node", manipulator_namespace, options);
+  std::shared_ptr<moveit::planning_interface::MoveGroupInterface> move_group_interface_arm;
+  std::shared_ptr<moveit::planning_interface::MoveGroupInterface> move_group_interface_gripper;
+  move_group_interface_arm = std::make_shared<moveit::planning_interface::MoveGroupInterface>(node, PLANNING_GROUP_ARM);
+  move_group_interface_gripper = std::make_shared<moveit::planning_interface::MoveGroupInterface>(node, PLANNING_GROUP_GRIPPER);
+  node->move_group_interface_arm_ = move_group_interface_arm;
+  node->move_group_interface_gripper_= move_group_interface_gripper;
 
-  if (node->get_parameter("tag_id").get_type() == rclcpp::ParameterType::PARAMETER_NOT_SET)
-  {
-    // Parameter not passed, declare param
-    node->declare_parameter("tag_id", "case");
-  } */
+  
 
 
 
@@ -98,6 +102,9 @@ int main(int argc, char* argv[])
   /* rclcpp::executors::SingleThreadedExecutor executor;
   executor.add_node(node);
   std::thread([&executor]() { executor.spin(); }).detach(); */
+
+
+  
 
   /* // Initiating the pick and place class
   PickAndPlace pick_and_place_class = PickAndPlace(node);
@@ -126,7 +133,7 @@ int main(int argc, char* argv[])
   
   //RCLCPP_INFO(LOGGER, "Waiting for pick or place command...");
 
-  rclcpp::spin(std::make_shared<MinimalSubscriber>());
+  rclcpp::spin(node);
 
   // // Join the executor thread before shutting down the node
   //executor.cancel();

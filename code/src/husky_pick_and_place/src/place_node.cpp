@@ -18,12 +18,21 @@ int main(int argc, char* argv[])
   rclcpp::init(argc, argv);
   
   static const std::string manipulator_namespace = "vx300";
+  static const std::string PLANNING_GROUP_ARM = "interbotix_arm";
+  static const std::string PLANNING_GROUP_GRIPPER = "interbotix_gripper";
 
   rclcpp::NodeOptions options;
   options.automatically_declare_parameters_from_overrides(true);
 
-  auto node = std::make_shared<rclcpp::Node>("place_node", manipulator_namespace, options);
-  node->declare_parameter("tag_id", "tag_0");
+  auto node = std::make_shared<PickAndPlace>(manipulator_namespace, options);
+
+  std::shared_ptr<moveit::planning_interface::MoveGroupInterface> move_group_interface_arm;
+  std::shared_ptr<moveit::planning_interface::MoveGroupInterface> move_group_interface_gripper;
+  move_group_interface_arm = std::make_shared<moveit::planning_interface::MoveGroupInterface>(node, PLANNING_GROUP_ARM);
+  move_group_interface_gripper = std::make_shared<moveit::planning_interface::MoveGroupInterface>(node, PLANNING_GROUP_GRIPPER);
+  node->move_group_interface_arm_ = move_group_interface_arm;
+  node->move_group_interface_gripper_= move_group_interface_gripper;
+
   static const rclcpp::Logger LOGGER = node->get_logger();
 
   // We spin up a SingleThreadedExecutor for the current state monitor to get information
@@ -32,12 +41,8 @@ int main(int argc, char* argv[])
   executor.add_node(node);
   std::thread([&executor]() { executor.spin(); }).detach();
 
-  // Initiating the pick and place class
-  PickAndPlace pick_and_place_class = PickAndPlace(node);
   
 
-  pick_and_place_class.placeObject();
-  
 
 
   // Shutdown ROS
