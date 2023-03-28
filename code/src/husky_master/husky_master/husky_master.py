@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-import rclpy 
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import String
 from nav2_simple_commander.robot_navigator import BasicNavigator
 from geometry_msgs.msg import PoseStamped
 import tf_transformations
@@ -23,6 +25,23 @@ def create_pose_stamped( nav , position_x , position_y , orientation_z):
     pose.pose.orientation.w = q_w
     return pose
 
+class MinimalPublisher(Node):
+
+    def __init__(self):
+        super().__init__('minimal_publisher')
+        self.publisher_ = self.create_publisher(String, 'manipulator_command', 10)
+        timer_period = 0.5  # seconds
+        self.timer = self.create_timer(timer_period, self.timer_callback)
+        self.i = 0
+
+    def timer_callback(self):
+        msg = String()
+        msg.data = 'Hello World: %d' % self.i
+        self.publisher_.publish(msg)
+        self.get_logger().info('Publishing: "%s"' % msg.data)
+        self.i += 1
+
+
 def while_pos ():
     print ( 'fun ')
     nav = BasicNavigator()
@@ -42,26 +61,27 @@ def while_pos ():
 
 def main(): 
     rclpy.init()
-    nav = BasicNavigator()
+    #nav = BasicNavigator()
 
     # --- Set initial pose 
     #initial_pose = create_pose_stamped( nav , -1.997726 , -0.499904 , 0.091122)
     #nav.setInitialPose( initial_pose )
 
     # --- Wait for Nav2 
-    nav.waitUntilNav2Active()
+    #nav.waitUntilNav2Active()
 
     # --- Send Nav2 goal 
-    goal_pose = create_pose_stamped(nav , 2.0 , 0.0 , 3.14)
-    nav.goToPose(goal_pose)
+    #goal_pose = create_pose_stamped(nav , 2.0 , 0.0 , 3.14)
+    #nav.goToPose(goal_pose)
     
-    while_pos()
+    #while_pos()
+    #print(nav.getResult())
 
-    
+    manipulator_commander = MinimalPublisher
 
-    print(nav.getResult())
+    rclpy.spin(manipulator_commander)
+
     # --- Shutdown
-
     rclpy.shutdown()
 
 if __name__ == '__main__' : 

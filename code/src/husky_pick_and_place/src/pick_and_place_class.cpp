@@ -6,9 +6,11 @@
 #include <memory>
 
 #include <rclcpp/rclcpp.hpp>
+#include "std_msgs/msg/string.hpp"
 #include <moveit/move_group_interface/move_group_interface.h>
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
+
 
 class PickAndPlace
 {
@@ -26,7 +28,18 @@ class PickAndPlace
       }
     
     
+    void subscribeToCommand()
+    {
+      // Subscribe to the "manipulator_command" topic
+      subscription_ = node_->create_subscription<std_msgs::msg::String>(
+          "manipulator_command", 10, std::bind(&PickAndPlace::topic_callback, this, std::placeholders::_1));
+    }
 
+    void topic_callback(const std_msgs::msg::String::SharedPtr msg)
+    {
+      RCLCPP_INFO(node_->get_logger(), "I heard: '%s'", msg->data.c_str());
+      message_data_ = msg->data;
+    }
 
     void pickObject()
     {
@@ -289,12 +302,14 @@ class PickAndPlace
     }
 
   private:
+    std::string message_data_;
     rclcpp::Node::SharedPtr node_;
     std::string PLANNING_GROUP_ARM_;
     std::string PLANNING_GROUP_GRIPPER_;
     geometry_msgs::msg::PoseStamped object_pose_;
     moveit::planning_interface::MoveGroupInterface::Plan my_plan_arm_;
     moveit::planning_interface::MoveGroupInterface::Plan my_plan_gripper_;
+    rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
     
     
 };

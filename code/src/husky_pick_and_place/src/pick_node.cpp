@@ -37,7 +37,7 @@
 // ROS
 #include <rclcpp/rclcpp.hpp>
 
-#include "std_msgs/msg/bool.h"
+#include "std_msgs/msg/string.hpp"
 
 // MoveIt
 #include <moveit/planning_scene_interface/planning_scene_interface.h>
@@ -96,19 +96,18 @@ int main(int argc, char* argv[])
   // Tag frame is the same as tag_id
   std::string tag_frame = node->get_parameter("tag_id").as_string();
 
-  // Subscribe to the pick signal topic
-  rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr signal_sub;
-  signal_sub = node->create_subscription<std_msgs::msg::Bool>(
-                "signal_topic", 10, std::bind(&MyNode::signal_callback, node, std::placeholders::_1));
+  
+  pick_and_place_class.subscribeToCommand();
 
-  RCLCPP_INFO(LOGGER, "Looking for: %s", tag_frame.c_str());
+
+  /* RCLCPP_INFO(LOGGER, "Looking for: %s", tag_frame.c_str());
   
   bool target_found = pick_and_place_class.searchForObjectFrame(100.0);
 
   if (target_found)
   {
     pick_and_place_class.pickObject();
-  }
+  } */
   
 
   // Shutdown ROS
