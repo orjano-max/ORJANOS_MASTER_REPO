@@ -61,14 +61,46 @@ class PickAndPlace : public rclcpp::Node
 
       // Open gripper
       move_group_interface_gripper_->setJointValueTarget(move_group_interface_gripper_->getNamedTargetValues("Released"));
-      planAndExecuteGripper();
+      bool success = (move_group_interface_gripper_->plan(my_plan_gripper_) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+      
+      if (success)
+      {
+        move_group_interface_gripper_->move();
+      }
+      else
+      {
+        RCLCPP_ERROR(this->get_logger(), "Planning Failed!");
+      }
 
       // --- Double check the position of the thingy ---
       searchForObjectFrame();
 
+      
       // Place the TCP (Tool Center Point, the tip of the robot) directly above the thingy 
+      tf2::Quaternion QObj; 
+      QObj.setX(object_pose_.pose.orientation.x);
+      QObj.setY(object_pose_.pose.orientation.y);
+      QObj.setZ(object_pose_.pose.orientation.z);
+      QObj.setW(object_pose_.pose.orientation.w);
+      tf2::Matrix3x3 objectMat(QObj);
+      tf2Scalar objRoll;
+      tf2Scalar objPitch;
+      tf2Scalar objYaw;
+      objectMat.getRPY(objRoll, objPitch, objYaw);
+
+
+      RCLCPP_INFO(this->get_logger(), "Roll of object: %f", static_cast<float>(objRoll));
+      RCLCPP_INFO(this->get_logger(), "Pitch of object: %f", static_cast<float>(objPitch));
+      RCLCPP_INFO(this->get_logger(), "Yaw of object: %f", static_cast<float>(objYaw));
+
+      qRot.setRPY(0, 0, objYaw);
+      qRot.normalize();
+      
       geometry_msgs::msg::Pose above_pose_object;
-      above_pose_object.orientation = object_pose_.pose.orientation;
+      above_pose_object.orientation.x = qRot.getX();
+      above_pose_object.orientation.y = qRot.getY();
+      above_pose_object.orientation.z = qRot.getZ();
+      above_pose_object.orientation.w = qRot.getW();
       above_pose_object.position = object_pose_.pose.position;
       above_pose_object.position.z = object_pose_.pose.position.z + 0.2;
       planAndExecuteArm();
@@ -76,20 +108,21 @@ class PickAndPlace : public rclcpp::Node
       // Place the TCP (Tool Center Point, the tip of the robot) at the thingy
       
       geometry_msgs::msg::Pose target_pose_at_object;
-      target_pose_at_object.orientation = object_pose_.pose.orientation;
+      target_pose_at_object.orientation = above_pose_object.orientation;
       target_pose_at_object.position = object_pose_.pose.position;
-      target_pose_at_object.position.z = object_pose_.pose.position.z + 0.05;
+      target_pose_at_object.position.z = object_pose_.pose.position.z + 0.02;
       move_group_interface_arm_->setPoseTarget(target_pose_at_object);
       planAndExecuteArm();
 
       // Grasp the thingy
       std::string graspPose = "Grasping_" + this->get_parameter("tag_id").as_string();
+      RCLCPP_INFO(this->get_logger(), "Grasping pose: %s", graspPose.c_str());
       move_group_interface_gripper_->setJointValueTarget(move_group_interface_gripper_->getNamedTargetValues(graspPose));
       planAndExecuteGripper();
 
       // Lift the thingy
       geometry_msgs::msg::Pose target_pose_lift_object;
-      target_pose_lift_object.orientation = object_pose_.pose.orientation;
+      target_pose_lift_object.orientation = above_pose_object.orientation;
       target_pose_lift_object.position = object_pose_.pose.position;
       target_pose_lift_object.position.z = object_pose_.pose.position.z + 0.2;
       move_group_interface_arm_->setPoseTarget(target_pose_lift_object);
@@ -278,7 +311,7 @@ class PickAndPlace : public rclcpp::Node
     {
       
       bool success = (move_group_interface_gripper_->plan(my_plan_gripper_) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
-
+      
       if (success)
       {
         move_group_interface_gripper_->move();
