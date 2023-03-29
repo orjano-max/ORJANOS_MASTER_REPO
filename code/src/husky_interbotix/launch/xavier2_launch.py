@@ -12,6 +12,10 @@ def generate_launch_description():
     interbotix_urdf_extras_path = PathJoinSubstitution(
                 [FindPackageShare("husky_interbotix"), "urdf", "interbotix_urdf_extras.urdf"]
     )
+
+    interbotix_srdf_extras_path = PathJoinSubstitution(
+                [FindPackageShare("husky_interbotix"), "srdf", "interbotix_srdf_extras.urdf"]
+    )
           
     # Launch Realsense camera
     launch_realsense_camera = IncludeLaunchDescription(
@@ -31,8 +35,8 @@ def generate_launch_description():
             launch_arguments ={
             'robot_model' : 'vx300',
             'use_moveit_rviz' : 'false',
-            'show_gripper_fingers' : 'false',
             'external_urdf_loc' : interbotix_urdf_extras_path,
+            'external_srdf_loc' : interbotix_srdf_extras_path,
             }.items()
     )
      
