@@ -14,7 +14,7 @@ def generate_launch_description():
     )
 
     interbotix_srdf_extras_path = PathJoinSubstitution(
-                [FindPackageShare("husky_interbotix"), "srdf", "interbotix_srdf_extras.urdf"]
+                [FindPackageShare("husky_interbotix"), "srdf", "interbotix_srdf_extras.srdf"]
     )
           
     # Launch Realsense camera
