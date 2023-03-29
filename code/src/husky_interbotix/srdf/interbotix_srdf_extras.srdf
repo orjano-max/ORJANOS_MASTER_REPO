@@ -1,6 +1,6 @@
  <robot>
 
-<group name="interbotix_arm">
+<group name="arm">
     <group name="interbotix_arm"/>
     <joint name="ee_joint"/>
 </group>
