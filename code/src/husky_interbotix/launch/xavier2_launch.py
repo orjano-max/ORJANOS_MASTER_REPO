@@ -31,6 +31,7 @@ def generate_launch_description():
             launch_arguments ={
             'robot_model' : 'vx300',
             'use_moveit_rviz' : 'false',
+            'show_gripper_fingers' : 'false',
             'external_urdf_loc' : interbotix_urdf_extras_path,
             }.items()
     )
