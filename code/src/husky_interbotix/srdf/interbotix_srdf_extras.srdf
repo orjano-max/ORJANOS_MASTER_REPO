@@ -1,9 +1,9 @@
  <robot>
 
-<group name="interbotix_arm">
+<!-- <group name="interbotix_arm">
     <group name="interbotix_arm"/>
     <joint name="ee_joint"/>
-</group>
+</group> -->
 
 <disable_collisions link1="$(arg robot_name)/gripper_link" link2="camera_link" />
 
@@ -21,6 +21,6 @@
     <joint name="right_finger" value="-0.0285" />
 </group_state>
 
-<end_effector name="interbotix_ee" parent_link="$(arg robot_name)/ee_gripper_link" group="interbotix_gripper" />
+<!-- <end_effector name="interbotix_ee" parent_link="$(arg robot_name)/ee_gripper_link" group="interbotix_gripper" /> -->
 
 </robot>
