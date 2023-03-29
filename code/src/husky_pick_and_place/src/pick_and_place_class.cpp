@@ -43,7 +43,7 @@ class PickAndPlace : public rclcpp::Node
       //  Place the TCP (Tool Center Point, the tip of the robot) over the thingy, but a little shifted
       double qYaw = computeYawAngle(object_pose_.pose);
       tf2::Quaternion qRot;
-      qRot.setRPY(0, pi/2, qYaw);
+      qRot.setRPY(0, 0, qYaw);
       qRot.normalize();
 
       geometry_msgs::msg::Pose target_pose_inspect;
@@ -83,7 +83,7 @@ class PickAndPlace : public rclcpp::Node
       planAndExecuteArm();
 
       // Grasp the thingy
-      std::string graspPose = "Grasping_" + node_->get_parameter("tag_id").as_string();
+      std::string graspPose = "Grasping_" + this->get_parameter("tag_id").as_string();
       move_group_interface_gripper_->setJointValueTarget(move_group_interface_gripper_->getNamedTargetValues(graspPose));
       planAndExecuteGripper();
 
@@ -114,7 +114,7 @@ class PickAndPlace : public rclcpp::Node
 
       // Defining the orientation of the end effector
       tf2::Quaternion qRot;
-      qRot.setRPY(0, pi/2, qYaw);
+      qRot.setRPY(0, 0, qYaw);
       qRot.normalize();
       place_pose.orientation.x = qRot.getX();
       place_pose.orientation.y = qRot.getY();
@@ -155,7 +155,7 @@ class PickAndPlace : public rclcpp::Node
     {
 
       tf2::Quaternion qRot;
-      qRot.setRPY(0, pi/4, 0);
+      qRot.setRPY(0, 0, 0);
       qRot.normalize();
 
       // Move to search position
@@ -164,7 +164,7 @@ class PickAndPlace : public rclcpp::Node
       target_pose1.orientation.y = qRot.getY();
       target_pose1.orientation.z = qRot.getZ();
       target_pose1.orientation.w = qRot.getW();
-      target_pose1.position.x = 0;
+      target_pose1.position.x = 0.5;
       target_pose1.position.y = 0;
       target_pose1.position.z = 0.45;
       move_group_interface_arm_->setPoseTarget(target_pose1);
@@ -177,8 +177,15 @@ class PickAndPlace : public rclcpp::Node
     {
 
       // Move to holding position
+      tf2::Quaternion qRot;
+      qRot.setRPY(0, -pi/2, 0);
+      qRot.normalize();
+
       geometry_msgs::msg::Pose target_pose1;
-      target_pose1.orientation.w = 1;
+      target_pose1.orientation.x = qRot.getX();
+      target_pose1.orientation.y = qRot.getY();
+      target_pose1.orientation.z = qRot.getZ();
+      target_pose1.orientation.w = qRot.getW();
       target_pose1.position.x = 0;
       target_pose1.position.y = 0;
       target_pose1.position.z = 0.5;
@@ -193,7 +200,7 @@ class PickAndPlace : public rclcpp::Node
       // Create tf2 buffer and transform listener
       std::shared_ptr<tf2_ros::TransformListener> tf_listener{nullptr};
       std::unique_ptr<tf2_ros::Buffer> tf_buffer;
-      tf_buffer = std::make_unique<tf2_ros::Buffer>(node_->get_clock());
+      tf_buffer = std::make_unique<tf2_ros::Buffer>(this->get_clock());
       tf_listener = std::make_shared<tf2_ros::TransformListener>(*tf_buffer);
       
       // Wait for tf2 frame to become available
@@ -201,7 +208,7 @@ class PickAndPlace : public rclcpp::Node
       geometry_msgs::msg::TransformStamped transform;
 
       rclcpp::Time start_time = rclcpp::Clock().now();
-      std::string tag_frame = node_->get_parameter("tag_id").as_string();
+      std::string tag_frame = this->get_parameter("tag_id").as_string();
 
       while (rclcpp::ok() && !frame_available) 
       {
@@ -221,7 +228,7 @@ class PickAndPlace : public rclcpp::Node
         double elapsed_time = (rclcpp::Clock().now() - start_time).seconds();
         if (elapsed_time >= timeout) {
             // Timeout reached, return false
-            RCLCPP_ERROR(node_->get_logger(), "Timeaout reached while looking for tag!");
+            RCLCPP_ERROR(this->get_logger(), "Timeaout reached while looking for tag!");
             return false;
         }
       }
@@ -229,11 +236,11 @@ class PickAndPlace : public rclcpp::Node
       if (frame_available)
       {
         // Extract the pose from the transform
-        RCLCPP_INFO(node_->get_logger(), "Found tag: %s", tag_frame.c_str());
-        RCLCPP_INFO(node_->get_logger(), "At pos:");
-        RCLCPP_INFO(node_->get_logger(), "X: %f", transform.transform.translation.x);
-        RCLCPP_INFO(node_->get_logger(), "Y: %f", transform.transform.translation.y);
-        RCLCPP_INFO(node_->get_logger(), "Z: %f", transform.transform.translation.z);
+        RCLCPP_INFO(this->get_logger(), "Found tag: %s", tag_frame.c_str());
+        RCLCPP_INFO(this->get_logger(), "At pos:");
+        RCLCPP_INFO(this->get_logger(), "X: %f", transform.transform.translation.x);
+        RCLCPP_INFO(this->get_logger(), "Y: %f", transform.transform.translation.y);
+        RCLCPP_INFO(this->get_logger(), "Z: %f", transform.transform.translation.z);
 
         setObjectPoseFromTransform(transform);
       }
@@ -263,7 +270,7 @@ class PickAndPlace : public rclcpp::Node
       }
       else
       {
-        RCLCPP_ERROR(node_->get_logger(), "Planning Failed!");
+        RCLCPP_ERROR(this->get_logger(), "Planning Failed!");
       }
     }
 
@@ -278,7 +285,7 @@ class PickAndPlace : public rclcpp::Node
       }
       else
       {
-        RCLCPP_ERROR(node_->get_logger(), "Planning Failed!");
+        RCLCPP_ERROR(this->get_logger(), "Planning Failed!");
       }
     }
 
@@ -307,7 +314,6 @@ class PickAndPlace : public rclcpp::Node
   
     bool is_picking_;
     mutable std::string current_action_;
-    rclcpp::Node::SharedPtr node_;
     std::string PLANNING_GROUP_ARM_;
     std::string PLANNING_GROUP_GRIPPER_;
     geometry_msgs::msg::PoseStamped object_pose_;
@@ -316,7 +322,7 @@ class PickAndPlace : public rclcpp::Node
 
     void topic_callback(const std_msgs::msg::String & msg) const
     {
-      RCLCPP_INFO(this->get_logger(), "I heard: '%s'", msg.data.c_str());
+      //RCLCPP_INFO(this->get_logger(), "I heard: '%s'", msg.data.c_str());
       current_action_ = msg.data;
     }
     rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
