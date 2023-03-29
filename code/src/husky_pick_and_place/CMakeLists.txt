@@ -26,22 +26,22 @@ ament_target_dependencies(
 install(TARGETS pick_node
   DESTINATION lib/${PROJECT_NAME})
 
-add_executable(place_node src/place_node.cpp)
-target_include_directories(place_node PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>)
-target_compile_features(place_node PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
-ament_target_dependencies(
-  place_node
-  "moveit_ros_planning_interface"
-  "rclcpp"
-)
+#add_executable(place_node src/place_node.cpp)
+#target_include_directories(place_node PUBLIC
+#  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+#  $<INSTALL_INTERFACE:include>)
+#target_compile_features(place_node PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+#ament_target_dependencies(
+#  place_node
+#  "moveit_ros_planning_interface"
+#  "rclcpp"
+#)
 
-install(TARGETS place_node
-  DESTINATION lib/${PROJECT_NAME})
+#install(TARGETS place_node
+#  DESTINATION lib/${PROJECT_NAME})
 
-install(DIRECTORY launch DESTINATION share/${PROJECT_NAME})
-install(DIRECTORY params DESTINATION share/${PROJECT_NAME})
+#install(DIRECTORY launch DESTINATION share/${PROJECT_NAME})
+#install(DIRECTORY params DESTINATION share/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

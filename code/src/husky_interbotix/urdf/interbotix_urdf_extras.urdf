@@ -46,6 +46,7 @@
     </collision>
   </link>
 
+  <!-- %%%%%% CAMERA LINK %%%%% -->
   <link name="camera_link">
   </link>
 
@@ -67,6 +68,16 @@
     <parent link="camera_frame_link"/>
     <child link="camera_link"/>
     <origin xyz="0.035 0 0.025" rpy="0 0 0"/>
+  </joint>
+
+  <!-- %%%%% END EFFECTOR LINK %%%%% -->
+
+  <link name="$(arg robot_name)/ee_link">
+  </link>
+  <joint name="realsense_joint" type="fixed">
+    <parent link="$(arg robot_name)/ee_gripper_link"/>
+    <child link="(arg robot_name)/ee_link"/>
+    <origin xyz="0 0 0" rpy="0 -${pi/2} 0"/>
   </joint>
   
 </robot>

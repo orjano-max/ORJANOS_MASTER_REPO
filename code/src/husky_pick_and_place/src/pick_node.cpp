@@ -75,6 +75,7 @@ int main(int argc, char* argv[])
   static const std::string manipulator_namespace = "vx300";
   static const std::string PLANNING_GROUP_ARM = "interbotix_arm";
   static const std::string PLANNING_GROUP_GRIPPER = "interbotix_gripper";
+  static const std::string end_effector_link = manipulator_namespace+"ee_link";
 
   rclcpp::NodeOptions options;
   options.automatically_declare_parameters_from_overrides(true);
@@ -84,18 +85,15 @@ int main(int argc, char* argv[])
   std::shared_ptr<moveit::planning_interface::MoveGroupInterface> move_group_interface_gripper;
   move_group_interface_arm = std::make_shared<moveit::planning_interface::MoveGroupInterface>(node, PLANNING_GROUP_ARM);
   move_group_interface_gripper = std::make_shared<moveit::planning_interface::MoveGroupInterface>(node, PLANNING_GROUP_GRIPPER);
-  node->move_group_interface_arm_ = move_group_interface_arm;
-  node->move_group_interface_gripper_= move_group_interface_gripper;
+  //move_group_interface_arm->setEndEffectorLink(end_effector_link);
+  //node->move_group_interface_arm_ = move_group_interface_arm;
+  //node->move_group_interface_gripper_= move_group_interface_gripper;
 
-  
-
-
-
-  //static const rclcpp::Logger LOGGER = node->get_logger();
+  //move_group_interface_arm->setEndEffectorLink(end_effector_link);
 
 
+  static const rclcpp::Logger LOGGER = node->get_logger();
 
-  
 
   // We spin up a SingleThreadedExecutor for the current state monitor to get information
   // about the robot's state.
@@ -103,22 +101,17 @@ int main(int argc, char* argv[])
   executor.add_node(node);
   std::thread([&executor]() { executor.spin(); }).detach(); */
 
-
-  
-
-  /* // Initiating the pick and place class
-  PickAndPlace pick_and_place_class = PickAndPlace(node);
-  
+  /* 
   // Print the name of the reference frame for this robot.
-  RCLCPP_INFO(LOGGER, "Planning frame: %s", pick_and_place_class.move_group_interface_arm_->getPlanningFrame().c_str());
+  RCLCPP_INFO(LOGGER, "Planning frame: %s", node->move_group_interface_arm_->getPlanningFrame().c_str());
 
   // Print the name of the end-effector link for this group.
-  RCLCPP_INFO(LOGGER, "End effector link: %s", pick_and_place_class.move_group_interface_arm_->getEndEffectorLink().c_str());
+  RCLCPP_INFO(LOGGER, "End effector link: %s", node->move_group_interface_arm_->getEndEffectorLink().c_str()); */
 
   // Go to position for scanning
   //pick_and_place_class.goToSearchPos();
 
-  // Create tf2 buffer and transform listener
+  /* // Create tf2 buffer and transform listener
   std::shared_ptr<tf2_ros::TransformListener> tf_listener{nullptr};
   std::unique_ptr<tf2_ros::Buffer> tf_buffer;
   tf_buffer = std::make_unique<tf2_ros::Buffer>(node->get_clock());
@@ -133,7 +126,20 @@ int main(int argc, char* argv[])
   
   //RCLCPP_INFO(LOGGER, "Waiting for pick or place command...");
 
-  rclcpp::spin(node);
+  while(rclcpp::ok())
+  {
+    if (node->getCurrent_action() == "pick")
+    {
+      node->pickObject();
+      break;
+    }
+    else if (node->getCurrent_action() == "place")
+    {
+      node->placeObject();
+      break;
+    }
+
+  }
 
   // // Join the executor thread before shutting down the node
   //executor.cancel();

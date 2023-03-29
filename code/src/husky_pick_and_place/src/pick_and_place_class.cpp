@@ -20,16 +20,16 @@ class PickAndPlace : public rclcpp::Node
     : Node("pick_and_place_node", move_group_namespace, options)
     {
 
+      // Create a subscription to listen for the topic "action"
+      subscription_ = this->create_subscription<std_msgs::msg::String>(
+      "action", 10, std::bind(&PickAndPlace::topic_callback, this, std::placeholders::_1));
+
       // Check if this parameter is set
       if (this->get_parameter("tag_id").get_type() == rclcpp::ParameterType::PARAMETER_NOT_SET)
       {
         // Parameter not passed, declare param
         this->declare_parameter("tag_id", "case");
       }
-
-      // Create a subscription to listen for the topic "action"
-      subscription_ = this->create_subscription<std_msgs::msg::String>(
-      "action", 10, std::bind(&PickAndPlace::action_callback, this, std::placeholders::_1));
 
     }
     
@@ -297,21 +297,31 @@ class PickAndPlace : public rclcpp::Node
       return yaw;
     }
 
+    std::string getCurrent_action()
+    {
+      return current_action_;
+    }
+
+
   private:
+  
     bool is_picking_;
-    std::string current_action_;
+    mutable std::string current_action_;
     rclcpp::Node::SharedPtr node_;
     std::string PLANNING_GROUP_ARM_;
     std::string PLANNING_GROUP_GRIPPER_;
     geometry_msgs::msg::PoseStamped object_pose_;
     moveit::planning_interface::MoveGroupInterface::Plan my_plan_arm_;
     moveit::planning_interface::MoveGroupInterface::Plan my_plan_gripper_;
-    rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
 
-    void action_callback(const std_msgs::msg::String & msg) const
+    void topic_callback(const std_msgs::msg::String & msg) const
     {
       RCLCPP_INFO(this->get_logger(), "I heard: '%s'", msg.data.c_str());
+      current_action_ = msg.data;
     }
+    rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
+
+    
     
     
 };

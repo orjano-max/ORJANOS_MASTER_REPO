@@ -14,9 +14,9 @@
 
 int main(int argc, char* argv[])
 {
-  // Initialize ROS and create the Node
+   // Initialize ROS and create the Node
   rclcpp::init(argc, argv);
-  
+  /*
   static const std::string manipulator_namespace = "vx300";
   static const std::string PLANNING_GROUP_ARM = "interbotix_arm";
   static const std::string PLANNING_GROUP_GRIPPER = "interbotix_gripper";
@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
   rclcpp::executors::SingleThreadedExecutor executor;
   executor.add_node(node);
   std::thread([&executor]() { executor.spin(); }).detach();
-
+  */
   
 
 
