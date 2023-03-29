@@ -68,7 +68,7 @@ class PickAndPlace : public rclcpp::Node
 
       // Place the TCP (Tool Center Point, the tip of the robot) directly above the thingy 
       geometry_msgs::msg::Pose above_pose_object;
-      above_pose_object.orientation = target_pose_inspect.orientation;
+      above_pose_object.orientation = object_pose_.pose.orientation;
       above_pose_object.position = object_pose_.pose.position;
       above_pose_object.position.z = object_pose_.pose.position.z + 0.2;
       planAndExecuteArm();
@@ -76,7 +76,7 @@ class PickAndPlace : public rclcpp::Node
       // Place the TCP (Tool Center Point, the tip of the robot) at the thingy
       
       geometry_msgs::msg::Pose target_pose_at_object;
-      target_pose_at_object.orientation = target_pose_inspect.orientation;
+      target_pose_at_object.orientation = object_pose_.pose.orientation;
       target_pose_at_object.position = object_pose_.pose.position;
       target_pose_at_object.position.z = object_pose_.pose.position.z + 0.05;
       move_group_interface_arm_->setPoseTarget(target_pose_at_object);
@@ -89,7 +89,7 @@ class PickAndPlace : public rclcpp::Node
 
       // Lift the thingy
       geometry_msgs::msg::Pose target_pose_lift_object;
-      target_pose_lift_object.orientation = target_pose_inspect.orientation;
+      target_pose_lift_object.orientation = object_pose_.pose.orientation;
       target_pose_lift_object.position = object_pose_.pose.position;
       target_pose_lift_object.position.z = object_pose_.pose.position.z + 0.2;
       move_group_interface_arm_->setPoseTarget(target_pose_lift_object);
@@ -155,7 +155,7 @@ class PickAndPlace : public rclcpp::Node
     {
 
       tf2::Quaternion qRot;
-      qRot.setRPY(0, 0, 0);
+      qRot.setRPY(0, -pi/4, 0);
       qRot.normalize();
 
       // Move to search position
@@ -164,7 +164,7 @@ class PickAndPlace : public rclcpp::Node
       target_pose1.orientation.y = qRot.getY();
       target_pose1.orientation.z = qRot.getZ();
       target_pose1.orientation.w = qRot.getW();
-      target_pose1.position.x = 0.5;
+      target_pose1.position.x = 0.0;
       target_pose1.position.y = 0;
       target_pose1.position.z = 0.45;
       move_group_interface_arm_->setPoseTarget(target_pose1);

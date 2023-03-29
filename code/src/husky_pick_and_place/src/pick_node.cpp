@@ -75,7 +75,6 @@ int main(int argc, char* argv[])
   static const std::string manipulator_namespace = "vx300";
   static const std::string PLANNING_GROUP_ARM = "interbotix_arm";
   static const std::string PLANNING_GROUP_GRIPPER = "interbotix_gripper";
-  static const std::string end_effector = "interbotix_ee";
 
   rclcpp::NodeOptions options;
   options.automatically_declare_parameters_from_overrides(true);
@@ -85,7 +84,6 @@ int main(int argc, char* argv[])
   std::shared_ptr<moveit::planning_interface::MoveGroupInterface> move_group_interface_gripper;
   move_group_interface_arm = std::make_shared<moveit::planning_interface::MoveGroupInterface>(node, PLANNING_GROUP_ARM);
   move_group_interface_gripper = std::make_shared<moveit::planning_interface::MoveGroupInterface>(node, PLANNING_GROUP_GRIPPER);
-  move_group_interface_arm->setEndEffector(end_effector);
   node->move_group_interface_arm_ = move_group_interface_arm;
   node->move_group_interface_gripper_= move_group_interface_gripper;
 
@@ -119,7 +117,8 @@ int main(int argc, char* argv[])
     {
       // Go to position for scanning
       node->goToSearchPos();
-      
+      node->searchForObjectFrame();
+      node->pickObject();
       break;
     }
     else if (node->getCurrent_action() == "place")
