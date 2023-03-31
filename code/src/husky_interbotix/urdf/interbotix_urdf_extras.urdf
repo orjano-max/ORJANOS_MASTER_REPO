@@ -46,6 +46,32 @@
     </collision>
   </link>
 
+  <!-- %%%%%% Case LINK %%%%% -->
+  <link name="case">
+  </link>
+
+  <link name="case_link">
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+         <box size="0.016 0.06 0.045"/>
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.1 0.1 0.1 1" />
+      </material>
+    </visual>
+  </link>
+
+  <joint name="case_joint" type="fixed">
+    <parent link="case"/>
+    <child link="case_link"/>
+    <origin xyz="0.01 0 0.0" rpy="0 0 0"/>
+  </joint>
+
   <!-- %%%%%% CAMERA LINK %%%%% -->
   <link name="camera_link">
   </link>
