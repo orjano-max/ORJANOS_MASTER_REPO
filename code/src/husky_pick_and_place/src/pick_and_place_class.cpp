@@ -70,16 +70,7 @@ class PickAndPlace : public rclcpp::Node
 
       // Open gripper
       move_group_interface_gripper_->setJointValueTarget(move_group_interface_gripper_->getNamedTargetValues("Released"));
-      bool success = (move_group_interface_gripper_->plan(my_plan_gripper_) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
-      
-      if (success)
-      {
-        move_group_interface_gripper_->move();
-      }
-      else
-      {
-        RCLCPP_ERROR(this->get_logger(), "Planning Failed!");
-      }
+      planAndExecuteGripper();
 
       // --- Double check the position of the thingy ---
       searchForObjectFrame();
@@ -116,7 +107,7 @@ class PickAndPlace : public rclcpp::Node
       above_pose_object.orientation.y = qPick.getY();
       above_pose_object.orientation.z = qPick.getZ();
       above_pose_object.orientation.w = qPick.getW();
-      //above_pose_object.orientation = target_pose_inspect.orientation;
+      above_pose_object.orientation = target_pose_inspect.orientation;
       above_pose_object.position = object_pose_.pose.position;
       above_pose_object.position.z = object_pose_.pose.position.z + 0.2;
       RCLCPP_INFO(this->get_logger(), "Moving to above object");
@@ -129,7 +120,6 @@ class PickAndPlace : public rclcpp::Node
       geometry_msgs::msg::Pose target_pose_at_object;
       target_pose_at_object.orientation = above_pose_object.orientation;
       target_pose_at_object.position = object_pose_.pose.position;
-      target_pose_at_object.position.z = object_pose_.pose.position.z;
       move_group_interface_arm_->setPoseTarget(target_pose_at_object);
       RCLCPP_INFO(this->get_logger(), "Moving to object");
       planAndExecuteArm();
@@ -167,7 +157,7 @@ class PickAndPlace : public rclcpp::Node
 
       // Defining the orientation of the end effector
       tf2::Quaternion qPlace;
-      qPlace.setRPY(0, pi/4, qYaw);
+      qPlace.setRPY(0, pi/2, qYaw);
       qPlace.normalize();
       place_pose.orientation.x = qPlace.getX();
       place_pose.orientation.y = qPlace.getY();
