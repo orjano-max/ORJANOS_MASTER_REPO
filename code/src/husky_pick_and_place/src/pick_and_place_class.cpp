@@ -58,13 +58,15 @@ class PickAndPlace : public rclcpp::Node
       tf2Scalar objRoll, objRoll0, objRoll1;
       tf2Scalar objPitch, objPitch0, objPitch1;
       tf2Scalar objYaw, objYaw0, objYaw1;
-      //objectMat.getRPY(objRoll0, objPitch0, objYaw0, 1);
-      //objectMat.getRPY(objRoll1, objPitch1, objYaw1, 2);
-      objectMat.getRPY(objRoll, objPitch, objYaw);
+
+      /* objectMat.getRPY(objRoll0, objPitch0, objYaw0, 1);
+      objectMat.getRPY(objRoll1, objPitch1, objYaw1, 2);
 
       objRoll = std::min(std::abs(objRoll0), std::abs(objRoll1));
       objPitch = std::min(std::abs(objPitch0), std::abs(objPitch1));
-      objYaw = std::min(std::abs(objYaw0), std::abs(objYaw1));
+      objYaw = std::min(std::abs(objYaw0), std::abs(objYaw1)); */
+
+      objectMat.getRPY(objRoll, objPitch, objYaw);
 
       //  Place the TCP (Tool Center Point, the tip of the robot) over the thingy, but a little shifted
       double qYaw = computeYawAngle(object_pose_.pose);
