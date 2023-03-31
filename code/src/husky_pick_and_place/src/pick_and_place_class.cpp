@@ -108,6 +108,7 @@ class PickAndPlace : public rclcpp::Node
       above_pose_object.orientation.w = qRot.getW();
       above_pose_object.position = object_pose_.pose.position;
       above_pose_object.position.z = object_pose_.pose.position.z + 0.2;
+      RCLCPP_INFO(this->get_logger(), "Moving to: x= %f y= %f z= %f", static_cast<float>(objRoll), static_cast<float>(objPitch), static_cast<float>(objYaw));
       planAndExecuteArm();
 
       // Place the TCP (Tool Center Point, the tip of the robot) at the thingy
