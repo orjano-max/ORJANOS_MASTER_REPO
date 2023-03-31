@@ -43,6 +43,9 @@ class PickAndPlace : public rclcpp::Node
       if (object_pose_ == empty_pose)
       {
         RCLCPP_ERROR(this->get_logger(),"No object pose stored, aborting picking procedure!");
+        // Move to sleep position
+        move_group_interface_arm_->setJointValueTarget(move_group_interface_arm_->getNamedTargetValues("Sleep"));
+        planAndExecuteArm();
         return;
       }
 
