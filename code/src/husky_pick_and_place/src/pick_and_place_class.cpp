@@ -42,17 +42,17 @@ class PickAndPlace : public rclcpp::Node
 
       //  Place the TCP (Tool Center Point, the tip of the robot) over the thingy, but a little shifted
       double qYaw = computeYawAngle(object_pose_.pose);
-      tf2::Quaternion qRot;
-      qRot.setRPY(0, pi/2, qYaw);
-      qRot.normalize();
+      tf2::Quaternion qInspect;
+      qInspect.setRPY(0, pi/2, qYaw);
+      qInspect.normalize();
 
       geometry_msgs::msg::Pose target_pose_inspect;
       double heightAbove = 0.3; // Height above when inspecting object
       double shift = 0.1;       // Shift when inspecting object
-      target_pose_inspect.orientation.x = qRot.getX();
-      target_pose_inspect.orientation.y = qRot.getY();
-      target_pose_inspect.orientation.z = qRot.getZ();
-      target_pose_inspect.orientation.w = qRot.getW();
+      target_pose_inspect.orientation.x = qInspect.getX();
+      target_pose_inspect.orientation.y = qInspect.getY();
+      target_pose_inspect.orientation.z = qInspect.getZ();
+      target_pose_inspect.orientation.w = qInspect.getW();
       target_pose_inspect.position.x = object_pose_.pose.position.x - shift*cos(qYaw);
       target_pose_inspect.position.y = object_pose_.pose.position.y - shift*sin(qYaw);
       target_pose_inspect.position.z = object_pose_.pose.position.z + heightAbove;
@@ -98,14 +98,15 @@ class PickAndPlace : public rclcpp::Node
       RCLCPP_INFO(this->get_logger(), "Pitch of object: %f", static_cast<float>(objPitch));
       RCLCPP_INFO(this->get_logger(), "Yaw of object: %f", static_cast<float>(objYaw));
 
-      qRot.setRPY(0, 0, objYaw);
-      qRot.normalize();
+      tf2::Quaternion qPick;
+      qPick.setRPY(0, 0, objYaw);
+      qPick.normalize();
       
       geometry_msgs::msg::Pose above_pose_object;
-      above_pose_object.orientation.x = qRot.getX();
-      above_pose_object.orientation.y = qRot.getY();
-      above_pose_object.orientation.z = qRot.getZ();
-      above_pose_object.orientation.w = qRot.getW();
+      above_pose_object.orientation.x = qPick.getX();
+      above_pose_object.orientation.y = qPick.getY();
+      above_pose_object.orientation.z = qPick.getZ();
+      above_pose_object.orientation.w = qPick.getW();
       above_pose_object.position = object_pose_.pose.position;
       above_pose_object.position.z = object_pose_.pose.position.z + 0.2;
       RCLCPP_INFO(this->get_logger(), "Moving to above object");
@@ -155,13 +156,13 @@ class PickAndPlace : public rclcpp::Node
       double qYaw = computeYawAngle(place_pose);
 
       // Defining the orientation of the end effector
-      tf2::Quaternion qRot;
-      qRot.setRPY(0, 0, qYaw);
-      qRot.normalize();
-      place_pose.orientation.x = qRot.getX();
-      place_pose.orientation.y = qRot.getY();
-      place_pose.orientation.z = qRot.getZ();
-      place_pose.orientation.w = qRot.getW();
+      tf2::Quaternion qPlace;
+      qPlace.setRPY(0, 0, qYaw);
+      qPlace.normalize();
+      place_pose.orientation.x = qPlace.getX();
+      place_pose.orientation.y = qPlace.getY();
+      place_pose.orientation.z = qPlace.getZ();
+      place_pose.orientation.w = qPlace.getW();
 
       // Place the TCP (Tool Center Point, the tip of the robot) over the place pos 
       geometry_msgs::msg::Pose above_pose = place_pose;
@@ -196,16 +197,16 @@ class PickAndPlace : public rclcpp::Node
     void goToSearchPos()
     {
 
-      tf2::Quaternion qRot;
-      qRot.setRPY(0, pi/4, 0);
-      qRot.normalize();
+      tf2::Quaternion qSearch;
+      qSearch.setRPY(0, pi/4, 0);
+      qSearch.normalize();
 
       // Move to search position
       geometry_msgs::msg::Pose search_pose;
-      search_pose.orientation.x = qRot.getX();
-      search_pose.orientation.y = qRot.getY();
-      search_pose.orientation.z = qRot.getZ();
-      search_pose.orientation.w = qRot.getW();
+      search_pose.orientation.x = qSearch.getX();
+      search_pose.orientation.y = qSearch.getY();
+      search_pose.orientation.z = qSearch.getZ();
+      search_pose.orientation.w = qSearch.getW();
       search_pose.position.x = 0.0;
       search_pose.position.y = 0;
       search_pose.position.z = 0.45;
@@ -219,15 +220,15 @@ class PickAndPlace : public rclcpp::Node
     {
 
       // Move to holding position
-      tf2::Quaternion qRot;
-      qRot.setRPY(0, 0, 0);
-      qRot.normalize();
+      tf2::Quaternion qHolding;
+      qHolding.setRPY(0, 0, 0);
+      qHolding.normalize();
 
       geometry_msgs::msg::Pose holding_pose;
-      holding_pose.orientation.x = qRot.getX();
-      holding_pose.orientation.y = qRot.getY();
-      holding_pose.orientation.z = qRot.getZ();
-      holding_pose.orientation.w = qRot.getW();
+      holding_pose.orientation.x = qHolding.getX();
+      holding_pose.orientation.y = qHolding.getY();
+      holding_pose.orientation.z = qHolding.getZ();
+      holding_pose.orientation.w = qHolding.getW();
       holding_pose.position.x = 0;
       holding_pose.position.y = 0;
       holding_pose.position.z = 0.5;
