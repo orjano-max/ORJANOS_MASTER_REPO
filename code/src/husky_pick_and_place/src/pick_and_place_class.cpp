@@ -188,7 +188,7 @@ class PickAndPlace : public rclcpp::Node
     {
 
       tf2::Quaternion qRot;
-      qRot.setRPY(0, pi/6, 0);
+      qRot.setRPY(0, pi/4, 0);
       qRot.normalize();
 
       // Move to search position
@@ -242,6 +242,7 @@ class PickAndPlace : public rclcpp::Node
 
       rclcpp::Time start_time = rclcpp::Clock().now();
       std::string tag_frame = this->get_parameter("tag_id").as_string();
+      RCLCPP_ERROR(this->get_logger(), "Looking for object tag:", tag_frame.c_str());
 
       while (rclcpp::ok() && !frame_available) 
       {
@@ -261,7 +262,7 @@ class PickAndPlace : public rclcpp::Node
         double elapsed_time = (rclcpp::Clock().now() - start_time).seconds();
         if (elapsed_time >= timeout) {
             // Timeout reached, return false
-            RCLCPP_ERROR(this->get_logger(), "Timeaout reached while looking for tag!");
+            RCLCPP_ERROR(this->get_logger(), "Timeout reached while looking for tag!");
             return false;
         }
       }
