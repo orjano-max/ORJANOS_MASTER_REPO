@@ -47,7 +47,7 @@
   </link>
 
   <!-- %%%%%% Case LINK %%%%% -->
-  <link name="case">
+  <!-- <link name="case">
   </link>
 
   <link name="case_link">
@@ -70,7 +70,7 @@
     <parent link="case"/>
     <child link="case_link"/>
     <origin xyz="0.01 0 0.0" rpy="0 0 0"/>
-  </joint>
+  </joint> -->
 
   <!-- %%%%%% CAMERA LINK %%%%% -->
   <link name="camera_link">
