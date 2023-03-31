@@ -55,16 +55,9 @@ class PickAndPlace : public rclcpp::Node
       QObj.setZ(object_pose_.pose.orientation.z);
       QObj.setW(object_pose_.pose.orientation.w);
       tf2::Matrix3x3 objectMat(QObj);
-      tf2Scalar objRoll, objRoll0, objRoll1;
-      tf2Scalar objPitch, objPitch0, objPitch1;
-      tf2Scalar objYaw, objYaw0, objYaw1;
-
-      /* objectMat.getRPY(objRoll0, objPitch0, objYaw0, 1);
-      objectMat.getRPY(objRoll1, objPitch1, objYaw1, 2);
-
-      objRoll = std::min(std::abs(objRoll0), std::abs(objRoll1));
-      objPitch = std::min(std::abs(objPitch0), std::abs(objPitch1));
-      objYaw = std::min(std::abs(objYaw0), std::abs(objYaw1)); */
+      tf2Scalar objRoll;
+      tf2Scalar objPitch;
+      tf2Scalar objYaw;
 
       objectMat.getRPY(objRoll, objPitch, objYaw);
 
@@ -93,15 +86,17 @@ class PickAndPlace : public rclcpp::Node
 
       // --- Double check the position of the thingy ---
       searchForObjectFrame();
-
       
       // Place the TCP (Tool Center Point, the tip of the robot) directly above the thingy 
-      
-
-
-      RCLCPP_INFO(this->get_logger(), "Roll of object: %f", static_cast<float>(objRoll));
-      RCLCPP_INFO(this->get_logger(), "Pitch of object: %f", static_cast<float>(objPitch));
-      RCLCPP_INFO(this->get_logger(), "Yaw of object: %f", static_cast<float>(objYaw));
+      QObj.setX(object_pose_.pose.orientation.x);
+      QObj.setY(object_pose_.pose.orientation.y);
+      QObj.setZ(object_pose_.pose.orientation.z);
+      QObj.setW(object_pose_.pose.orientation.w);
+      objectMat.setRotation(QObj);
+      tf2Scalar objRoll;
+      tf2Scalar objPitch;
+      tf2Scalar objYaw;
+      objectMat.getRPY(objRoll, objPitch, objYaw);
 
       tf2::Quaternion qPick;
       qPick.setRPY(0, pi/2, objYaw);
@@ -114,7 +109,7 @@ class PickAndPlace : public rclcpp::Node
       above_pose_object.orientation.w = qPick.getW();
       //above_pose_object.orientation = target_pose_inspect.orientation;
       above_pose_object.position = object_pose_.pose.position;
-      above_pose_object.position.z = object_pose_.pose.position.z + 0.2;
+      above_pose_object.position.z = object_pose_.pose.position.z + 0.05;
       RCLCPP_INFO(this->get_logger(), "Moving to above object");
       RCLCPP_INFO(this->get_logger(), "\n  x= %f y= %f z= %f", above_pose_object.position.x, above_pose_object.position.y, above_pose_object.position.z);
       RCLCPP_INFO(this->get_logger(), "\n x= %f y= %f z= %f w= %f", above_pose_object.orientation.x, above_pose_object.orientation.y, above_pose_object.orientation.z, above_pose_object.orientation.w);
