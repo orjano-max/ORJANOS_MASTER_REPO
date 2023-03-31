@@ -39,6 +39,12 @@ class PickAndPlace : public rclcpp::Node
 
     void pickObject()
     {
+      geometry_msgs::msg::PoseStamped empty_pose;
+      if (object_pose_ == empty_pose)
+      {
+        RCLCPP_ERROR(this->get_logger(),"No object pose stored, aborting picking procedure!");
+        return;
+      }
 
       //  Place the TCP (Tool Center Point, the tip of the robot) over the thingy, but a little shifted
       double qYaw = computeYawAngle(object_pose_.pose);

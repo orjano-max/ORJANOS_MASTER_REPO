@@ -23,7 +23,8 @@ class MinimalPublisher(Node):
     def timer_callback(self):
         msg = String()
         msg.data = 'pick' 
-        #msg.data = 'place' 
+        msg.data = 'place'
+        msg.data = 'none' 
         self.publisher_.publish(msg)
         self.get_logger().info('Publishing: "%s"' % msg.data)
         self.i += 1
