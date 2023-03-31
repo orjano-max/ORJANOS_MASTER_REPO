@@ -49,10 +49,26 @@ class PickAndPlace : public rclcpp::Node
         return;
       }
 
+      tf2::Quaternion QObj; 
+      QObj.setX(object_pose_.pose.orientation.x);
+      QObj.setY(object_pose_.pose.orientation.y);
+      QObj.setZ(object_pose_.pose.orientation.z);
+      QObj.setW(object_pose_.pose.orientation.w);
+      tf2::Matrix3x3 objectMat(QObj);
+      tf2Scalar objRoll, objRoll0, objRoll1;
+      tf2Scalar objPitch, objPitch0, objPitch1;
+      tf2Scalar objYaw, objYaw0, objYaw1;
+      objectMat.getRPY(objRoll0, objPitch0, objYaw0, 1);
+      objectMat.getRPY(objRoll1, objPitch1, objYaw1, 2);
+
+      objRoll = std::min(std::abs(objRoll0), std::abs(objRoll1));
+      objPitch = std::min(std::abs(objPitch0), std::abs(objPitch1));
+      objYaw = std::min(std::abs(objYaw0), std::abs(objYaw1));
+
       //  Place the TCP (Tool Center Point, the tip of the robot) over the thingy, but a little shifted
       double qYaw = computeYawAngle(object_pose_.pose);
       tf2::Quaternion qInspect;
-      qInspect.setRPY(0, pi/2, qYaw);
+      qInspect.setRPY(0, pi/2, objYaw);
       qInspect.normalize();
 
       geometry_msgs::msg::Pose target_pose_inspect;
@@ -77,21 +93,7 @@ class PickAndPlace : public rclcpp::Node
 
       
       // Place the TCP (Tool Center Point, the tip of the robot) directly above the thingy 
-      tf2::Quaternion QObj; 
-      QObj.setX(object_pose_.pose.orientation.x);
-      QObj.setY(object_pose_.pose.orientation.y);
-      QObj.setZ(object_pose_.pose.orientation.z);
-      QObj.setW(object_pose_.pose.orientation.w);
-      tf2::Matrix3x3 objectMat(QObj);
-      tf2Scalar objRoll, objRoll0, objRoll1;
-      tf2Scalar objPitch, objPitch0, objPitch1;
-      tf2Scalar objYaw, objYaw0, objYaw1;
-      objectMat.getRPY(objRoll0, objPitch0, objYaw0, 1);
-      objectMat.getRPY(objRoll1, objPitch1, objYaw1, 2);
-
-      objRoll = std::min(std::abs(objRoll0), std::abs(objRoll1));
-      objPitch = std::min(std::abs(objPitch0), std::abs(objPitch1));
-      objYaw = std::min(std::abs(objYaw0), std::abs(objYaw1));
+      
 
 
       RCLCPP_INFO(this->get_logger(), "Roll of object: %f", static_cast<float>(objRoll));
