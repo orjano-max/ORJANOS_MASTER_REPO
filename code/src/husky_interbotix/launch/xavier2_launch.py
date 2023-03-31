@@ -53,7 +53,7 @@ def generate_launch_description():
     node_tf_case = Node(
         package="tf2_ros",
         executable="static_transform_publisher",
-        arguments = ["0.0", "0.0", "-0.045", "0", "0", "0", "case", "case_link"],
+        arguments = ["0.0", "0.0", "-0.0", "0", "0", "0", "case", "case_link"],
     )
 
     # Publish scene geometry
