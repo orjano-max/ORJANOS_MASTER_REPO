@@ -188,7 +188,7 @@ class PickAndPlace : public rclcpp::Node
     {
 
       tf2::Quaternion qRot;
-      qRot.setRPY(0, 0, 0);
+      qRot.setRPY(0, -pi/4, 0);
       qRot.normalize();
 
       // Move to search position
@@ -214,15 +214,15 @@ class PickAndPlace : public rclcpp::Node
       qRot.setRPY(0, 0, 0);
       qRot.normalize();
 
-      geometry_msgs::msg::Pose target_pose1;
-      target_pose1.orientation.x = qRot.getX();
-      target_pose1.orientation.y = qRot.getY();
-      target_pose1.orientation.z = qRot.getZ();
-      target_pose1.orientation.w = qRot.getW();
-      target_pose1.position.x = 0;
-      target_pose1.position.y = 0;
-      target_pose1.position.z = 0.5;
-      move_group_interface_arm_->setPoseTarget(target_pose1);
+      geometry_msgs::msg::Pose holding_pose;
+      holding_pose.orientation.x = qRot.getX();
+      holding_pose.orientation.y = qRot.getY();
+      holding_pose.orientation.z = qRot.getZ();
+      holding_pose.orientation.w = qRot.getW();
+      holding_pose.position.x = 0;
+      holding_pose.position.y = 0;
+      holding_pose.position.z = 0.5;
+      move_group_interface_arm_->setPoseTarget(holding_pose);
       
       planAndExecuteArm();
     
