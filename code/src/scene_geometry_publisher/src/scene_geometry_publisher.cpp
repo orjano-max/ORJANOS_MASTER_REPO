@@ -50,7 +50,7 @@
   // Now we will load the realsense camera assembly and attatch it to the gripper
   // ----------- 
   // Set frame id to gripper link
-  std::string frameId = "vx300/gripper_link";
+  /* std::string frameId = "vx300/gripper_link";
   node->setFrameId(frameId);
  
   // Set path to the realsense.scene file
@@ -78,7 +78,7 @@
     attachedObjects.push_back(attachedObject);
   }
 
-  planning_scene_interface.applyAttachedCollisionObjects(attachedObjects);
+  planning_scene_interface.applyAttachedCollisionObjects(attachedObjects); */
 
 
 
