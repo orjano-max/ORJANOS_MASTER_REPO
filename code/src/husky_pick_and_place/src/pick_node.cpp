@@ -126,7 +126,7 @@ int main(int argc, char* argv[])
     }
     else if (node->getCurrent_action() == "none")
     {
-      node->goToSleepPos()
+      node->goToSleepPos();
     }
 
   }
