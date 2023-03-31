@@ -108,7 +108,8 @@ class PickAndPlace : public rclcpp::Node
       above_pose_object.orientation.w = qRot.getW();
       above_pose_object.position = object_pose_.pose.position;
       above_pose_object.position.z = object_pose_.pose.position.z + 0.2;
-      RCLCPP_INFO(this->get_logger(), "Moving to:\n  x= %f y= %f z= %f", above_pose_object.position.x, above_pose_object.position.y, above_pose_object.position.z);
+      RCLCPP_INFO(this->get_logger(), "Moving to above object");
+      RCLCPP_INFO(this->get_logger(), "\n  x= %f y= %f z= %f", above_pose_object.position.x, above_pose_object.position.y, above_pose_object.position.z);
       RCLCPP_INFO(this->get_logger(), "\n x= %f y= %f z= %f w= %f", above_pose_object.orientation.x, above_pose_object.orientation.y, above_pose_object.orientation.z, above_pose_object.orientation.w);
       planAndExecuteArm();
 
@@ -119,6 +120,7 @@ class PickAndPlace : public rclcpp::Node
       target_pose_at_object.position = object_pose_.pose.position;
       target_pose_at_object.position.z = object_pose_.pose.position.z;
       move_group_interface_arm_->setPoseTarget(target_pose_at_object);
+      RCLCPP_INFO(this->get_logger(), "Moving to object");
       planAndExecuteArm();
 
       // Grasp the thingy
