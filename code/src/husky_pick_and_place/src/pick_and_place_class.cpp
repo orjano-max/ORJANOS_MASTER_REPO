@@ -39,8 +39,8 @@ class PickAndPlace : public rclcpp::Node
 
     void pickObject()
     {
-      geometry_msgs::msg::PoseStamped empty_pose;
-      if (object_pose_ == empty_pose)
+
+      if (object_pose_ == empty_pose_)
       {
         RCLCPP_ERROR(this->get_logger(),"No object pose stored, aborting picking procedure!");
         // Move to sleep position
@@ -282,6 +282,7 @@ class PickAndPlace : public rclcpp::Node
         double elapsed_time = (rclcpp::Clock().now() - start_time).seconds();
         if (elapsed_time >= timeout) {
             // Timeout reached, return false
+            object_pose_ = empty_pose_;
             RCLCPP_ERROR(this->get_logger(), "Timeout reached while looking for tag!");
             return false;
         }
@@ -371,6 +372,7 @@ class PickAndPlace : public rclcpp::Node
     std::string PLANNING_GROUP_ARM_;
     std::string PLANNING_GROUP_GRIPPER_;
     geometry_msgs::msg::PoseStamped object_pose_;
+    geometry_msgs::msg::PoseStamped empty_pose_;
     moveit::planning_interface::MoveGroupInterface::Plan my_plan_arm_;
     moveit::planning_interface::MoveGroupInterface::Plan my_plan_gripper_;
 
