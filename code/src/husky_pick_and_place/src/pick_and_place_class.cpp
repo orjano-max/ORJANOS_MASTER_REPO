@@ -83,10 +83,15 @@ class PickAndPlace : public rclcpp::Node
       QObj.setZ(object_pose_.pose.orientation.z);
       QObj.setW(object_pose_.pose.orientation.w);
       tf2::Matrix3x3 objectMat(QObj);
-      tf2Scalar objRoll;
-      tf2Scalar objPitch;
-      tf2Scalar objYaw;
-      objectMat.getRPY(objRoll, objPitch, objYaw);
+      tf2Scalar objRoll, objRoll0, objRoll1;
+      tf2Scalar objPitch, objPitch0, objPitch1;
+      tf2Scalar objYaw, objYaw0, objYaw1;
+      objectMat.getRPY(objRoll0, objPitch0, objYaw0, 1);
+      objectMat.getRPY(objRoll1, objPitch1, objYaw1, 2);
+
+      objRoll = std::min(objRoll0, objRoll1);
+      objPitch = std::min(objPitch0, objPitch1);
+      objYaw = std::min(objYaw0, objYaw1);
 
 
       RCLCPP_INFO(this->get_logger(), "Roll of object: %f", static_cast<float>(objRoll));
@@ -110,7 +115,7 @@ class PickAndPlace : public rclcpp::Node
       geometry_msgs::msg::Pose target_pose_at_object;
       target_pose_at_object.orientation = above_pose_object.orientation;
       target_pose_at_object.position = object_pose_.pose.position;
-      target_pose_at_object.position.z = object_pose_.pose.position.z + 0.02;
+      target_pose_at_object.position.z = object_pose_.pose.position.z;
       move_group_interface_arm_->setPoseTarget(target_pose_at_object);
       planAndExecuteArm();
 
