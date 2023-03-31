@@ -242,7 +242,7 @@ class PickAndPlace : public rclcpp::Node
 
       rclcpp::Time start_time = rclcpp::Clock().now();
       std::string tag_frame = this->get_parameter("tag_id").as_string();
-      RCLCPP_INFO(this->get_logger(), "Looking for object tag:", tag_frame.c_str());
+      RCLCPP_INFO(this->get_logger(), "Looking for object tag: %s", tag_frame.c_str());
 
       while (rclcpp::ok() && !frame_available) 
       {
