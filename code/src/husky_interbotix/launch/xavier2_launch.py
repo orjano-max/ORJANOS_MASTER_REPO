@@ -55,6 +55,19 @@ def generate_launch_description():
             [FindPackageShare('scene_geometry_publisher'), 'launch', 'scene_geometry_publisher_launch.py'])),
             launch_arguments ={
             'robot_model' : 'vx300',
+            'external_urdf_loc' : interbotix_urdf_extras_path,
+            'external_srdf_loc' : interbotix_srdf_extras_path,
+            }.items()
+    )
+
+    # Publish scene geometry
+    launch_pick_and_place = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(PathJoinSubstitution(
+            [FindPackageShare('husky_pick_and_place'), 'launch', 'pick_launch.py'])),
+            launch_arguments ={
+            'robot_model' : 'vx300',
+            'external_urdf_loc' : interbotix_urdf_extras_path,
+            'external_srdf_loc' : interbotix_srdf_extras_path,
             }.items()
     )
 
@@ -72,5 +85,8 @@ def generate_launch_description():
 
     # Launch Apriltag
     ld.add_action(launch_apriltag_continuous_detection)
+
+    #Launch pick and place node
+    ld.add_action(launch_pick_and_place)
 
     return ld

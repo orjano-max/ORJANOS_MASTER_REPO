@@ -119,12 +119,10 @@ int main(int argc, char* argv[])
       node->goToSearchPos();
       node->searchForObjectFrame();
       node->pickObject();
-      break;
     }
     else if (node->getCurrent_action() == "place")
     {
       node->placeObject();
-      break;
     }
 
   }
