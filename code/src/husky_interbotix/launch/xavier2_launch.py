@@ -37,7 +37,7 @@ def generate_launch_description():
             'use_moveit_rviz' : 'false',
             'external_urdf_loc' : interbotix_urdf_extras_path,
             'external_srdf_loc' : interbotix_srdf_extras_path,
-            'show_gripper_fingers' : 'true',
+            'show_gripper_fingers' : 'false',
             }.items()
     )
      

@@ -83,7 +83,7 @@
 
   <!-- Custom gripper link.
        in reality, it is the same thing but with rotated tf -->
-  <!-- <joint name="left_finger" type="prismatic">
+  <joint name="left_finger" type="prismatic">
     <axis xyz="0 1 0"/>
     <limit
       effort="${finger_limit_effort}"
@@ -217,6 +217,6 @@
         ixz="0"
         iyz="0"/>
     </inertial>
-  </link> -->
+  </link>
   
 </robot>
