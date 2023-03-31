@@ -49,6 +49,13 @@ def generate_launch_description():
         arguments = ["-0.44", "-0.104", "0", "-1.5708", "0", "0", "user_rail_link", "world"],
     )
 
+    # Static transform that describes case origin
+    node_tf_case = Node(
+        package="tf2_ros",
+        executable="static_transform_publisher",
+        arguments = ["0.0", "0.0", "-0.045", "0", "0", "0", "case", "case_link"],
+    )
+
     # Publish scene geometry
     launch_scene_geometry_publisher = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(PathJoinSubstitution(
@@ -77,6 +84,7 @@ def generate_launch_description():
     # Launch Interbotix arm with moveit
     ld.add_action(launch_interbotix_moveit)
     ld.add_action(node_tf_manipulator)
+    ld.add_action(node_tf_case)
     # Publish scene
     ld.add_action(launch_scene_geometry_publisher)
 
