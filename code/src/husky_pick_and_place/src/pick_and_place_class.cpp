@@ -109,6 +109,7 @@ class PickAndPlace : public rclcpp::Node
       RCLCPP_INFO(this->get_logger(), "Moving to above object");
       RCLCPP_INFO(this->get_logger(), "\n  x= %f y= %f z= %f", above_pose_object.position.x, above_pose_object.position.y, above_pose_object.position.z);
       RCLCPP_INFO(this->get_logger(), "\n x= %f y= %f z= %f w= %f", above_pose_object.orientation.x, above_pose_object.orientation.y, above_pose_object.orientation.z, above_pose_object.orientation.w);
+      move_group_interface_arm_->setPoseTarget(above_pose_object);
       planAndExecuteArm();
 
       // Place the TCP (Tool Center Point, the tip of the robot) at the thingy
