@@ -18,8 +18,8 @@
 </group_state>
 
 <group_state name="Grasping_case" group="interbotix_gripper">
-    <joint name="left_finger" value="0.0405" />
-    <joint name="right_finger" value="-0.0405" />
+    <joint name="left_finger" value="0.041" />
+    <joint name="right_finger" value="-0.041" />
 </group_state>
 
 <!-- <end_effector name="interbotix_ee" parent_link="$(arg robot_name)/ee_gripper_link" group="interbotix_gripper" /> -->
