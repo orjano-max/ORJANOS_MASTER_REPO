@@ -43,7 +43,7 @@ class PickAndPlace : public rclcpp::Node
       //  Place the TCP (Tool Center Point, the tip of the robot) over the thingy, but a little shifted
       double qYaw = computeYawAngle(object_pose_.pose);
       tf2::Quaternion qRot;
-      qRot.setRPY(0, 0, qYaw);
+      qRot.setRPY(0, pi/4, qYaw);
       qRot.normalize();
 
       geometry_msgs::msg::Pose target_pose_inspect;
