@@ -89,9 +89,9 @@ class PickAndPlace : public rclcpp::Node
       objectMat.getRPY(objRoll0, objPitch0, objYaw0, 1);
       objectMat.getRPY(objRoll1, objPitch1, objYaw1, 2);
 
-      objRoll = std::min(objRoll0, objRoll1);
-      objPitch = std::min(objPitch0, objPitch1);
-      objYaw = std::min(objYaw0, objYaw1);
+      objRoll = std::min(std::abs(objRoll0), std::abs(objRoll1));
+      objPitch = std::min(std::abs(objPitch0), std::abs(objPitch1));
+      objYaw = std::min(std::abs(objYaw0), std::abs(objYaw1));
 
 
       RCLCPP_INFO(this->get_logger(), "Roll of object: %f", static_cast<float>(objRoll));
