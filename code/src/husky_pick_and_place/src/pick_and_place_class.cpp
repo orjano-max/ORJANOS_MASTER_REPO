@@ -192,15 +192,15 @@ class PickAndPlace : public rclcpp::Node
       qRot.normalize();
 
       // Move to search position
-      geometry_msgs::msg::Pose target_pose1;
-      target_pose1.orientation.x = qRot.getX();
-      target_pose1.orientation.y = qRot.getY();
-      target_pose1.orientation.z = qRot.getZ();
-      target_pose1.orientation.w = qRot.getW();
-      target_pose1.position.x = 0.0;
-      target_pose1.position.y = 0;
-      target_pose1.position.z = 0.45;
-      move_group_interface_arm_->setPoseTarget(target_pose1);
+      geometry_msgs::msg::Pose search_pose;
+      search_pose.orientation.x = qRot.getX();
+      search_pose.orientation.y = qRot.getY();
+      search_pose.orientation.z = qRot.getZ();
+      search_pose.orientation.w = qRot.getW();
+      search_pose.position.x = 0.0;
+      search_pose.position.y = 0;
+      search_pose.position.z = 0.45;
+      move_group_interface_arm_->setPoseTarget(search_pose);
       
       planAndExecuteArm();
     
