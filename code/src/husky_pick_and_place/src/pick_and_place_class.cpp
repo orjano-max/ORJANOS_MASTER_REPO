@@ -188,7 +188,7 @@ class PickAndPlace : public rclcpp::Node
     {
 
       tf2::Quaternion qRot;
-      qRot.setRPY(0, -pi/6, 0);
+      qRot.setRPY(0, pi/6, 0);
       qRot.normalize();
 
       // Move to search position
