@@ -69,7 +69,7 @@ class PickAndPlace : public rclcpp::Node
 
       geometry_msgs::msg::Pose target_pose_inspect;
       double heightAbove = 0.3; // Height above when inspecting object
-      double shift = 0.04;       // Shift when inspecting object
+      double shift = 0.00;       // Shift when inspecting object
       target_pose_inspect.orientation.x = qInspect.getX();
       target_pose_inspect.orientation.y = qInspect.getY();
       target_pose_inspect.orientation.z = qInspect.getZ();
