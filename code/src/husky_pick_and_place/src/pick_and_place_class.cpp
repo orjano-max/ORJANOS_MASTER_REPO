@@ -261,14 +261,15 @@ class PickAndPlace : public rclcpp::Node
 
       rclcpp::Time start_time = rclcpp::Clock().now();
       std::string tag_frame = this->get_parameter("tag_id").as_string();
-      RCLCPP_INFO(this->get_logger(), "Looking for object tag: %s", tag_frame.c_str());
+      std::string object_frame = tag_frame + "_link";
+      RCLCPP_INFO(this->get_logger(), "Looking for object: %s", object_frame.c_str());
 
       while (rclcpp::ok() && !frame_available) 
       {
         try 
         {
             std::string planning_frame = move_group_interface_arm_->getPlanningFrame();
-            transform = tf_buffer->lookupTransform(planning_frame, tag_frame, tf2::TimePointZero);
+            transform = tf_buffer->lookupTransform(planning_frame, object_frame, tf2::TimePointZero);
             frame_available = true;
         } 
         catch (tf2::TransformException& ex) 
@@ -290,7 +291,7 @@ class PickAndPlace : public rclcpp::Node
       if (frame_available)
       {
         // Extract the pose from the transform
-        RCLCPP_INFO(this->get_logger(), "Found tag: %s", tag_frame.c_str());
+        RCLCPP_INFO(this->get_logger(), "Found tag: %s", object_frame.c_str());
         RCLCPP_INFO(this->get_logger(), "At pos:");
         RCLCPP_INFO(this->get_logger(), "X: %f", transform.transform.translation.x);
         RCLCPP_INFO(this->get_logger(), "Y: %f", transform.transform.translation.y);
