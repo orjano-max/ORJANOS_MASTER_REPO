@@ -99,7 +99,7 @@ class PickAndPlace : public rclcpp::Node
       RCLCPP_INFO(this->get_logger(), "Yaw of object: %f", static_cast<float>(objYaw));
 
       tf2::Quaternion qPick;
-      qPick.setRPY(0, 0, objYaw);
+      qPick.setRPY(0, pi/2, objYaw);
       qPick.normalize();
       
       geometry_msgs::msg::Pose above_pose_object;
@@ -107,7 +107,7 @@ class PickAndPlace : public rclcpp::Node
       above_pose_object.orientation.y = qPick.getY();
       above_pose_object.orientation.z = qPick.getZ();
       above_pose_object.orientation.w = qPick.getW();
-      above_pose_object.orientation = target_pose_inspect.orientation;
+      //above_pose_object.orientation = target_pose_inspect.orientation;
       above_pose_object.position = object_pose_.pose.position;
       above_pose_object.position.z = object_pose_.pose.position.z + 0.2;
       RCLCPP_INFO(this->get_logger(), "Moving to above object");
@@ -234,6 +234,15 @@ class PickAndPlace : public rclcpp::Node
       holding_pose.position.z = 0.5;
       move_group_interface_arm_->setPoseTarget(holding_pose);
       
+      planAndExecuteArm();
+    
+    }
+
+    void goToSleepPos()
+    {
+
+      // Move to sleep position
+      move_group_interface_arm_->setJointValueTarget(move_group_interface_arm_->getNamedTargetValues("Sleep"));
       planAndExecuteArm();
     
     }

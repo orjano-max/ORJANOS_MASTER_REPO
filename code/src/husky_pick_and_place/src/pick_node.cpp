@@ -124,6 +124,10 @@ int main(int argc, char* argv[])
     {
       node->placeObject();
     }
+    else if (node->getCurrent_action() == "none")
+    {
+      node->goToSleepPos()
+    }
 
   }
 
