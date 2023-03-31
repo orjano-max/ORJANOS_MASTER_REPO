@@ -107,6 +107,7 @@ class PickAndPlace : public rclcpp::Node
       above_pose_object.orientation.y = qPick.getY();
       above_pose_object.orientation.z = qPick.getZ();
       above_pose_object.orientation.w = qPick.getW();
+      above_pose_object.orientation = target_pose_inspect.orientation;
       above_pose_object.position = object_pose_.pose.position;
       above_pose_object.position.z = object_pose_.pose.position.z + 0.2;
       RCLCPP_INFO(this->get_logger(), "Moving to above object");
