@@ -15,10 +15,15 @@ ARGUMENTS = [
 
 
 def generate_launch_description():
-    
+
     interbotix_urdf_extras_path = PathJoinSubstitution(
                 [FindPackageShare("husky_interbotix"), "urdf", "interbotix_urdf_extras.urdf"]
     )
+
+    interbotix_srdf_extras_path = PathJoinSubstitution(
+                [FindPackageShare("husky_interbotix"), "srdf", "interbotix_srdf_extras.srdf"]
+    )
+    
     
     # Launch the husky robot using the husky_uia uia_master_husky repo
     launch_husky_simulation = IncludeLaunchDescription(
@@ -50,7 +55,9 @@ def generate_launch_description():
             [FindPackageShare('scene_geometry_publisher'), 'launch', 'scene_geometry_publisher_launch.py'])),
             launch_arguments ={
             'robot_model' : 'vx300',
-            'hardware_type' : 'fake'
+            'hardware_type' : 'fake',
+            'external_urdf_loc' : interbotix_urdf_extras_path,
+            'external_srdf_loc' : interbotix_srdf_extras_path,
             }.items()
     )
 
@@ -59,7 +66,9 @@ def generate_launch_description():
             [FindPackageShare('husky_interbotix'), 'launch', 'rviz_moveit_launch.py'])),
             launch_arguments ={
             'robot_model' : 'vx300',
-            'hardware_type' : 'fake'
+            'hardware_type' : 'fake',
+            'external_urdf_loc' : interbotix_urdf_extras_path,
+            'external_srdf_loc' : interbotix_srdf_extras_path,
             }.items()
     )
 

@@ -43,6 +43,7 @@ class PickAndPlace : public rclcpp::Node
       if (object_pose_ == empty_pose_)
       {
         RCLCPP_ERROR(this->get_logger(),"No object pose stored, aborting picking procedure!");
+        RCLCPP_ERROR(this->get_logger(),"Run the 'searchForObject()' function to populate the object_pose_ variable!");
         // Move to sleep position
         move_group_interface_arm_->setJointValueTarget(move_group_interface_arm_->getNamedTargetValues("Sleep"));
         planAndExecuteArm();
@@ -50,10 +51,10 @@ class PickAndPlace : public rclcpp::Node
       }
 
       tf2::Quaternion QObj; 
-      QObj.setX(object_pose_.pose.orientation.x);
-      QObj.setY(object_pose_.pose.orientation.y);
-      QObj.setZ(object_pose_.pose.orientation.z);
-      QObj.setW(object_pose_.pose.orientation.w);
+      QObj.setX(object_pose_.orientation.x);
+      QObj.setY(object_pose_.orientation.y);
+      QObj.setZ(object_pose_.orientation.z);
+      QObj.setW(object_pose_.orientation.w);
       tf2::Matrix3x3 objectMat(QObj);
       tf2Scalar objRoll;
       tf2Scalar objPitch;
@@ -62,7 +63,7 @@ class PickAndPlace : public rclcpp::Node
       objectMat.getRPY(objRoll, objPitch, objYaw);
 
       //  Place the TCP (Tool Center Point, the tip of the robot) over the thingy, but a little shifted
-      double qYaw = computeYawAngle(object_pose_.pose);
+      double qYaw = computeYawAngle(object_pose_);
       tf2::Quaternion qInspect;
       qInspect.setRPY(0, pi/2, objYaw);
       qInspect.normalize();
@@ -74,9 +75,9 @@ class PickAndPlace : public rclcpp::Node
       target_pose_inspect.orientation.y = qInspect.getY();
       target_pose_inspect.orientation.z = qInspect.getZ();
       target_pose_inspect.orientation.w = qInspect.getW();
-      target_pose_inspect.position.x = object_pose_.pose.position.x - shift*cos(qYaw);
-      target_pose_inspect.position.y = object_pose_.pose.position.y - shift*sin(qYaw);
-      target_pose_inspect.position.z = object_pose_.pose.position.z + heightAbove;
+      target_pose_inspect.position.x = object_pose_.position.x - shift*cos(qYaw);
+      target_pose_inspect.position.y = object_pose_.position.y - shift*sin(qYaw);
+      target_pose_inspect.position.z = object_pose_.position.z + heightAbove;
       move_group_interface_arm_->setPoseTarget(target_pose_inspect);
       planAndExecuteArm();
 
@@ -85,13 +86,13 @@ class PickAndPlace : public rclcpp::Node
       planAndExecuteGripper();
 
       // --- Double check the position of the thingy ---
-      searchForObjectFrame();
+      searchForObject();
       
       // Place the TCP (Tool Center Point, the tip of the robot) directly above the thingy 
-      QObj.setX(object_pose_.pose.orientation.x);
-      QObj.setY(object_pose_.pose.orientation.y);
-      QObj.setZ(object_pose_.pose.orientation.z);
-      QObj.setW(object_pose_.pose.orientation.w);
+      QObj.setX(object_pose_.orientation.x);
+      QObj.setY(object_pose_.orientation.y);
+      QObj.setZ(object_pose_.orientation.z);
+      QObj.setW(object_pose_.orientation.w);
       objectMat.setRotation(QObj);
       objectMat.getRPY(objRoll, objPitch, objYaw);
 
@@ -104,8 +105,8 @@ class PickAndPlace : public rclcpp::Node
       above_pose_object.orientation.y = qPick.getY();
       above_pose_object.orientation.z = qPick.getZ();
       above_pose_object.orientation.w = qPick.getW();
-      above_pose_object.position = object_pose_.pose.position;
-      above_pose_object.position.z = object_pose_.pose.position.z + 0.05;
+      above_pose_object.position = object_pose_.position;
+      above_pose_object.position.z = object_pose_.position.z + 0.05;
       RCLCPP_INFO(this->get_logger(), "Moving to above object");
       RCLCPP_INFO(this->get_logger(), "\n  x= %f y= %f z= %f", above_pose_object.position.x, above_pose_object.position.y, above_pose_object.position.z);
       RCLCPP_INFO(this->get_logger(), "\n x= %f y= %f z= %f w= %f", above_pose_object.orientation.x, above_pose_object.orientation.y, above_pose_object.orientation.z, above_pose_object.orientation.w);
@@ -116,7 +117,7 @@ class PickAndPlace : public rclcpp::Node
       
       geometry_msgs::msg::Pose target_pose_at_object;
       target_pose_at_object.orientation = above_pose_object.orientation;
-      target_pose_at_object.position = object_pose_.pose.position;
+      target_pose_at_object.position = object_pose_.position;
       move_group_interface_arm_->setPoseTarget(target_pose_at_object);
       RCLCPP_INFO(this->get_logger(), "Moving to object");
       planAndExecuteArm();
@@ -130,8 +131,8 @@ class PickAndPlace : public rclcpp::Node
       // Lift the thingy
       geometry_msgs::msg::Pose target_pose_lift_object;
       target_pose_lift_object.orientation = above_pose_object.orientation;
-      target_pose_lift_object.position = object_pose_.pose.position;
-      target_pose_lift_object.position.z = object_pose_.pose.position.z + 0.2;
+      target_pose_lift_object.position = object_pose_.position;
+      target_pose_lift_object.position.z = object_pose_.position.z + 0.2;
       move_group_interface_arm_->setPoseTarget(target_pose_lift_object);
       planAndExecuteArm();
 
@@ -182,6 +183,47 @@ class PickAndPlace : public rclcpp::Node
       // Move to sleep position
       move_group_interface_arm_->setJointValueTarget(move_group_interface_arm_->getNamedTargetValues("Sleep"));
       planAndExecuteArm();
+    }
+
+    void calibrate()
+    {
+      tf2::Quaternion qCalib;
+      std::string calib_frame = "calib";
+      float rot = 0.0;
+      std::vector <geometry_msgs::msg::Pose> measurements;
+      geometry_msgs::msg::Pose calib_pose;
+
+      RCLCPP_INFO(this->get_logger(), "Starting calibration procedure...");
+
+      // Set calib position
+      calib_pose.position.x = 0.4;
+      calib_pose.position.y = 0;
+      calib_pose.position.z = 0.3;
+  
+      // Get the measurements
+      for (int i = 0; i<4; i++)
+      {
+        RCLCPP_INFO(this->get_logger(), "Value of rot: %f", rot);
+        qCalib.setRPY(0, pi/2, rot);
+        qCalib.normalize();
+        calib_pose.orientation.x = qCalib.getX();
+        calib_pose.orientation.y = qCalib.getY();
+        calib_pose.orientation.z = qCalib.getZ();
+        calib_pose.orientation.w = qCalib.getW();
+        move_group_interface_arm_->setPoseTarget(calib_pose);
+        planAndExecuteArm();
+        
+        measurements.push_back(this->searchForTagFrame(10.0, "calib"));
+
+        rot += pi/2;
+      }      
+
+      double error_x = (measurements[0].position.x - measurements[2].position.x)/2;
+      double error_y = (measurements[1].position.y - measurements[3].position.y)/2;
+
+      RCLCPP_INFO(this->get_logger(), "Adjust the camera position accordingly:");
+      RCLCPP_INFO(this->get_logger(), "X: %f", error_x);
+      RCLCPP_INFO(this->get_logger(), "Y: %f", error_y);
     }
 
     void goToHomePos()
@@ -244,71 +286,11 @@ class PickAndPlace : public rclcpp::Node
     
     }
 
-    bool searchForObjectFrame(const double timeout = 10.0)
+    void searchForObject()
     {
-      // Create tf2 buffer and transform listener
-      std::shared_ptr<tf2_ros::TransformListener> tf_listener{nullptr};
-      std::unique_ptr<tf2_ros::Buffer> tf_buffer;
-      tf_buffer = std::make_unique<tf2_ros::Buffer>(this->get_clock());
-      tf_listener = std::make_shared<tf2_ros::TransformListener>(*tf_buffer);
-      
-      // Wait for tf2 frame to become available
-      bool frame_available = false;
-      geometry_msgs::msg::TransformStamped transform;
-
-      rclcpp::Time start_time = rclcpp::Clock().now();
-      std::string tag_frame = this->get_parameter("tag_id").as_string();
-      std::string object_frame = tag_frame + "_link";
-      RCLCPP_INFO(this->get_logger(), "Looking for object: %s", object_frame.c_str());
-
-      while (rclcpp::ok() && !frame_available) 
-      {
-        try 
-        {
-            std::string planning_frame = move_group_interface_arm_->getPlanningFrame();
-            transform = tf_buffer->lookupTransform(planning_frame, object_frame, tf2::TimePointZero);
-            frame_available = true;
-        } 
-        catch (tf2::TransformException& ex) 
-        {
-            // Frame not available yet, wait and try again
-            rclcpp::sleep_for(std::chrono::milliseconds(100));
-        }
-
-        // Check if the timeout has been reached
-        double elapsed_time = (rclcpp::Clock().now() - start_time).seconds();
-        if (elapsed_time >= timeout) {
-            // Timeout reached, return false
-            object_pose_ = empty_pose_;
-            RCLCPP_ERROR(this->get_logger(), "Timeout reached while looking for tag!");
-            return false;
-        }
-      }
-
-      if (frame_available)
-      {
-        // Extract the pose from the transform
-        RCLCPP_INFO(this->get_logger(), "Found tag: %s", object_frame.c_str());
-        RCLCPP_INFO(this->get_logger(), "At pos:");
-        RCLCPP_INFO(this->get_logger(), "X: %f", transform.transform.translation.x);
-        RCLCPP_INFO(this->get_logger(), "Y: %f", transform.transform.translation.y);
-        RCLCPP_INFO(this->get_logger(), "Z: %f", transform.transform.translation.z);
-
-        setObjectPoseFromTransform(transform);
-      }
-
-      return frame_available;
-    }
-
-    void setObjectPoseFromTransform(geometry_msgs::msg::TransformStamped transform)
-    {
-      object_pose_.pose.position.x = transform.transform.translation.x;
-      object_pose_.pose.position.y = transform.transform.translation.y;
-      object_pose_.pose.position.z = transform.transform.translation.z;
-      object_pose_.pose.orientation.x = transform.transform.rotation.x;
-      object_pose_.pose.orientation.y = transform.transform.rotation.y;
-      object_pose_.pose.orientation.z = transform.transform.rotation.z;
-      object_pose_.pose.orientation.w = transform.transform.rotation.w;
+      // This function searches for an object and stores the information about this
+      // Object in the member variable object_pose_
+      object_pose_ = searchForTagFrame();
     }
 
     void planAndExecuteArm()
@@ -368,17 +350,110 @@ class PickAndPlace : public rclcpp::Node
     mutable std::string current_action_;
     std::string PLANNING_GROUP_ARM_;
     std::string PLANNING_GROUP_GRIPPER_;
-    geometry_msgs::msg::PoseStamped object_pose_;
-    geometry_msgs::msg::PoseStamped empty_pose_;
+    geometry_msgs::msg::Pose object_pose_;
+    geometry_msgs::msg::Pose calib_pose_;
+    geometry_msgs::msg::Pose empty_pose_;
     moveit::planning_interface::MoveGroupInterface::Plan my_plan_arm_;
     moveit::planning_interface::MoveGroupInterface::Plan my_plan_gripper_;
+    rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
 
     void topic_callback(const std_msgs::msg::String & msg) const
     {
       //RCLCPP_INFO(this->get_logger(), "I heard: '%s'", msg.data.c_str());
       current_action_ = msg.data;
     }
-    rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
+    
+
+    geometry_msgs::msg::Pose searchForTagFrame(const double timeout = 10.0, std::string tag_frame = "")
+    {
+      /* 
+      This function is used to search for an apriltag frame.
+      It returns the pose of the frame.
+      The two parameters are optional.
+      timeout defines how long this function will try to find a frame, default value: 10s
+      tag_frame specifies which frame to look for. Default: will use the tag_id parameter if no frame is defined
+      */ 
+      geometry_msgs::msg::Pose pose;
+      bool frame_available = false; // Wait for tf2 frame to become available
+      geometry_msgs::msg::TransformStamped transform;
+      std::string planning_frame = move_group_interface_arm_->getPlanningFrame();
+      std::shared_ptr<tf2_ros::TransformListener> tf_listener{nullptr}; // Declare tf2 buffer
+      std::unique_ptr<tf2_ros::Buffer> tf_buffer; // Declare transform listener
+      
+      tf_buffer = std::make_unique<tf2_ros::Buffer>(this->get_clock());
+      tf_listener = std::make_shared<tf2_ros::TransformListener>(*tf_buffer);
+
+      // Set tag frame if not defined
+      if (tag_frame == "")
+      {
+        tag_frame = this->get_parameter("tag_id").as_string();
+      }
+
+      // The pose of object or whatever measured does not nessecarily have its origin located at the tag
+      // therefore another tag is used
+      std::string pose_frame = tag_frame + "_link";
+
+      RCLCPP_INFO(this->get_logger(), "Looking for object: %s", pose_frame.c_str());
+
+      // Get the current time
+      rclcpp::Time start_time = rclcpp::Clock().now();
+
+      // Look for frame
+      while (rclcpp::ok() && !frame_available) 
+      {
+        try 
+        {
+            transform = tf_buffer->lookupTransform(planning_frame, pose_frame, tf2::TimePointZero);
+            frame_available = true;
+        } 
+        catch (tf2::TransformException& ex) 
+        {
+            // Frame not available yet, wait and try again
+            rclcpp::sleep_for(std::chrono::milliseconds(100));
+        }
+
+        // Check if the timeout has been reached
+        double elapsed_time = (rclcpp::Clock().now() - start_time).seconds();
+        if (elapsed_time >= timeout) {
+            // Timeout reached, return false
+            object_pose_ = empty_pose_;
+            RCLCPP_ERROR(this->get_logger(), "Timeout reached while looking for tag!");
+            return empty_pose_;
+        }
+      }
+      
+      // If nothing was detected, return an empty pose.
+      if (!frame_available)
+      {
+        return empty_pose_;
+      }
+
+      pose = setPoseFromTransform(transform);
+
+      // Print information apbout the pose of the frame
+      RCLCPP_INFO(this->get_logger(), "Found pose of: %s", pose_frame.c_str());
+      RCLCPP_INFO(this->get_logger(), "At pos:");
+      RCLCPP_INFO(this->get_logger(), "X: %f", pose.position.x);
+      RCLCPP_INFO(this->get_logger(), "Y: %f", pose.position.y);
+      RCLCPP_INFO(this->get_logger(), "Z: %f", pose.position.z);
+      
+      return pose;
+    }
+
+    geometry_msgs::msg::Pose setPoseFromTransform(geometry_msgs::msg::TransformStamped transform)
+    {
+      geometry_msgs::msg::Pose pose;
+
+      pose.position.x = transform.transform.translation.x;
+      pose.position.y = transform.transform.translation.y;
+      pose.position.z = transform.transform.translation.z;
+      pose.orientation.x = transform.transform.rotation.x;
+      pose.orientation.y = transform.transform.rotation.y;
+      pose.orientation.z = transform.transform.rotation.z;
+      pose.orientation.w = transform.transform.rotation.w;
+
+      return pose;
+    }
 
     
     

@@ -116,13 +116,27 @@ int main(int argc, char* argv[])
     if (node->getCurrent_action() == "pick")
     {
       // Go to position for scanning
+      node->searchForObject();
       node->goToSearchPos();
-      node->searchForObjectFrame();
       node->pickObject();
     }
     else if (node->getCurrent_action() == "place")
     {
       node->placeObject();
+    }
+    else if (node->getCurrent_action() == "calibrate")
+    {
+      /* 
+      This will run a procedure where there will be taken
+      four measurements with the wrist of the manipulator rotated
+      90 degrees between each measurement. 
+      Make sure there is an apriltag named "calib" in the field of view of the camera.
+      The difference in the four measurements will be used to calculate how much the "camera_link" 
+      should be moved in order to get correct measurements.
+      the "camera_link could be moved physically or in the 
+      urdf file/transform where its location is defined.
+      "*/
+      node->calibrate();
     }
     else
     {
