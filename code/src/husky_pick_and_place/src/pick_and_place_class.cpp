@@ -24,6 +24,8 @@ class PickAndPlace : public rclcpp::Node
       subscription_ = this->create_subscription<std_msgs::msg::String>(
       "action", 10, std::bind(&PickAndPlace::topic_callback, this, std::placeholders::_1));
 
+      publisher_ = this->create_publisher<std_msgs::msg::String>("action_status", 10);
+
       // Check if this parameter is set
       if (this->get_parameter("tag_id").get_type() == rclcpp::ParameterType::PARAMETER_NOT_SET)
       {
@@ -39,6 +41,12 @@ class PickAndPlace : public rclcpp::Node
 
     void pickObject()
     {
+
+      // Publish action status
+      this->publish_string("picking");
+
+      // Set current action back to none
+      this->current_action_ = "none";
 
       if (object_pose_ == empty_pose_)
       {
@@ -139,11 +147,21 @@ class PickAndPlace : public rclcpp::Node
 
       //  Move to holding position, it is nice for holding stuff
       this->goToHoldingPos();
+
+      // Publish action status
+      this->publish_string("picking finished");
     
     }
 
     void placeObject()
     {
+
+      // Publish action status
+      this->publish_string("placing");
+
+      // Set current action back to none
+      this->current_action_ = "none";
+
       // Define the place pose
       geometry_msgs::msg::Pose place_pose;
       place_pose.position.x = 0.2;
@@ -183,10 +201,17 @@ class PickAndPlace : public rclcpp::Node
       // Move to sleep position
       move_group_interface_arm_->setJointValueTarget(move_group_interface_arm_->getNamedTargetValues("Sleep"));
       planAndExecuteArm();
+
+      // Publish action status
+      this->publish_string("placing finished");
     }
 
     void calibrate()
     {
+
+      // Set current action back to none
+      this->current_action_ = "none";
+
       tf2::Quaternion qCalib;
       std::string calib_frame = "calib";
       float rot = 0.0;
@@ -356,11 +381,20 @@ class PickAndPlace : public rclcpp::Node
     moveit::planning_interface::MoveGroupInterface::Plan my_plan_arm_;
     moveit::planning_interface::MoveGroupInterface::Plan my_plan_gripper_;
     rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
+    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
 
     void topic_callback(const std_msgs::msg::String & msg) const
     {
       //RCLCPP_INFO(this->get_logger(), "I heard: '%s'", msg.data.c_str());
       current_action_ = msg.data;
+    }
+
+    void publish_string(std::string content)
+    {
+      auto message = std_msgs::msg::String();
+      message.data = content;
+      RCLCPP_INFO(this->get_logger(), "Publishing: '%s'", message.data.c_str());
+      publisher_->publish(message);
     }
     
 

@@ -138,7 +138,7 @@ int main(int argc, char* argv[])
       "*/
       node->calibrate();
     }
-    else
+    else if (node->getCurrent_action() == "sleep")
     {
       node->goToSleepPos();
     }

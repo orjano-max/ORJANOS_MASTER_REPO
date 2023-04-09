@@ -37,6 +37,7 @@ def generate_launch_description():
             launch_arguments ={
             'robot_model' : 'vx300',
             'external_urdf_loc' : interbotix_urdf_extras_path,
+            'external_srdf_loc' : interbotix_srdf_extras_path,
             'use_moveit_rviz' : 'false',
             'hardware_type' : 'fake',
             }.items()
@@ -53,6 +54,17 @@ def generate_launch_description():
     launch_scene_geometry_publisher = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(PathJoinSubstitution(
             [FindPackageShare('scene_geometry_publisher'), 'launch', 'scene_geometry_publisher_launch.py'])),
+            launch_arguments ={
+            'robot_model' : 'vx300',
+            'hardware_type' : 'fake',
+            'external_urdf_loc' : interbotix_urdf_extras_path,
+            'external_srdf_loc' : interbotix_srdf_extras_path,
+            }.items()
+    )
+
+    launch_pick_and_place = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(PathJoinSubstitution(
+            [FindPackageShare('husky_pick_and_place'), 'launch', 'pick_launch.py'])),
             launch_arguments ={
             'robot_model' : 'vx300',
             'hardware_type' : 'fake',
@@ -82,6 +94,9 @@ def generate_launch_description():
 
     # Launch husky
     ld.add_action(launch_husky_simulation)
+
+    #Launch pick and place listener
+    ld.add_action(launch_pick_and_place)
 
     # Launch rviz
     ld.add_action(launch_rviz)
