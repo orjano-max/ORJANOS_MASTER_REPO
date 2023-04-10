@@ -23,7 +23,6 @@ class HuskyMasterNode(BasicNavigator):
             10)
         self.subscription  # prevent unused variable warning
         self.mutex = threading.Lock()
-        self.action_ = "pick" 
 
     def action_callback(self, msg):
         self.action_status_ = msg.data
@@ -99,7 +98,7 @@ def main(args=None):
     
     # Send pick command
     if reachedPickLoc:
-        nav.set_action("pick")
+        nav.set_action("pick case 0.15 0.045 0.04")
         nav.action_publisher()        
 
     # Wait for picking task to finish

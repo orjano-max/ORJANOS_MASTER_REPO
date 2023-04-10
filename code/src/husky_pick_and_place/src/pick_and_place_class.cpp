@@ -4,7 +4,7 @@
 // Author: Ørjan Øvsthus
 
 #include <memory>
-
+#include <fstream>
 #include <rclcpp/rclcpp.hpp>
 #include "std_msgs/msg/string.hpp"
 #include <moveit/move_group_interface/move_group_interface.h>
@@ -21,17 +21,18 @@ class PickAndPlace : public rclcpp::Node
     {
 
       // Create a subscription to listen for the topic "action"
-      subscription_ = this->create_subscription<std_msgs::msg::String>(
+      action_subscription_ = this->create_subscription<std_msgs::msg::String>(
       "action", 10, std::bind(&PickAndPlace::topic_callback, this, std::placeholders::_1));
+
 
       publisher_ = this->create_publisher<std_msgs::msg::String>("action_status", 10);
 
-      // Check if this parameter is set
+      /* // Check if this parameter is set
       if (this->get_parameter("tag_id").get_type() == rclcpp::ParameterType::PARAMETER_NOT_SET)
       {
         // Parameter not passed, declare param
         this->declare_parameter("tag_id", "case");
-      }
+      } */
 
     }
     
@@ -131,7 +132,7 @@ class PickAndPlace : public rclcpp::Node
       planAndExecuteArm();
 
       // Grasp the thingy
-      std::string graspPose = "Grasping_" + this->get_parameter("tag_id").as_string();
+      std::string graspPose = "Grasping_" + current_object_;
       RCLCPP_INFO(this->get_logger(), "Grasping pose: %s", graspPose.c_str());
       move_group_interface_gripper_->setJointValueTarget(move_group_interface_gripper_->getNamedTargetValues(graspPose));
       planAndExecuteGripper();
@@ -209,6 +210,9 @@ class PickAndPlace : public rclcpp::Node
     void calibrate()
     {
 
+      // Publish action status
+      this->publish_string("calibrating");
+
       // Set current action back to none
       this->current_action_ = "none";
 
@@ -249,6 +253,9 @@ class PickAndPlace : public rclcpp::Node
       RCLCPP_INFO(this->get_logger(), "Adjust the camera position accordingly:");
       RCLCPP_INFO(this->get_logger(), "X: %f", error_x);
       RCLCPP_INFO(this->get_logger(), "Y: %f", error_y);
+
+      // Publish action status
+      this->publish_string("calibrating finished");
     }
 
     void goToHomePos()
@@ -315,7 +322,25 @@ class PickAndPlace : public rclcpp::Node
     {
       // This function searches for an object and stores the information about this
       // Object in the member variable object_pose_
-      object_pose_ = searchForTagFrame();
+
+      // Get tag pose
+      geometry_msgs::msg::Pose tag_pose = searchForTagFrame();
+      tf2::Vector3 tag_pos(tag_pose.position.x, tag_pose.position.y, tag_pose.position.z);
+      tf2::Quaternion tag_rot(tag_pose.orientation.x, tag_pose.orientation.y, tag_pose.orientation.z, tag_pose.orientation.w);
+
+
+      // Create a transform from the object's frame to the middle of the object
+      tf2::Quaternion rotation(0, 0, 0, 1);
+      tf2::Vector3 translation(0, 0, -object_dimensions_[2]/2.0);  // Shift along the z-axis to the middle of the object
+      tf2::Transform objectToMiddle(rotation, translation); // Apply rotation to the translation
+      
+      tf2::Vector3 object_pos = objectToMiddle * tag_pos;  // Apply the transform to the original coordinates of the object's surface
+
+      object_pose_.position.x = object_pos.getX();
+      object_pose_.position.y = object_pos.getY();
+      object_pose_.position.z = object_pos.getZ();
+      object_pose_.orientation = tag_pose.orientation;
+
     }
 
     void planAndExecuteArm()
@@ -368,11 +393,18 @@ class PickAndPlace : public rclcpp::Node
       return current_action_;
     }
 
+    std::string getCurrent_object()
+    {
+      return current_object_;
+    }
+
 
   private:
   
     bool is_picking_;
     mutable std::string current_action_;
+    mutable std::string current_object_ = "case"; // default;
+    mutable std::vector<double> object_dimensions_ = {0.0, 0.0, 0.0}; // xyz dimensions of object
     std::string PLANNING_GROUP_ARM_;
     std::string PLANNING_GROUP_GRIPPER_;
     geometry_msgs::msg::Pose object_pose_;
@@ -380,13 +412,36 @@ class PickAndPlace : public rclcpp::Node
     geometry_msgs::msg::Pose empty_pose_;
     moveit::planning_interface::MoveGroupInterface::Plan my_plan_arm_;
     moveit::planning_interface::MoveGroupInterface::Plan my_plan_gripper_;
-    rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
+    rclcpp::Subscription<std_msgs::msg::String>::SharedPtr action_subscription_;
     rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
 
     void topic_callback(const std_msgs::msg::String & msg) const
     {
-      //RCLCPP_INFO(this->get_logger(), "I heard: '%s'", msg.data.c_str());
-      current_action_ = msg.data;
+
+      std::vector<std::string> messages = this->split(msg.data, ' ');
+
+      if (!messages[0].empty())
+      {
+        RCLCPP_INFO(this->get_logger(), "Got action command: '%s'", messages[0].c_str());
+        current_action_ = messages[0];
+      }
+
+      if (messages.size() > 1 && !messages[1].empty())
+      {
+        RCLCPP_INFO(this->get_logger(), "Got object: '%s'", messages[1].c_str());
+        current_object_ = messages[1];
+      }
+
+      if (messages.size() > 4 && !messages[2].empty() && !messages[3].empty() && !messages[4].empty())
+      {
+        RCLCPP_INFO(this->get_logger(), "Got dimensions: '%s, %s, %s'", messages[2].c_str(), messages[3].c_str(), messages[4].c_str());
+        double object_x = std::stod(messages[2]);
+        double object_y = std::stod(messages[3]);
+        double object_z = std::stod(messages[4]);
+        object_dimensions_ = {object_x, object_y, object_z};
+      }
+
+    
     }
 
     void publish_string(std::string content)
@@ -395,6 +450,17 @@ class PickAndPlace : public rclcpp::Node
       message.data = content;
       RCLCPP_INFO(this->get_logger(), "Publishing: '%s'", message.data.c_str());
       publisher_->publish(message);
+    }
+
+    std::vector<std::string> split(const std::string& str, char delim) const
+    {
+      std::vector<std::string> tokens;
+      std::stringstream ss(str);
+      std::string item;
+      while (std::getline(ss, item, delim)) {
+          tokens.push_back(item);
+      }
+      return tokens;
     }
     
 
@@ -405,7 +471,8 @@ class PickAndPlace : public rclcpp::Node
       It returns the pose of the frame.
       The two parameters are optional.
       timeout defines how long this function will try to find a frame, default value: 10s
-      tag_frame specifies which frame to look for. Default: will use the tag_id parameter if no frame is defined
+      tag_frame specifies which frame to look for. Default: will use the current_object_ member 
+      variable if no frame is defined in function call.
       */ 
       geometry_msgs::msg::Pose pose;
       bool frame_available = false; // Wait for tf2 frame to become available
@@ -417,17 +484,16 @@ class PickAndPlace : public rclcpp::Node
       tf_buffer = std::make_unique<tf2_ros::Buffer>(this->get_clock());
       tf_listener = std::make_shared<tf2_ros::TransformListener>(*tf_buffer);
 
-      // Set tag frame if not defined
+      // Set tag frame if not defined in function call
       if (tag_frame == "")
       {
-        tag_frame = this->get_parameter("tag_id").as_string();
+        tag_frame = current_object_;
       }
 
-      // The pose of object or whatever measured does not nessecarily have its origin located at the tag
-      // therefore another tag is used
+      // The pose of object is described as object name plus "_link"
       std::string pose_frame = tag_frame + "_link";
 
-      RCLCPP_INFO(this->get_logger(), "Looking for object: %s", pose_frame.c_str());
+      RCLCPP_INFO(this->get_logger(), "Looking for tag: %s", pose_frame.c_str());
 
       // Get the current time
       rclcpp::Time start_time = rclcpp::Clock().now();
@@ -450,7 +516,6 @@ class PickAndPlace : public rclcpp::Node
         double elapsed_time = (rclcpp::Clock().now() - start_time).seconds();
         if (elapsed_time >= timeout) {
             // Timeout reached, return false
-            object_pose_ = empty_pose_;
             RCLCPP_ERROR(this->get_logger(), "Timeout reached while looking for tag!");
             return empty_pose_;
         }
