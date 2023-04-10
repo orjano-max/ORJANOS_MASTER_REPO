@@ -27,13 +27,6 @@ class PickAndPlace : public rclcpp::Node
 
       publisher_ = this->create_publisher<std_msgs::msg::String>("action_status", 10);
 
-      /* // Check if this parameter is set
-      if (this->get_parameter("tag_id").get_type() == rclcpp::ParameterType::PARAMETER_NOT_SET)
-      {
-        // Parameter not passed, declare param
-        this->declare_parameter("tag_id", "case");
-      } */
-
     }
     
     std::shared_ptr<moveit::planning_interface::MoveGroupInterface> move_group_interface_arm_;
@@ -217,7 +210,7 @@ class PickAndPlace : public rclcpp::Node
       this->current_action_ = "none";
 
       tf2::Quaternion qCalib;
-      std::string calib_frame = "calib";
+      std::string calib_frame = "calib_tag";
       float rot = 0.0;
       std::vector <geometry_msgs::msg::Pose> measurements;
       geometry_msgs::msg::Pose calib_pose;
@@ -242,7 +235,7 @@ class PickAndPlace : public rclcpp::Node
         move_group_interface_arm_->setPoseTarget(calib_pose);
         planAndExecuteArm();
         
-        measurements.push_back(this->searchForTagFrame(10.0, "calib"));
+        measurements.push_back(this->searchForTagFrame(10.0, calib_frame));
 
         rot += pi/2;
       }      
@@ -487,11 +480,11 @@ class PickAndPlace : public rclcpp::Node
       // Set tag frame if not defined in function call
       if (tag_frame == "")
       {
-        tag_frame = current_object_;
+        tag_frame = current_object_ + "_tag";
       }
 
       // The pose of object is described as object name plus "_link"
-      std::string pose_frame = tag_frame + "_link";
+      std::string pose_frame = tag_frame;
 
       RCLCPP_INFO(this->get_logger(), "Looking for tag: %s", pose_frame.c_str());
 

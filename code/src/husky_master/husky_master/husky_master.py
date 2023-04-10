@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import rclpy
-from rclpy.node import Node
 from std_msgs.msg import String
 from nav2_simple_commander.robot_navigator import BasicNavigator
 from geometry_msgs.msg import PoseStamped
@@ -12,13 +11,36 @@ class HuskyMasterNode(BasicNavigator):
     
     action_= ""
     action_status_ = ""
+    __manipulator_model = "" # This variable is set to vx300 by default upon init. 
+    object = ""
+    dimensions = [0.0, 0.0, 0.0]
+    pick_loc = [0.0, 0.0, 0.0]
 
-    def __init__(self):
+
+    def __init__(self, manipulator_model = "vx300"):
         super().__init__()
-        self.publisher_ = self.create_publisher(String, 'vx300/action', 10) 
+
+        if not self.has_parameter("object"):
+            self.declare_parameter("object","case")
+        if not self.has_parameter("dimensions"):
+            self.declare_parameter("dimensions", [0.15, 0.045, 0.04])
+        if not self.has_parameter("pick_loc"):
+            self.declare_parameter("pick_loc", [2.0, 0.0, 3.14])
+
+        self.object = self.get_parameter("object")
+        self.dimensions = self.get_parameter("dimensions")
+        self.pick_loc = self.get_parameter("pick_loc")
+
+        self.__manipulator_model = manipulator_model
+
+        self.publisher_ = self.create_publisher(
+            String, 
+            self.__manipulator_model+'/action', 
+            10) 
+        
         self.subscription = self.create_subscription(
             String,
-            'vx300/action_status',
+            self.__manipulator_model+'/action_status',
             self.action_callback,
             10)
         self.subscription  # prevent unused variable warning
@@ -28,7 +50,6 @@ class HuskyMasterNode(BasicNavigator):
         self.action_status_ = msg.data
         self.get_logger().info('Manipulator status: "%s"' % msg.data)
         
-
     def set_action(self, action):
         with self.mutex:
             self.action_ = action
@@ -59,8 +80,6 @@ class HuskyMasterNode(BasicNavigator):
         pose.pose.orientation.w = q_w
         return pose
 
-
-
 def main(args=None):
 
     rclpy.init(args=args)
@@ -77,10 +96,16 @@ def main(args=None):
     
     # Wait for Nav2 
     nav.waitUntilNav2Active()
-    
+
+    # Get object name
+    object = nav.object
+    # Get pick_pose
+    pick_pose = nav.create_pose_stamped(nav.pick_loc[0], nav.pick_loc[1], nav.pick_loc[2])
+    # Get object dimensions
+    object_dimensions = nav.dimensions
+        
     # Send Nav2 goal 
-    goal_pose = nav.create_pose_stamped( 2.0, 0.0, 3.14)
-    nav.goToPose(goal_pose) 
+    nav.goToPose(pick_pose) 
 
     # Wait for navigation task to finish
     start_time = time.monotonic()
@@ -98,7 +123,7 @@ def main(args=None):
     
     # Send pick command
     if reachedPickLoc:
-        nav.set_action("pick case 0.15 0.045 0.04")
+        nav.set_action("pick" + " " + object + " " + object_dimensions)
         nav.action_publisher()        
 
     # Wait for picking task to finish
@@ -121,8 +146,8 @@ def main(args=None):
     # Go to place location
     if pickingFinished:
         # Send Nav2 goal 
-        goal_pose = nav.create_pose_stamped( 2.0, 1.0, 3.14)
-        nav.goToPose(goal_pose)
+        place_pose = nav.create_pose_stamped( 2.0, 1.0, 3.14)
+        nav.goToPose(place_pose)
 
     # Wait for navigation task to finish
     start_time = time.monotonic()

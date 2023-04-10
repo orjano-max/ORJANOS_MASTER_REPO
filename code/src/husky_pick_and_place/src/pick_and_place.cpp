@@ -46,25 +46,6 @@
 
 #include "pick_and_place_class.cpp"
 
-/* class MinimalSubscriber : public rclcpp::Node
-{
-  public:
-    MinimalSubscriber()
-    : Node("minimal_subscriber")
-    {
-      subscription_ = this->create_subscription<std_msgs::msg::String>(
-      "action", 10, std::bind(&MinimalSubscriber::topic_callback, this, std::placeholders::_1));
-    }
-
-  private:
-    void topic_callback(const std_msgs::msg::String & msg) const
-    {
-      RCLCPP_INFO(this->get_logger(), "I heard: '%s'", msg.data.c_str());
-    }
-    rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
-}; */
-
-
 
 
 int main(int argc, char* argv[])

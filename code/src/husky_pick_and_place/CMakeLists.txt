@@ -11,34 +11,20 @@ find_package(moveit_ros_planning_interface REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(ament_index_cpp REQUIRED)
 
-add_executable(pick_node src/pick_node.cpp)
+add_executable(pick_and_place src/pick_and_place.cpp)
 
-target_include_directories(pick_node PUBLIC
+target_include_directories(pick_and_place PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
-target_compile_features(pick_node PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+target_compile_features(pick_and_place PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 ament_target_dependencies(
-  pick_node
+  pick_and_place
   "moveit_ros_planning_interface"
   "rclcpp"
 )
 
-install(TARGETS pick_node
+install(TARGETS pick_and_place
   DESTINATION lib/${PROJECT_NAME})
-
-#add_executable(place_node src/place_node.cpp)
-#target_include_directories(place_node PUBLIC
-#  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-#  $<INSTALL_INTERFACE:include>)
-#target_compile_features(place_node PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
-#ament_target_dependencies(
-#  place_node
-#  "moveit_ros_planning_interface"
-#  "rclcpp"
-#)
-
-#install(TARGETS place_node
-#  DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY launch DESTINATION share/${PROJECT_NAME})
 install(DIRECTORY params DESTINATION share/${PROJECT_NAME})

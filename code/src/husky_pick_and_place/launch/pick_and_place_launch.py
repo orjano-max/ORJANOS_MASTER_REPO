@@ -83,6 +83,7 @@ def launch_setup(context, *args, **kwargs):
     robot_description_launch_arg = LaunchConfiguration('robot_description')
     hardware_type_launch_arg = LaunchConfiguration('hardware_type')
     xs_driver_logging_level_launch_arg = LaunchConfiguration('xs_driver_logging_level')
+    tag_id = LaunchConfiguration('tag_id')
 
     # sets use_sim_time parameter to 'true' if using gazebo hardware
     use_sim_time_param = determine_use_sim_time_param(
@@ -189,11 +190,12 @@ def launch_setup(context, *args, **kwargs):
     husky_pick_and_place_node = Node(
         name="husky_pick_and_place",
         package="husky_pick_and_place",
-        executable="husky_pick_and_place",
+        executable="pick_and_place",
         output="screen",
         parameters=[
             {'joint_state_topic': f'/{robot_name_launch_arg.perform(context)}/joint_states' },
             {'use_sim_time': use_sim_time_param},
+            {'tag_id' : tag_id},
             robot_description,
             robot_description_semantic,
             kinematics_config,
@@ -311,6 +313,17 @@ def generate_launch_description():
             )
         )
     )
+
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            'tag_id',
+            default_value='case',
+            description=(
+                'ID of the tag to detect'
+            )
+        )
+    )
+
     declared_arguments.extend(
         declare_interbotix_xsarm_robot_description_launch_arguments(
             show_gripper_bar='true',
