@@ -324,7 +324,7 @@ class PickAndPlace : public rclcpp::Node
 
       // Create a transform from the object's frame to the middle of the object
       tf2::Quaternion rotation(0, 0, 0, 1);
-      tf2::Vector3 translation(0, 0, -0.05/2.0);  // Shift along the z-axis to the middle of the object
+      tf2::Vector3 translation(0, 0, -0.05);  // Shift along the z-axis to the middle of the object
       tf2::Transform objectToMiddle(rotation, translation); // Apply rotation to the translation
       
       tf2::Vector3 object_pos = objectToMiddle * tag_pos;  // Apply the transform to the original coordinates of the object's surface
