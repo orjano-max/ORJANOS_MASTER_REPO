@@ -477,6 +477,8 @@ class PickAndPlace : public rclcpp::Node
       tf_buffer = std::make_unique<tf2_ros::Buffer>(this->get_clock());
       tf_listener = std::make_shared<tf2_ros::TransformListener>(*tf_buffer);
 
+      this->goToSearchPos();
+
       // Set tag frame if not defined in function call
       if (tag_frame == "")
       {

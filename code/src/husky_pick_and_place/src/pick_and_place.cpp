@@ -98,7 +98,6 @@ int main(int argc, char* argv[])
     {
       // Go to position for scanning
       node->searchForObject();
-      node->goToSearchPos();
       node->pickObject();
     }
     else if (node->getCurrent_action() == "place")
