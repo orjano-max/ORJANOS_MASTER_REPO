@@ -27,9 +27,9 @@ class HuskyMasterNode(BasicNavigator):
         if not self.has_parameter("pick_loc"):
             self.declare_parameter("pick_loc", [2.0, 0.0, 3.14])
 
-        self.object = self.get_parameter("object")
-        self.dimensions = self.get_parameter("dimensions")
-        self.pick_loc = self.get_parameter("pick_loc")
+        self.object = self.get_parameter("object").get_parameter_value().string_value
+        self.dimensions = self.get_parameter("dimensions").get_parameter_value().string_value
+        self.pick_loc = self.get_parameter("pick_loc").get_parameter_value().double_array_value
 
         self.__manipulator_model = manipulator_model
 
@@ -123,7 +123,7 @@ def main(args=None):
     
     # Send pick command
     if reachedPickLoc:
-        nav.set_action("pick" + " " + object + " " + object_dimensions)
+        nav.set_action('pick' + ' ' + object + ' ' + object_dimensions)
         nav.action_publisher()        
 
     # Wait for picking task to finish
