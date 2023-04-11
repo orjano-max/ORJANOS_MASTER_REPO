@@ -70,7 +70,7 @@ def generate_launch_description():
     # Publish scene geometry
     launch_pick_and_place = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(PathJoinSubstitution(
-            [FindPackageShare('husky_pick_and_place'), 'launch', 'pick_launch.py'])),
+            [FindPackageShare('husky_pick_and_place'), 'launch', 'pick_and_place_launch.py'])),
             launch_arguments ={
             'robot_model' : 'vx300',
             'external_urdf_loc' : interbotix_urdf_extras_path,
