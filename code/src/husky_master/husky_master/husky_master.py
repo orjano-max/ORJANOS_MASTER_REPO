@@ -25,7 +25,7 @@ class HuskyMasterNode(BasicNavigator):
         if not self.has_parameter("dimensions"):
             self.declare_parameter("dimensions", [0.15, 0.045, 0.04])
         if not self.has_parameter("pick_loc"):
-            self.declare_parameter("pick_loc", [0.0, 0.6, 0.7])
+            self.declare_parameter("pick_loc", [0.8, 0.9, -1.51])
 
         self.object = self.get_parameter("object").get_parameter_value().string_value
         self.dimensions = self.get_parameter("dimensions").get_parameter_value().string_value
@@ -95,7 +95,7 @@ def main(args=None):
     nav = HuskyMasterNode()
     
     # Wait for Nav2 
-    nav.waitUntilNav2Active()
+    nav.waitUntilNav2Active(localizer="waypoint_follower")
 
     # Get object name
     object = nav.object
@@ -146,7 +146,7 @@ def main(args=None):
     # Go to place location
     if pickingFinished:
         # Send Nav2 goal 
-        place_pose = nav.create_pose_stamped( 1.2, 0.5, 0.13)
+        place_pose = nav.create_pose_stamped( 0.5, -0.4, 1.51)
         nav.goToPose(place_pose)
 
     # Wait for navigation task to finish
