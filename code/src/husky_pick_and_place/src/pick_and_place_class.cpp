@@ -225,7 +225,6 @@ class PickAndPlace : public rclcpp::Node
       // Get the measurements
       for (int i = 0; i<4; i++)
       {
-        RCLCPP_INFO(this->get_logger(), "Value of rot: %f", rot);
         qCalib.setRPY(0, pi/2, rot);
         qCalib.normalize();
         calib_pose.orientation.x = qCalib.getX();
@@ -236,12 +235,24 @@ class PickAndPlace : public rclcpp::Node
         planAndExecuteArm();
         
         measurements.push_back(this->searchForTagFrame(10.0, calib_frame));
+        RCLCPP_INFO(this->get_logger(), "Value of rot: %f", rot);
 
         rot += pi/2;
-      }      
+      }  
+
+      this->goToSleepPos();    
 
       double error_x = (measurements[0].position.x - measurements[2].position.x)/2;
       double error_y = (measurements[1].position.y - measurements[3].position.y)/2;
+
+
+      for (int i = 0; i<4; i++)
+      {
+        RCLCPP_INFO(this->get_logger(), "Measurement %i:", i);
+      RCLCPP_INFO(this->get_logger(), "X: %f", measurements[i].position.x);
+      RCLCPP_INFO(this->get_logger(), "Y: %f", measurements[i].position.y);
+      RCLCPP_INFO(this->get_logger(), "Y: %f", measurements[i].position.z);
+      }
 
       RCLCPP_INFO(this->get_logger(), "Adjust the camera position accordingly:");
       RCLCPP_INFO(this->get_logger(), "X: %f", error_x);
@@ -249,6 +260,7 @@ class PickAndPlace : public rclcpp::Node
 
       // Publish action status
       this->publish_string("calibrating finished");
+
     }
 
     void goToHomePos()
