@@ -249,9 +249,9 @@ class PickAndPlace : public rclcpp::Node
       for (int i = 0; i<4; i++)
       {
         RCLCPP_INFO(this->get_logger(), "Measurement %i:", i);
-      RCLCPP_INFO(this->get_logger(), "X: %f", measurements[i].position.x);
-      RCLCPP_INFO(this->get_logger(), "Y: %f", measurements[i].position.y);
-      RCLCPP_INFO(this->get_logger(), "Y: %f", measurements[i].position.z);
+        RCLCPP_INFO(this->get_logger(), "X: %f", measurements[i].position.x);
+        RCLCPP_INFO(this->get_logger(), "Y: %f", measurements[i].position.y);
+        RCLCPP_INFO(this->get_logger(), "Y: %f", measurements[i].position.z);
       }
 
       RCLCPP_INFO(this->get_logger(), "Adjust the camera position accordingly:");
