@@ -332,11 +332,17 @@ class PickAndPlace : public rclcpp::Node
       geometry_msgs::msg::Pose tag_pose = searchForTagFrame();
       tf2::Vector3 tag_pos(tag_pose.position.x, tag_pose.position.y, tag_pose.position.z);
       tf2::Quaternion tag_rot(tag_pose.orientation.x, tag_pose.orientation.y, tag_pose.orientation.z, tag_pose.orientation.w);
+      double zOff = 0.05;
+
+      if (object_dimensions_[2] < 0.05)
+      {
+        zOff = object_dimensions_[2];
+      }
 
 
       // Create a transform from the object's frame to the middle of the object
       tf2::Quaternion rotation(0, 0, 0, 1);
-      tf2::Vector3 translation(0, 0, -0.05);  // Shift along the z-axis to the middle of the object
+      tf2::Vector3 translation(0, 0, -zOff);  // Shift along the z-axis to the middle of the object
       tf2::Transform objectToMiddle(rotation, translation); // Apply rotation to the translation
       
       tf2::Vector3 object_pos = objectToMiddle * tag_pos;  // Apply the transform to the original coordinates of the object's surface
