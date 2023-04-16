@@ -334,7 +334,7 @@ class PickAndPlace : public rclcpp::Node
       tf2::Quaternion tag_rot(tag_pose.orientation.x, tag_pose.orientation.y, tag_pose.orientation.z, tag_pose.orientation.w);
       double zOff = 0.05;
 
-      if (object_dimensions_[2] < 0.05)
+      if (object_dimensions_[2] < 0.05 && object_dimensions_[2] != 0.0)
       {
         zOff = object_dimensions_[2];
       }
