@@ -250,11 +250,11 @@ class PickAndPlace : public rclcpp::Node
       {
         RCLCPP_INFO(this->get_logger(), "Measurement %i:", i);
         RCLCPP_INFO(this->get_logger(), "X: %f", measurements[i].position.x);
-        RCLCPP_INFO(this->get_logger(), "Y: %f", measurements[i].position.y);
+        RCLCPP_INFO(this->get_logger(), "Y: %f", measurements[i].position.y)
         RCLCPP_INFO(this->get_logger(), "Y: %f", measurements[i].position.z);
       }
 
-      RCLCPP_INFO(this->get_logger(), "Adjust the camera position accordingly:");
+      RCLCPP_INFO(this->get_logger(), "Half of the difference in opposing measurements(ex:(x[0]-x[2])/2):");
       RCLCPP_INFO(this->get_logger(), "X: %f", error_x);
       RCLCPP_INFO(this->get_logger(), "Y: %f", error_y);
 
