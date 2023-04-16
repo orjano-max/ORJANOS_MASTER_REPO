@@ -42,7 +42,7 @@ class PickAndPlace : public rclcpp::Node
       // Set current action back to none
       this->current_action_ = "none";
 
-      if (object_pose_ == empty_pose_)
+      if (object_pose_.position == empty_pose_.position)
       {
         RCLCPP_ERROR(this->get_logger(),"No object pose stored, aborting picking procedure!");
         RCLCPP_ERROR(this->get_logger(),"Run the 'searchForObject()' function to populate the object_pose_ variable!");
