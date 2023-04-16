@@ -33,7 +33,7 @@
         size: 0.0344
       calib_tag:
         id: 3
-        size: 0.0344
+        size: 0.1015
 
     # ## Tag bundle definitions
     # ### Remarks
@@ -63,6 +63,6 @@
       bundle_names: ["bundle_0"]
       bundle_0:
         layout:
-          ids: [3]
-          3:
+          ids: [5]
+          5:
             size: 1.0
