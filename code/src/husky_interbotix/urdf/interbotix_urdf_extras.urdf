@@ -94,7 +94,7 @@
   <joint name="realsense_joint" type="fixed">
     <parent link="camera_frame_link"/>
     <child link="camera_link"/>
-    <origin xyz="0.102348 0.0985 0.032" rpy="0 0 0"/> 
+    <origin xyz="0.10235 0.0985 0.032" rpy="0 0 0"/> 
   </joint>
 
   <!-- %%%%% END EFFECTOR LINK %%%%% -->
