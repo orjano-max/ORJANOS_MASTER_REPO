@@ -24,3 +24,14 @@ The hardware setup of the system is determined by the tasks that the UGV should 
   \caption{Hardware overview of system}
   \label{fig:hardware_overview}
 \end{figure}
+
+
+\section{Software overview}
+On a high level, the system is controlled by a ros node called "husky\_master". This node interacts with NAV2 and Moveit 2 to orchestrate an autonomous pick and place operation. The interaction between "husky\_master" and Moveit 2 is done through "husky\_pick\_and\_place" which acts as an interface between Moveit 2 and "husky\_master". A high level overview of this interaction is shown in figure \ref{}
+
+% \begin{figure}[H]
+%   \centering
+%   \includegraphics[width = 0.6\textwidth]{}
+%   \caption{Hardware overview of system}
+%   \label{fig:software_overview}
+% \end{figure}
