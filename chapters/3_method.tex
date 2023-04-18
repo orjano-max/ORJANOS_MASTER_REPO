@@ -16,7 +16,10 @@ This chapter will describe different methodologies used to solve technical probl
 The objective of this project is to set up an autonomous warehouse system where an autonomous UGV should be able to fetch objects in a warehouse. The system will rely on an UGV equipped for autonomous navigation to move around in the environment. The UGV will also be equipped with a robotic manipulator for pick and place operations.
 
 \section{Conceptual Design}
-The design of the robot should reflect the intended tasks of the robotic platform. For an autonomous warehouse robot, these tasks involve autonomous navigation, pick and place and object detection/recognition. The design should deliver a platform that could be used for future projects. The resulting conceptual design resulted in the following major components:
+The design of the robot should reflect the intended tasks of the robotic platform. For an autonomous warehouse robot, these tasks involve autonomous navigation, pick and place and object detection/recognition. The design should deliver a platform that could be used for future projects. 
+
+\subsection{Initial Concept}
+With the described design specifications considered, the initial conceptual design resulted in the following major components:
 
 \begin{itemize}
     \item Clearpath - Husky A200 UGV
@@ -27,8 +30,7 @@ The design of the robot should reflect the intended tasks of the robotic platfor
     \item 2 X NVIDIA - Jetson AGX Xavier
 \end{itemize}
 
-From the bulletin list above, Husky A200, seen in figure \ref{fig:huskyA200}, provides a robust mobile platform and UM7 IMU and Ouster OS1-64 LiDAR provides sensory information to allow for autonomous navigation. The UR5 robotic manipulator, seen in figure \ref{fig:ur5}, paired with an Intel Realsese D435i, adds capabilities for pick and place operations with object detection and 6-DOF pose estimation.
-
+From the bulletin list above, Husky A200, seen in figure \ref{fig:huskyA200}, provides a robust mobile platform and UM7 IMU and Ouster OS1-64 LiDAR provides sensory information to allow for autonomous navigation. The UR5 robotic manipulator, seen in figure \ref{fig:ur5}, paired with an Intel Realsense D435i, adds capabilities for pick and place operations with object detection and 6-DOF pose estimation. The two NVIDIA Jetson AGX Xaviers will be used to control the platform.
 
 \begin{figure}[H]
   \centering
@@ -51,29 +53,29 @@ Some specifications on the Husky A200 robotic platform is listed in table \ref{t
 
 \input{Tables/husky_specs}
 
-One NVIDIA Jetson AGX Xavier, hereby called "UGV Xavier", interfaces with Husky, LiDAR and IMU. This computer will control the Husky and take care of autonomous navigation tasks such as mapping, localization and path planning. Looking at figure \ref{fig:topology}, it can be seen that the UGV Xavier 
+One NVIDIA Jetson AGX Xavier, hereby called "UGV Xavier", interfaces with Husky, LiDAR and IMU. This computer will control the Husky and take care of autonomous navigation tasks such as mapping, localization and path planning. 
 
-The second NVIDIA Jetson AGX Xavier interfaces with the Realsense camera and UR5 manipulator. This computer will control the manipulator, and take care of sensory information from the Realsense camera. 
+The second NVIDIA Jetson AGX Xavier, hereby called Manipulator Xavier, interfaces with the Realsense camera and robotic manipulator. This computer will control the manipulator, and take care of sensory information from the Realsense camera. 
 
 The relatively powerful GPU of the Xaviers adds capabilities to implement deep learning algorithms to do for example image- or PointCloud based object detection.
 
+\subsection{Final Design/Concept??}
+The final design is 
 
-
- high level topology of the system is shown in figure \ref{fig:topology}.
+\subsection{Topology}
+Looking at figure \ref{fig:topology}, it can be seen that the UGV Xavier communicates with the Husky through RS232 and the UM7 IMU through USB. The LiDAR communicates through Ethernet via a WiFi router that acts as a switch. It's data is therefore available for all computers on the network. From figure \ref{fig:topology}, it can be seen that the Manipulator Xavier interfaces with both the Realsense camera and the manipulator through USB.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width = 0.6\textwidth]{Figures/example_figure.drawio.png}
-  \caption{High level topology}
+  \caption{High level topology of the mobile robotic platform}
   \label{fig:topology}
 \end{figure}
 
 
-
-
   
 \section{Hardware Setup}
-As the
+
 
 The complete setup is described in URDF files, which allows for an accurate digital model of the robot to be made . The URDF model of the robot is shown in figure \ref{fig:hardware}.
 
