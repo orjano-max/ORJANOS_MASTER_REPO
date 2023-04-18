@@ -15,23 +15,85 @@ This chapter will describe different methodologies used to solve technical probl
 
 The objective of this project is to set up an autonomous warehouse system where an autonomous UGV should be able to fetch objects in a warehouse. The system will rely on an UGV equipped for autonomous navigation to move around in the environment. The UGV will also be equipped with a robotic manipulator for pick and place operations.
 
-\section{Hardware Setup}
-The hardware setup of the system is determined by the tasks that the UGV should preform. The main functionality of the system can be divided into two main subsystems: an autonomously navigating UGV and a robot manipulator for pick-and-place operations. The "Husky A200" by Clearpath is chosen as a the UGV platform for the whole system. This is a ROS 2 compatible UGV with a rugged design that is suitable for both outdoor and indoor applications. The robotic manipulator of choice, is the "Interbotix VX300" by Trossen Robotics. This is a 12V powered compact manipulator that makes it easy to mount on the Husky UGV that has a 12V power distribution. Hardware overview is shown in figure \ref{fig:hardware_overview}.
+\section{Conceptual Design}
+The design of the robot should reflect the intended tasks of the robotic platform. For an autonomous warehouse robot, these tasks involve autonomous navigation, pick and place and object detection/recognition. The design should deliver a platform that could be used for future projects. The resulting conceptual design resulted in the following major components:
+
+\begin{itemize}
+    \item Clearpath - Husky A200 UGV
+    \item Redshift Labs - UM7 IMU
+    \item Ouster -  OS1-64 3D LiDAR
+    \item Universal Robots - UR5
+    \item Intel - Realsense D435i Camera
+    \item 2 X NVIDIA - Jetson AGX Xavier
+\end{itemize}
+
+From the bulletin list above, Husky A200, seen in figure \ref{fig:huskyA200}, provides a robust mobile platform and UM7 IMU and Ouster OS1-64 LiDAR provides sensory information to allow for autonomous navigation. The UR5 robotic manipulator, seen in figure \ref{fig:ur5}, paired with an Intel Realsese D435i, adds capabilities for pick and place operations with object detection and 6-DOF pose estimation.
+
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width = 0.8\textwidth]{Figures/huskyA200.png}
+        \caption{Clearpath Husky A200. Image adapted from \cite{clearpath_husky_website}}
+        \label{fig:huskyA200}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.49\textwidth}
+    \centering
+    \includegraphics[width = 0.8\textwidth]{Figures/ur5.png}
+    \caption{Universal Robots UR5. Image from \cite{ur5_img}}
+    \label{fig:ur5}
+  \end{minipage}
+\end{figure}
+
+Some specifications on the Husky A200 robotic platform is listed in table \ref{tab:husky:a200:specs}
+
+\input{Tables/husky_specs}
+
+One NVIDIA Jetson AGX Xavier, hereby called "UGV Xavier", interfaces with Husky, LiDAR and IMU. This computer will control the Husky and take care of autonomous navigation tasks such as mapping, localization and path planning. Looking at figure \ref{fig:topology}, it can be seen that the UGV Xavier 
+
+The second NVIDIA Jetson AGX Xavier interfaces with the Realsense camera and UR5 manipulator. This computer will control the manipulator, and take care of sensory information from the Realsense camera. 
+
+The relatively powerful GPU of the Xaviers adds capabilities to implement deep learning algorithms to do for example image- or PointCloud based object detection.
+
+
+
+ high level topology of the system is shown in figure \ref{fig:topology}.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width = 0.6\textwidth]{Figures/example_figure.drawio.png}
-  \caption{Hardware overview of system}
-  \label{fig:hardware_overview}
+  \caption{High level topology}
+  \label{fig:topology}
 \end{figure}
 
 
-\section{Software overview}
+
+
+  
+\section{Hardware Setup}
+As the
+
+The complete setup is described in URDF files, which allows for an accurate digital model of the robot to be made . The URDF model of the robot is shown in figure \ref{fig:hardware}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width = 0.6\textwidth]{Figures/husky_initiated.png}
+  \caption{3D model of the robotic system.}
+  \label{fig:hardware}
+\end{figure}
+
+
+\section{Autonomous Navigation}
+Autonomous navigation is achieved using the NAV2 navigation stack for ROS 2.
+
+\section{Autonomous Object Fetching}
 On a high level, the system is controlled by a ros node called "husky\_master". This node interacts with NAV2 and Moveit 2 to orchestrate an autonomous pick and place operation. The interaction between "husky\_master" and Moveit 2 is done through "husky\_pick\_and\_place" which acts as an interface between Moveit 2 and "husky\_master". A high level overview of this interaction is shown in figure \ref{fig:software_overview}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width = 0.6\textwidth]{Figures/software_overview.drawio.svg}
-  \caption{Hardware overview of system}
-  \label{fig:hardware_overview}
+  \includegraphics[width = 0.6\textwidth]{Figures/software_overview.drawio.png}
+  \caption{Software overview of warehouse automation system. The "husky\_master" node controls the operation by interfacing directly with NAV2 and with Moveit2 trhough the "husky\_pick\_and\_place" node.}
+  \label{fig:software_overview}
 \end{figure}
