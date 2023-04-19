@@ -90,8 +90,8 @@ This section describes the different hardware components of the robotic system a
 
 The WiFi Router allows external computers to connect to the network, either through WiFi or cabled connection, and communicate with the two Xaviers and the LiDAR. This makes it possible to control the Xavier computers through SSH and also allows developers to interact with the ROS2 network.
 
-\subsection{Unmanned Ground Vehicle Hardware Setup}
-The UGV is a platform for the complete system and acts as a bracket for that holds all sensors and actuators as well as having the role of powering all equipment it holds. A general arrangement drawing describing physical arrangement of all the components mounted on the UGV is presented in figure \ref{fig:general_arrangement}.
+\subsection{General Arrangement}
+The UGV acts as a bracket that holds all sensors and actuators as well as having the role of powering all equipment it holds. A general arrangement drawing describing physical arrangement of all the components mounted on the UGV is presented in figure \ref{fig:general_arrangement}.
 
 \begin{figure}[H]
   \centering
@@ -100,6 +100,16 @@ The UGV is a platform for the complete system and acts as a bracket for that hol
   \label{fig:general_arrangement}
 \end{figure}
 
+
+\subsection{Electrical Interface}
+The different components in the system is powered through the user power supply of the UGV(see table \ref{tab:husky:a200:specs}). Figure illustrates the electrical interface between the husky and the different components.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width = 0.6\textwidth]{Figures/husky_initiated.png}
+  \caption{3D model of the robotic system.}
+  \label{fig:circuit_diagram}
+\end{figure}
 
 
 \subsubsection{Sensor mounting frame}
