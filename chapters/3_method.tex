@@ -60,21 +60,47 @@ The second NVIDIA Jetson AGX Xavier, hereby called Manipulator Xavier, interface
 The relatively powerful GPU of the Xaviers adds capabilities to implement deep learning algorithms to do for example image- or PointCloud based object detection.
 
 \subsection{Final Design/Concept??}
-The final design is 
 
-\subsection{Topology}
-Looking at figure \ref{fig:topology}, it can be seen that the UGV Xavier communicates with the Husky through RS232 and the UM7 IMU through USB. The LiDAR communicates through Ethernet via a WiFi router that acts as a switch. It's data is therefore available for all computers on the network. From figure \ref{fig:topology}, it can be seen that the Manipulator Xavier interfaces with both the Realsense camera and the manipulator through USB.
+The UR5 manipulator requires a dedicated controller to operate.This controller also contains the DC-power supply for the manipulator. As the manipulator is to be mounted on an UGV, this controller has to be powered through DC-power. According to the Universal Robots CB3 battery supply installation manual \cite{ur5_battery_manual}, the UR5 could draw up to 50A at "peak conditions". Looking at table \ref{tab:husky:a200:specs}, it is clear that the built in 24V power distribution on the Husky, with a 5A circuit breaker, is insufficient.
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}[b]{0.49\textwidth}
+        \centering
+        The design of a mobile power system for the CB3 controller and thus, the UR5 manipulator is beyond the scope of this project. The decision was therefore made to swap out the UR5 manipulator with a smaller Interbotix VX300 manipulator from Trossen Robotics, illustrated in figure \ref{fig:vx300}. This is a significantly smaller robotic arm that is powered through 12V DC-power supply with a standard 2.5mm DC barrel jack. 
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.49\textwidth}
+   \centering
+  \includegraphics[width = 0.7\textwidth]{Figures/VX300.jpg}
+  \caption{Interbotix Vx300. Image from \cite{interbotix_vx300}}
+  \label{fig:vx300}
+  \end{minipage}
+\end{figure}
+  
+\section{Hardware}
+This section describes the different hardware components of the robotic system and how they are set up for this project. A high level overview of the network topology is shown in figure \ref{fig:topology}. This topology gives an insight to how the different components are connected to create a complete system. Looking at figure \ref{fig:topology}, it can be seen that the UGV Xavier communicates with the Husky through RS232 and the UM7 IMU through USB. The LiDAR communicates through Ethernet via a WiFi router that, in this case acts as a switch. The LiDAR data is therefore available for all computers on the network. From figure \ref{fig:topology}, it can be seen that the Manipulator Xavier interfaces with both the Realsense camera and the manipulator through USB. 
 
 \begin{figure}[H]
   \centering
   \includegraphics[width = 0.6\textwidth]{Figures/example_figure.drawio.png}
-  \caption{High level topology of the mobile robotic platform}
+  \caption{High level network topology showing the various components on the mobile robotic platform}
   \label{fig:topology}
 \end{figure}
 
+The WiFi Router allows external computers to connect to the network, either through WiFi or cabled connection, and communicate with the two Xaviers and the LiDAR. This makes it possible to control the Xavier computers through SSH and also allows developers to interact with the ROS2 network.
 
-  
-\section{Hardware Setup}
+\subsection{Unmanned Ground Vehicle Hardware Setup}
+The UGV is a platform for the complete system and acts as a bracket for that holds all sensors and actuators as well as having the role of powering all equipment it holds. A circuit diagram describing the electrical interface betwen the husky and the different components of the system has been made.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width = 0.6\textwidth]{Figures/husky_initiated.png}
+  \caption{3D model of the robotic system.}
+  \label{fig:hardware}
+\end{figure}
+
+\subsubsection{Sensor mounting frame}
 
 
 The complete setup is described in URDF files, which allows for an accurate digital model of the robot to be made . The URDF model of the robot is shown in figure \ref{fig:hardware}.
@@ -86,16 +112,58 @@ The complete setup is described in URDF files, which allows for an accurate digi
   \label{fig:hardware}
 \end{figure}
 
+\subsubsection{IMU}
+
+\subsubsection{LiDAR}
+
+\subsection{Manipulator}
+
+\subsection{Machine Vision Camera}
+
+\section{Software Setup}
+
+\subsection{ROS2 Setup}
+
+\subsection{UGV Setup}
+\subsubsection{Model Description}
+
+\subsection{IMU Setup}
+
+\subsection{LiDAR Setup}
+
+\subsection{IMU Fusion}
+
+\subsection{Manipulator}
+\subsubsection{Model Description}
+\subsubsection{Panning Scene}
+
+\subsection{Machine Vision}
+\subsubsection{Camera Setup}
+\subsubsection{Apriltag}
+
 
 \section{Autonomous Navigation}
 Autonomous navigation is achieved using the NAV2 navigation stack for ROS 2.
 
-\section{Autonomous Object Fetching}
-On a high level, the system is controlled by a ros node called "husky\_master". This node interacts with NAV2 and Moveit 2 to orchestrate an autonomous pick and place operation. The interaction between "husky\_master" and Moveit 2 is done through "husky\_pick\_and\_place" which acts as an interface between Moveit 2 and "husky\_master". A high level overview of this interaction is shown in figure \ref{fig:software_overview}
+\subsection{SLAM}
+
+\subsection{Navigation 2}
+
+
+
+\section{Algorithms}
+
+\subsection{Scene Geometry Publisher}
+
+\subsection{Husky Pick and Place}
+
+
+\subsection{Husky Master Node}
+On a high level, the system is controlled by a ros node called "husky\_master". This node interacts with NAV2 and Moveit 2 to orchestrate an autonomous pick and place operation. The interaction between "husky\_master" and Moveit 2 is done through "husky\_pick\_and\_place" which acts as an interface between Moveit 2 and "husky\_master". A high level overview of this interaction is shown in figure \ref{fig:husky_master}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width = 0.6\textwidth]{Figures/software_overview.drawio.png}
-  \caption{Software overview of warehouse automation system. The "husky\_master" node controls the operation by interfacing directly with NAV2 and with Moveit2 trhough the "husky\_pick\_and\_place" node.}
-  \label{fig:software_overview}
+  \caption{The "husky\_master" node controls the operation by interfacing directly with NAV2 and with Moveit2 through the "husky\_pick\_and\_place" node.}
+  \label{fig:husky_master}
 \end{figure}
