@@ -77,18 +77,103 @@ The UR5 manipulator requires a dedicated controller to operate.This controller a
   \label{fig:vx300}
   \end{minipage}
 \end{figure}
+
+
+
+
   
 \section{Hardware}
 This section describes the different hardware components of the robotic system and how they are set up for this project. A high level overview of the network topology is shown in figure \ref{fig:topology}. This topology gives an insight to how the different components are connected to create a complete system. Looking at figure \ref{fig:topology}, it can be seen that the UGV Xavier communicates with the Husky through RS232 and the UM7 IMU through USB. The LiDAR communicates through Ethernet via a WiFi router that, in this case acts as a switch. The LiDAR data is therefore available for all computers on the network. From figure \ref{fig:topology}, it can be seen that the Manipulator Xavier interfaces with both the Realsense camera and the manipulator through USB. 
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width = 0.6\textwidth]{Figures/example_figure.drawio.png}
+  \includegraphics[width = 0.5\textwidth]{Figures/example_figure.drawio.png}
   \caption{High level network topology showing the various components on the mobile robotic platform}
   \label{fig:topology}
 \end{figure}
 
 The WiFi Router allows external computers to connect to the network, either through WiFi or cabled connection, and communicate with the two Xaviers and the LiDAR. This makes it possible to control the Xavier computers through SSH and also allows developers to interact with the ROS2 network.
+
+\subsection{Accessory mounting frame}
+As the UGV is to be used for prototyping and testing, it is preferable to have some kind of bracket where various sensors and actuators could be mounted. The bracket should be rigid, yet flexible in terms of mounting possibilities. An aluminium profile frame is therefore designed for the UGV.
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}[b]{0.49\textwidth}
+        \centering
+         The aluminium frame, seen in figure \ref{fig:user_frame} is made out of 20X20mm aluminium profiles. The purpose of the frame is to add the possibility to mount whatever accessory the developer wants to the UGV. The choice fell on 20X20mm aluminium profiles as they are practical for mounting various equipment as well as the fact that the Husky A200 UGV is delivered with a 20x20mm mounting frame out of the box. Looking at figure \ref{fig:user_frame}, the husky mounting frame can be seen as the rectangular black frame on top of the Husky UGV.
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.49\textwidth}
+   \centering
+    \includegraphics[width = 0.8\textwidth]{Figures/husky_with_frame.png}
+    \caption{Husky A200 with sensor frame mounted}
+    \label{fig:user_frame}
+  \end{minipage}
+\end{figure}
+
+\subsection{Autonomous Navigation Hardware}
+
+\subsubsection{IMU}
+In order to increase the performance of the UGV odometry, an UM7 IMU from Redshift Labs, seen in figure \ref{fig:um7_imu}, has been added. This IMU is ROS2 compatible and will publish IMU data to ROS2. This data can then be used to better calculate the position of the UGV. 
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width = 0.3\textwidth]{Figures/um7_imu.png}
+  \caption{Redshift Labs UM7 IMU. Image from \cite{um7_imu}.}
+  \label{fig:um7_imu}
+\end{figure}
+
+As illustrated in the topology in figure \ref{fig:topology}, the UM7 is connected to the UGV Xavier through USB which is used for power and communication.
+
+\subsubsection{LiDAR}
+The Ouster OS1-64, is a $360\deg$ 3D LiDAR that generates a large amount of spatial information about the surrounding environment as a point cloud. In this project, that point cloud is used for localisation and to generate a 2D map of the environment. The OS1-164 LiDAR is fitted with a built in IMU sensor which for example can be used the same way, or together with, the UM7 IMU for localisation. The LiDAR can be seen mounted on a camera bracket in figure \ref{fig:lidar_mount}.
+
+\subsubsection{LiDAR and Camera Mount}
+To account for the possibility to fuse LiDAR and image data, a LiDAR and camera mount, seen in figure \ref{fig:lidar_mount}, is created. The mount is designed to have the Ouster OS1 LiDAR mounted on the top and four e-con cameras inside. The e-con cameras are arranged $90\deg$ away from each other with a constant radius from the center of the mount.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width = 0.5\textwidth]{Figures/lidar_mount.png}
+  \caption{Cad model of LiDAR mount with cameras. The Ouster OS1-64 is mounted on top.}
+  \label{fig:lidar_mount}
+\end{figure}
+
+\subsection{Pick and Place Hardware}
+
+\subsubsection{Manipulator}
+The chosen manipulator, the Interbotix VX300 (figure \ref{fig:vx300}, is mounted on the aluminium profiles at the rear right side of the UGV. Offsetting the base of the manipulator from the center of the UGV, gives a longer reach outside of the UGV's footprint. The manipulator requires 12V power through a 2.5mm barrel jack and is connected to the husky user power supply as seen in figure \ref{fig:circuit_diagram}.
+
+\subsubsection{Manipulator Mounted Camera}
+An Intel Realsense D435i camera, seen in figure \ref{fig:d435i}, is mounted on the manipulator to add the possibility of machine vision for pick and place operations. Intel Realsense D435i is a stereo-camera from Intel with 3D vision capabilities and ROS2 compatibility. In order to mount the camera to the manipulator, a bracket has been  designed in CAD software. The bracket is adapted from \cite{d435_sleeve} with modifications to be able to mount it on the gripper of the V300 manipulator. The bracket can be seen in figure \ref{fig:realsense_assembly}.
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}[b]{0.49\textwidth}
+    \centering
+    \includegraphics[width = 0.8\textwidth]{Figures/D435i.jpg}
+    \caption{Intel Realsense D435i Depth Camera. Image from: \cite{realsense_d435i}.}
+    \label{fig:d435i}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.49\textwidth}
+   \centering
+    \includegraphics[width = 0.8\textwidth]{Figures/realsense_assembly.pdf}
+    \caption{Realsense D435i bracket assembly with camera. The bracket is adapted from \cite{d435_sleeve} to be able to mount on the VX300 robotic arm.}
+    \label{fig:realsense_assembly}
+  \end{minipage}
+\end{figure}
+
+\subsection{Complete Hardware Setup}
+
+The complete system is presented in figure \ref{fig:hardware}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width = 0.7\textwidth]{Figures/husky_completed.pdf}
+  \caption{3D model of the complete robotic system.}
+  \label{fig:hardware}
+\end{figure}
 
 \subsection{General Arrangement}
 The UGV acts as a bracket that holds all sensors and actuators as well as having the role of powering all equipment it holds. A general arrangement drawing describing physical arrangement of all the components mounted on the UGV is presented in figure \ref{fig:general_arrangement}.
@@ -96,10 +181,9 @@ The UGV acts as a bracket that holds all sensors and actuators as well as having
 \begin{figure}[H]
   \centering
    \includegraphics[width = 0.9\textwidth]{Figures/general_arrangement.drawio.png}
-  \caption{General arrangement drawing of UGV platform. Here, the physical position of different hardware components are defined. The sensor frame is drawn to the left of the main frame to make it easier to read.}
+  \caption{General arrangement drawing of UGV platform. Here, the physical position of different hardware components are defined. The sensor frame is drawn to the left of the main frame.}
   \label{fig:general_arrangement}
 \end{figure}
-
 
 \subsection{Electrical Interface}
 The different components in the system is powered through the user power supply of the UGV(see table \ref{tab:husky:a200:specs}). Figure \ref{fig:circuit_diagram} is a circuit diagram that illustrates the DC power distribution.
@@ -111,34 +195,28 @@ The different components in the system is powered through the user power supply 
   \label{fig:circuit_diagram}
 \end{figure}
 
+\section{Software Setup}
+For the different components of the robotic system to act together, some software configuration has to be done. This section describes different  parts of the software setup to achieve an autonomously navigating robotic platform. As mentioned in \textbf{where i mention} ROS2 is used for software implementation. All ROS2 packages described in this section is either available as open source packages, or developed during the course of this project.
 
+\subsection{UGV Setup}
+\subsubsection{Husky ROS2 Packages}
+An adaptation of Clearpath's own Husky A200 ROS2 packages are used to operate the UGV in ROS2. Clearpath husky provides Debian ROS2 packages for ROS2 Foxy, and these are therefore used. The story is different for ROS2 Galactic which has reached its EOL and is no longer maintained. Nevertheless, the official Husky ROS2 repository\cite{husky_repo} still contains a branch for ROS2 Galactic even though it won't build. This branch is forked and modified in order to build as well as modified to take in some arguments to the launch file. The forked repository is public and available at \cite{uia_husky_repo}.
 
-\subsubsection{Sensor mounting frame}
-
-
-The complete setup is described in URDF files, which allows for an accurate digital model of the robot to be made . The URDF model of the robot is shown in figure \ref{fig:hardware}.
+The Husky ROS2 packages brings up the UGV and makes it ready to take velocity commands. The velocity commands are handled through the \lstinline{twist_mux} node. This node publishes velocity commands based on the incoming commands and the defined priority. The command is published to the \lstinline{/husky_velovity_controller/cmd_vel_unstamped} topic. Figure \ref{fig:rqt_husky} illustrates how the husky takes in velocity commands through that topic and then publishes the husky odometry through the \lstinline{/odom} topic. This odometry is then passed to the \lstinline{ekf_node} that also takes in IMU data from the UM7 IMU(\lstinline{/um7_driver}) and the OS1 LiDAR(\lstinline{ouster_driver}). The node \lstinline{ekf_node}, is an Extended Kalman Filter that fuses the odometry and IMU data in order to define the position of the robot \lstinline{base_link} relative to the \lstinline{/odom} transform.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width = 0.6\textwidth]{Figures/husky_initiated.png}
-  \caption{3D model of the robotic system.}
-  \label{fig:hardware}
+  \includegraphics[width = 1\textwidth]{Figures/rqt_husky2.png}
+  \caption{RQT Node Graph of Husky running in ROS2 Foxy. In addition to the Husky ROS2 packages, \lstinline{um7_node}, \lstinline{ros2_ouster} and \lstinline{pointcloud_to_laserscan} is running.}
+  \label{fig:rqt_husky}
 \end{figure}
 
-\subsubsection{IMU}
-
-\subsubsection{LiDAR}
-
-\subsection{Manipulator}
-
-\subsection{Machine Vision Camera}
-
-\section{Software Setup}
-
-\subsection{ROS2 Setup}
-
-\subsection{UGV Setup}
 \subsubsection{Model Description}
+In ROS2, urdf files are used to describe robotic systems. As extra hardware is mounted on the UGV, some extra urdf information has to be added in order to describe the spatial relationship between the UGV and accessories such as the LiDAR. This information is added in an own urdf file and passed upon launch of the husky.
+
+A visual representation of the UGV with all accessories attached is preferable when interacting with the robot in rviz2. Meshes of the accessory frame with the LiDAR and LiDAR/camera mount is therefore generated and used in the urdf file for visaluzation. 
+
+
 
 \subsection{IMU Setup}
 
