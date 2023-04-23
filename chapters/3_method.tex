@@ -202,7 +202,16 @@ For the different components of the robotic system to act together, some softwar
 \subsubsection{Husky ROS2 Packages}
 An adaptation of Clearpath's own Husky A200 ROS2 packages are used to operate the UGV in ROS2. Clearpath husky provides Debian ROS2 packages for ROS2 Foxy, and these are therefore used. The story is different for ROS2 Galactic which has reached its EOL and is no longer maintained. Nevertheless, the official Husky ROS2 repository\cite{husky_repo} still contains a branch for ROS2 Galactic even though it won't build. This branch is forked and modified in order to build as well as modified to take in some arguments to the launch file. The forked repository is public and available at \cite{uia_husky_repo}.
 
-The Husky ROS2 packages brings up the UGV and makes it ready to take velocity commands. The velocity commands are handled through the \lstinline{twist_mux} node. This node publishes velocity commands based on the incoming commands and the defined priority. The command is published to the \lstinline{/husky_velovity_controller/cmd_vel_unstamped} topic. Figure \ref{fig:rqt_husky} illustrates how the husky takes in velocity commands through that topic and then publishes the husky odometry through the \lstinline{/odom} topic. This odometry is then passed to the \lstinline{ekf_node} that also takes in IMU data from the UM7 IMU(\lstinline{/um7_driver}) and the OS1 LiDAR(\lstinline{ouster_driver}). The node \lstinline{ekf_node}, is an Extended Kalman Filter that fuses the odometry and IMU data in order to define the position of the robot \lstinline{base_link} relative to the \lstinline{/odom} transform.
+The Husky ROS2 packages brings up the UGV and makes it ready to take velocity commands. The velocity commands are handled through the \lstinline{twist_mux} node. This node publishes velocity commands based on the incoming commands and the defined priority. The command is published to the \lstinline{/husky_velovity_controller/cmd_vel_unstamped} topic.
+
+\begin{figure}[H]
+  \centering
+  \includesvg[width = 0.9\textwidth]{Figures/husky_nodess.drawio.png}
+  \caption{RQT Node Graph of Husky running in ROS2 Foxy. In addition to the Husky ROS2 packages, \lstinline{um7_node}, \lstinline{ros2_ouster} and \lstinline{pointcloud_to_laserscan} is running.}
+  \label{fig:rqt_husky}
+\end{figure}
+
+Figure \ref{fig:rqt_husky} illustrates how the husky takes in velocity commands through that topic and then publishes the husky odometry through the \lstinline{/odom} topic. This odometry is then passed to the \lstinline{ekf_node} that also takes in IMU data from the UM7 IMU(\lstinline{/um7_driver}) and the OS1 LiDAR(\lstinline{ouster_driver}). The node \lstinline{ekf_node}, is an Extended Kalman Filter that fuses the odometry and IMU data in order to define the position of the robot \lstinline{base_link} relative to the \lstinline{/odom} transform.
 
 \begin{figure}[H]
   \centering
