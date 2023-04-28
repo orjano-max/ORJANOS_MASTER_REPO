@@ -1,0 +1,16 @@
+\begin{table}[H]
+\centering
+\caption{This table describes the LiDAR parameters that are changed for this project. Their current value and a short description of the parameter as well as their default value.}
+\label{tab:lidar_params}
+\vspace{1mm}
+\begin{tabular}{llll}
+\hline
+\textbf{Parameter} & \textbf{Value}                                                        & \textbf{Description}                                                                                                           &  \\ \hline
+lidar\_ip          & 169.254.171.185                                                       & \begin{tabular}[c]{@{}l@{}}IP address of LiDAR\\ \textbf{Default:} 10.5.5.96\end{tabular}                                               &  \\
+computer\_ip       & 192.168.0.169                                                         & \begin{tabular}[c]{@{}l@{}}IP adress of Computer\\ \textbf{Default:} 10.5.5.1\end{tabular}                                              &  \\
+sensor\_frame      & lidar\_link                                                           & \begin{tabular}[c]{@{}l@{}}TF2 base frame of sensor\\ \textbf{Default:} laser\_sensor\_frame\end{tabular}                               &  \\
+laser\_frame       & base\_laser                                                           & \begin{tabular}[c]{@{}l@{}}TF2 dara frame of sensor\\ \textbf{Default:} laser\_data\_frame\end{tabular}                                 &  \\
+timestamp\_mode    & \begin{tabular}[c]{@{}l@{}}TIME\_FROM\\ \_ROS\_RECEPTION\end{tabular} & \begin{tabular}[c]{@{}l@{}}Where the messages timestamp should \\ come from\\ \textbf{Default:} TIME\_FROM\_INTERNAL\_OSC\end{tabular}  &  \\
+proc\_mask         & IMG|PCL|IMU                                                           & \begin{tabular}[c]{@{}l@{}}Which data that should be published to \\ the ROS2 network\\ \textbf{Default:} IMG|PCL|IMU|SCAN\end{tabular} &  \\ \hline
+\end{tabular}
+\end{table}
