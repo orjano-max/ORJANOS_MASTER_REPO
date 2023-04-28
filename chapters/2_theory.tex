@@ -1,5 +1,7 @@
 \chapter{Theory}
-This chapter will present theoretic concepts that help understand the methodologies used during the course of this project. First, the reader will be presented with fundamental concepts related autonomous mobile robotics. Then, theory about robotic manipulation and tag based machine vision will be explained. Finally, ROS2 is explained, as this is a vital part of the project.
+This chapter will presents theoretic concepts that help understand the methodologies used during the course of this project. First, the reader will be presented with fundamental concepts related autonomous mobile robotics. Then, theory about robotic manipulation and tag based machine vision will be explained. Finally, ROS2 is explained, as this is a vital part of the project.
+% aj - presents. Not is future but in simple present tense. something like this
+% This chapter presents the ovelying thoery behind the autonomous warehous functionalities namely ... a,b,c .. in chapter 1. Starting with the fundamental conpept of use of unmanned ground vehicle (UGV) for warehouse automation, then we describe the autonomous navigation ......Finally we intergrate individual functionalities to achieve warehouse automation.
 
 \section{Autonomous Navigation}
 As pointed out in section \ref{sec:I:AutonomousNavigation}, for a mobile robot to be able to do autonomous navigation, four building blocks has to be fulfilled, or rather, four problems has to be solved. This section describes methods used to solve these problems in mobile robotics.
@@ -9,7 +11,7 @@ Motion Control refers to the actuation of motors to move around the environment 
 
 Close to all mechanisms of locomotion are heavily inspired from nature. Examples of such locomotion mechanisms are walking, sliding, jumping, swimming and flying. However, there is one type of locomotion invented by humans that is also extremely energy efficient on hard surfaces; the powered wheel. Legged locomotion gives the benefit of adaptability and manoeuvrability in rough terrain. However, legged locomotion suffer from power inefficiency and high complexity. Wheeled locomotion is therefore by far the most popular type of locomotion in mobile robotics\cite{SiegwartRoland2011Itam}.
 
-\subsubsection{Differential Drive Mobile Robots}
+\subsubsection{Differential Drive Robots}
 Differential drive mobile robots refers to a wheeled robotic system made up of a rigid body with two driven wheels. Figure \ref{fig:differentialDrive} illustrates different types of differential drive robotic movement systems. The common denominator for all three of the robotic systems in figure \ref{fig:differentialDrive}, is that they all rely on two driven wheels.
 
 \begin{figure}[H]
@@ -19,7 +21,9 @@ Differential drive mobile robots refers to a wheeled robotic system made up of a
   \label{fig:differentialDrive}
 \end{figure}
 
-For 
+The robot is modeled as a rigid body on wheels, interacting with a horizontal plane. The robot has a total of three DOFs, two for postion, and one orientaion along the orthogonal axis of the plane. Figure FIGURE! illustrates how the robot is modeled and its  positional notation relative to the reference frame.
+
+
 
 
 
