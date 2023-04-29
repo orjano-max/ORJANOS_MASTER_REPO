@@ -21,16 +21,33 @@ Differential drive mobile robots refers to a wheeled robotic system made up of a
   \label{fig:differentialDrive}
 \end{figure}
 
-The robot is modelled as a rigid body on wheels, interacting with a horizontal plane. The robot has a total of three DOFs, two for position, and one orientation along the orthogonal axis of the plane. Figure \ref{fig:PositionalRepresentation} illustrates how the robot is modelled and how the pose of the robot is specified on the plane. The axes $X_I$ and $Y_I$ represents a global reference frame on the plane with its origin at $O:{X_I, Y_X}$. A point P defined on the robot's chassis to act as a position reference point. Using the point P as origin, the axes $X_R$ and $Y:_R$ represents the robot's local reference frame. 
+% Inspired by \cite{SiegwartRoland2011Itam}, the robot is modelled as a rigid body on wheels, interacting with a horizontal plane. The robot has a total of three DOFs, two for position, and one orientation along the orthogonal axis of the plane. Figure \ref{fig:PositionalRepresentation} illustrates how the robot is modelled and how the pose of the robot is specified on the plane. The axes $X_I$ and $Y_I$ represents a global reference frame on the plane with its origin at $O:{X_I, Y_X}$. A point P defined on the robot's chassis to act as a position reference point. Using the point P as origin, the axes $X_R$ and $Y:_R$ represents the robot's local reference frame. 
 
-\begin{figure}[H]
-  \centering
-  \includesvg[width = 0.7\textwidth]{Figures/figPositionalRepresentation.drawio.svg}
-  \caption{}
-  \label{fig:PositionalRepresentation}
-\end{figure}
+% \begin{figure}[H]
+%   \centering
+%   \includesvg[width = 0.7\textwidth]{Figures/figPositionalRepresentation.drawio.svg}
+%   \caption{Illustration of the local robot reference frame, $P:{X_R, Y_R}$, relative to the global reference frame, $O:{X_I, Y_I}$. The pose of the robot is given as $\zeta_I$ where $x$ and $y$ denotes position and $\theta$ denotes angular rotation of local frame relative to global frame. Figure inspired from \cite{SiegwartRoland2011Itam}.}
+%   \label{fig:PositionalRepresentation}
+% \end{figure}
 
-From figure \ref{fig:PositionalRepresentation}, 
+% Looking at figure \ref{fig:PositionalRepresentation}, the position of $P$ is given as $P=(x,y)$ and the angle between the global and local reference frame is given as $\theta$. The pose of the robot becomes $\zeta_I$, where the subscript $I$ specifies that the pose is given relative to the global reference frame. Definition of $\zeta_I$ is given in eq. \ref{eq:posRep}.
+
+% \begin{equation}
+%     \label{eq:posRep}
+%     \zeta_I &= \begin{bmatrix}
+%                 x \\
+%                 y \\
+%                 \theta
+%                 \end{bmatrix}
+% \end{equation}
+
+\subsubsection{Skidding Robots}
+On a differential drive robot, the assumption is made that the driven wheels are not allowed to skid against the surface. However, there is an alternative type of robot where skidding is a part of the steering mechanism. Similarly to differential drive robots, these robots reorient themselves by spinning the wheels on each side of the robot at different speeds or in opposite directions. The difference is that these robots usually have tracks or several wheels on each side, giving it a much larger contact patch with the ground. The large contact patch gives these robots significantly improved traction in loose and rough terrain. Due to this large contact patch, the robot will usually skid when turning, hence the name. On some designs, the whole contact patch will be skidding when turning. This is the same type of locomotion that is used by military tanks\cite{SiegwartRoland2011Itam}.
+
+The main disadvantage of these skidding robots is that their turning nature makes it difficult to determine a center of rotation. In addition, the turning motion will be affected by differences in surface friction. This makes it significantly harder to determine the exact pose of the robot when turning compared to for example a normal differential drive robot. As a result, dead-reckoning is inaccurate for these robots and too aggressive turning motions could disorient the whole system. Another disadvantage is that the robot must overcome the static friction between the ground and the wheels/tracks to turn, this is highly inefficient on surfaces with high friction.
+
+
+
 
 \subsection{Perception}
 Talk about lidar systems
