@@ -21,16 +21,16 @@ Differential drive mobile robots refers to a wheeled robotic system made up of a
   \label{fig:differentialDrive}
 \end{figure}
 
-The robot is modelled as a rigid body on wheels, interacting with a horizontal plane. The robot has a total of three DOFs, two for position, and one orientation along the orthogonal axis of the plane. Figure \ref{fig:PositionalRepresentation} illustrates how the robot is modelled and its  positional notation relative to the reference frame.
+The robot is modelled as a rigid body on wheels, interacting with a horizontal plane. The robot has a total of three DOFs, two for position, and one orientation along the orthogonal axis of the plane. Figure \ref{fig:PositionalRepresentation} illustrates how the robot is modelled and how the pose of the robot is specified on the plane. The axes $X_I$ and $Y_I$ represents a global reference frame on the plane with its origin at $O:{X_I, Y_X}$. A point P defined on the robot's chassis to act as a position reference point. Using the point P as origin, the axes $X_R$ and $Y:_R$ represents the robot's local reference frame. 
 
 \begin{figure}[H]
   \centering
   \includesvg[width = 0.7\textwidth]{Figures/figPositionalRepresentation.drawio.svg}
-  \caption{Illustration of different differential drive robotic designs. \textbf{1:} Two independently driven wheels in the rear/front, one unpowered omnidirectional wheel in the front/rear. \textbf{2:} Two-wheel centered differential drive with a third point of contact. \textbf{3:} Two-wheel differential drive with the center of mass (COM) below the axle. Figure inspired from \cite{SiegwartRoland2011Itam}.}
+  \caption{}
   \label{fig:PositionalRepresentation}
 \end{figure}
 
-
+From figure \ref{fig:PositionalRepresentation}, 
 
 \subsection{Perception}
 Talk about lidar systems
