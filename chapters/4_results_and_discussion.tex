@@ -66,6 +66,13 @@ The Husky A200 UGV proved to be a practical mounting platform for developers to 
 \section{Perception}
 The Ouster OS1 LiDARs performance is affected by the high mounting location and it's relatively poor minimum range. The high mounting position creates a large blind-zone for low obstacles close to the robot. Ouster claims a vertical field of view of $45\deg$\textbf{SOURCE FOR THIS}, which at a sensor height of ...m above the ground means that 
 
+\begin{figure}[ht]
+  \centering
+  \includesvg[angle=90, width = 0.5\textwidth]{Figures/figUiaMap.svg}
+  \caption{Map of Machine Lab and Corridor at UiA Campus Grimstad. The map has been generated through SLAM with an autonomous mobile robot.}
+  \label{fig:R&D:AN:SLAM:figUiaMap}
+\end{figure}
+
 The use of the ROS2 package \lstinline{pointcloud_to_laserscan}, described in section \ref{sec:M:AN:P:PointCloudToLaserScan} is considered a success as this resulted in a 2D mapping that took all relevant obstacles into account.
 
 \subsection{Simultaneous Localisation and Mapping}\label{sec:R&D:AN:SLAM}
