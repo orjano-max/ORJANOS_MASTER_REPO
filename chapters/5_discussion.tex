@@ -33,10 +33,10 @@ The high mounting position creates a large blind-zone around the robot. This bli
 The radius of the shadow cast by the LiDAR in figure \ref{fig:D:AN:P:LidarShadow}, can be mathematically described as follows. For a LiDAR mounted at a height $h[m]$ above ground and vertical field of view $2\theta[rad]$ the radius of the shadow cast on the ground, $r[m]$, is given as
 
 \begin{equation} \label{eq:LidarShadow}
-    r = \frac{h}{\cos{\theta}}[m].
+    r = \frac{h}{\tan{\theta}}[m].
 \end{equation}
 
-Ouster claims a vertical field of view of $45\deg$\textbf{SOURCE FOR THIS} which translates to $\theta=\frac{\pi}{8}[rad]$. Using equation \ref{eq:LidarShadow}, with a sensor height of \textbf{GET THE METERS}[m], the radius of the shadow cast becomes \textbf{CALCULATE THIS}[m].
+Ouster claims a vertical field of view of $45\deg$\textbf{SOURCE FOR THIS} which translates to $\theta=\frac{\pi}{8}[rad]$. Using equation \ref{eq:LidarShadow}, with a sensor height of $1.025[m]$, the radius of the shadow cast becomes $2.475[m]$.
 
 The use of the ROS2 package PointCloud to LaserScan, described in section \ref{sec:M:AN:P:PointCloudToLaserScan} is considered a success as this resulted in a 2D LaserScan that took all relevant obstacles into account. This again means that a 2D map constructed from this LaserScan will take all relevant obstacles into account.
 
