@@ -32,13 +32,22 @@ The objective of this project is to set up an autonomous mobile robot capable of
 
 
 \section{Conceptual Design}\label{sec:M:ConceptualDesign}
-The warehouse automation task can be divided into three main parts; an autonomous navigation system, a pick and place system, and the top level system that fuses "autonomous navigation" and "pick and place" together.
+The warehouse automation task can be divided into three main parts; an autonomous navigation system, a pick and place system, and the top level system that fuses "autonomous navigation" and "pick and place" together. Figure \ref{fig:M:CD:topLevelMethod} illustrates on a high level how these systems interact.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = 0.5\textwidth]{Figures/figTopLevelMethod.drawio.svg}
+    \caption{This figure illustrates on a high level how the main systems in the solution interacts with each other to orchestrate a warehouse automation task. The Top Level Node commands and receives feedback from Autonomous Navigation and Pick and Place}
+    \label{fig:M:CD:topLevelMethod}
+\end{figure}
 
 The autonomous navigation system should be able to take pose goals consisting of $x,y,\theta$ coordinates, from the top level algorithm. It should then plan it's trajectory, using either Djikstra's algorithm or A*, and autonomously navigate towards the goal pose without the assistance of any operator. During this operation, a SLAM algorithm should be running to provide an updated map of the robot's environment as well as robust localisation. It should also have a collision avoidance system capable of detecting and avoiding collision with moving objects such as workers in the warehouse. When the mobile robot has reached it's goal, the system should report back to the top level system that the goal has been reached.
 
 The pick and place system should consist of a manipulator and a machine vision system that will be a part of the mobile robot. The system should be able to take commands from the top level system and act accordingly. Example of commands are "pick", "place" and "sleep". During picking, machine vision should be utilised for object detection and pose estimation. The system should give feedback on it's current status to the top level system.
 
 The top level system should take commands for what object to pick and where this object is located in the warehouse. It should then give commands to both the autonomous navigating system and the pick and place system in order to orchestrate a warehouse automation task. During this operation, this system will need to get feedback on the status of the other systems to decide what to do next.
+
+
 
 The design of the mobile robot should reflect the intended warehouse automation task. This places some requirements on the design that needs to be considered when setting up the robotic system. The requirements gives design specification where a few major components are needed:
 
