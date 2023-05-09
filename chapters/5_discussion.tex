@@ -1,0 +1,65 @@
+\chapter{Discussion}\label{sec:Discussion}
+
+% During the course of this project, an autonomous UGV for warehouse pick and place application was set up. Necessary mechanical modifications were done to the UGV platform in order to accommodate extra sensors and a robotic manipulator. Then, sensors and algorithms were configured to build a demonstration of how a warehouse application system could work with an autonomous UGV. Testing was then done separately on both the the autonomous navigation system and the pick and place system. Finally, the entire pipeline was tested, where autonomous navigation, machine vision and robot manipulation works together to achieve a warehouse automation task.
+
+\section{Hardware}\label{D:Hardware}
+
+
+\subsection{Manipulator} \label{sec:D:H:Manipulator}
+The mounting position of the manipulator, explained in section \ref{sec:M:H:P&PH:Manipulator}, is practical in terms of packaging and keeping the manipulator within the confinements of the UGV while not in use. Nevertheless, the limited reach of the chosen manipulator resulted in a relatively small workspace outside the bounding box of the UGV. For example, the manipulator was unable to reach the ground, meaning that objects either has to be placed on an elevated surface, or the object has to be tall enough to be picked. This is unwanted as it places a higher demand on the accuracy of the autonomous navigation system. Additionally the limited reach of the manipulator results in less flexibility in therms of object placement at pick location.
+Another consideration regarding the manipulator, is the absence of brakes of any kind in the manipulator's joints. This means that the servo motors constantly has to output a torque to hold a manipulator pose. One side effect of this is unnecessary power drainage, another is the fact that there are no safety mechanisms in place in case of power cut-off or sudden control system failure. In the case of a power cut-off or sudden control system failure, the manipulator could fall uncontrollably and possibly damage itself and/or its environment.
+
+\subsection{Manipulator Mounted Camera}\label{D:H:ManipulatorMountedCamera}
+For the manipulator mounted camera, it is important that the pose of the camera is accurately defined and that the physical camera is fixed at the defined pose. The pose of the camera bracket is defined based on CAD measurements and can be assumed to be defined correctly. However, the pose of the camera relative to the bracket might not be accurately defined as this position was not thoroughly verified. 
+The camera bracket described in section \ref{sec:M:H:P&PH:ManipulatorMountedCamera} proved to be successful at rigidly mounting the camera to the manipulator. However, inaccuracies in mounting pose relative to defined pose can not be ruled out due to possible slack in hole patterns at mounting flange.
+
+\section{Autonomous Navigation} \label{sec:D:AutonomousNavigaion}
+
+\subsection{Mobile Robot} \label{sec:D:AN:MobileRobot}
+The Husky A200 UGV proved to be a practical mounting platform for developers to mount the equipment of their choice. However, there are some aspects of this UGV that should be discussed. The Husky A200 is a skidding robot (explained in section \ref{sec:T:AN:MRD:SkiddingRobots}), meaning that the robot will skid like a war-tank when turning. This is a major drawback when designing an autonomous robot since the skidding behaviour massively reduces the performance of the robot's odometry system. Sharp turns sometimes completely puts off the entire navigation system. 
+
+\subsection{Perception} \label{sec:D:AN:Perception}
+The Ouster OS1 LiDARs performance is affected by the high mounting location and it's relatively poor minimum range. Ouster states the minimum range of the LiDAR to be $r_{min}=0.8[m]$. This means that all objects within a range of $r_{min}$ from the sensor will not be detected.
+
+The high mounting position creates a large blind-zone around the robot. This blind zone is illustrated in figure \ref{fig:D:AN:P:LidarShadow}, where it can be seen that a LiDAR mounted at a height $h[m]$ above the ground will cast a shadow with a radius $r[m]$ around the LiDAR. Notice that the orange box in figure \ref{fig:D:AN:P:LidarShadow} will not be detected by the LiDAR.
+
+\begin{figure}[ht]
+  \centering
+  \includesvg[width = 0.5\textwidth]{Figures/figLiDAR_Shadow.drawio.svg}
+  \caption{Illustration showing the blind-zone of the LiDAR based on it's mounting height, $h$. The green box represents the sensor, the red triangles represents the sensor's vertical field of view, and the orange box represents an object in the blind-zone of the sensor. $\theta$: half of vertical field of view. $r$: radius of shadow cast on ground.}
+  \label{fig:D:AN:P:LidarShadow}
+\end{figure}
+
+The radius of the shadow cast by the LiDAR in figure \ref{fig:D:AN:P:LidarShadow}, can be mathematically described as follows. For a LiDAR mounted at a height $h[m]$ above ground and vertical field of view $2\theta[rad]$ the radius of the shadow cast on the ground, $r[m]$, is given as
+
+\begin{equation} \label{eq:LidarShadow}
+    r = \frac{h}{\cos{\theta}}[m].
+\end{equation}
+
+Ouster claims a vertical field of view of $45\deg$\textbf{SOURCE FOR THIS} which translates to $\theta=\frac{\pi}{8}[rad]$. Using equation \ref{eq:LidarShadow}, with a sensor height of \textbf{GET THE METERS}[m], the radius of the shadow cast becomes \textbf{CALCULATE THIS}[m].
+
+The use of the ROS2 package PointCloud to LaserScan, described in section \ref{sec:M:AN:P:PointCloudToLaserScan} is considered a success as this resulted in a 2D LaserScan that took all relevant obstacles into account. This again means that a 2D map constructed from this LaserScan will take all relevant obstacles into account.
+
+\subsection{Navigation}\label{sec:D:AN:Navigation}
+Autonomous navigation performance suffered the consequences of the skidding robot design of the Husky A200, discussed in section \ref{sec:D:AN:MobileRobot}. Although the robot would successfully navigate around the environment issues occurred during hard turns. This was especially prominent in situations where the goal position had been reached, but the robot would need to spin in order to reach the correct orientation. The robot would become disoriented from the spinning action, and since the default recovery action in NAV2 is spinning, it would end up spinning in a seemingly endless dance.
+
+\subsubsection{Collision Avoidance}
+Collision avoidance would suffer from the large LiDAR blind zones discussed in section \ref{sec:D:AN:Perception}. If, for example a wall was within the minimum range of the LiDAR, the robot would have no means of detecting the wall. This could result in the robot ramming itself into walls and trying to drive through them. Objects located too low and too close could get run over due to the mounting height. A solution to this issue is presented by Didrik Robsrud in his thesis on Radar and LiDAR sensor fusion for ROS. His thesis is running in parallel to this one, and the solution from his work is therefore not implemented into this project.
+
+% \subsection{Object Detection \& Pick and Place}
+% The tag based machine vision system was set up according to section \ref{sec:M:MRC:MachineVision}. The performance of the vision system is verified by testing the combined pick and place performance of the manipulator. Interbotix states a repeatability of 1[mm] for the manipulator\cite{interbotix_vx300}. This tells that large variations in pick accuracy can be attributed to the vision system. It should be mentioned that gripper performance also plays a factor in the pick and place accuracy, as a bad gripper would not be able to achieve consistent results.
+
+\subsection{Custom ROS2 Packages}
+The custom ROS2 packages has been built and tested around a specific robotic system. It is not likely that it will work for other types of robotic systems out of the box. 
+
+
+\subsubsection{Custom Pick and Place Package}
+
+
+
+\subsection{Warehouse Automation}
+The skidding behaviour of the UGV limited the performance of the this solution in that it could struggle with some poses. This navigational problem is described in section \ref{sec:D:AN:Navigation}, and placed a constraint on the warehouse automation system. This constraint is that the goal poses (pick pose, place pose, home pose) has to be carefully selected so that the robot won't have to reorient itself too much at the goal. 
+
+The limited reach of the manipulator, discussed in section \ref{sec:D:H:Manipulator}, combined with the rectangular footprint of the UGV could cause issues. If the robot decides to do sharp turns at pick or place pose, there are chances of collision with objects.
+
+The "Husky Master" ROS2 node that orchestrates the different behaviours of the system seemed to work as intended. The complete operation where the robot moves to a pick location, picks an object using MV, moves to a place location, places the object and moves back home was performed twice in a row with success. However, the test was preformed with goal poses that took the constraints of the navigation system and the manipulator into account.
