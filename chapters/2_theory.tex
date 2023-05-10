@@ -20,7 +20,8 @@ Kinematics is the most basic study of how mechanical systems behave\cite{Siegwar
 % aj make it navigation, as you have a section - SLAM later that combines perception and this section
 As pointed out in section \ref{sec:I:AutonomousNavigation}, for a mobile robot to be able to do autonomous navigation, four building blocks has to be fulfilled, or rather, four problems has to be solved. This section describes methods used to solve these problems in mobile robotics.
 
-\subsection{Mobile Robot Design}
+\subsection{Motion Control}\label{sec:T:AN:MotionControl}
+Motion Control in mobile robotics refers to the actuation of motors to move  around the environment in a controlled manner. The control system calculates the actuation of the robotic motors based on inverse kinematics, moves the mobile robot by actuating its motors and estimates its movement based on wheel measurements and forward kinematics.
 A mobile robot is designed to be able to move around in the environment. The design of the robot therefore needs to be centred around the design requirement that the robot needs an efficient way of traversing it's intended environment in a predictable manner. Predictable is important as the robotic system needs to be able to estimate it's movement. This section will introduce the reader to some common mechanisms of locomotion and a few mobile robotic designs.
 
 \subsubsection{Locomotion}
@@ -69,9 +70,6 @@ On a differential drive robot, the assumption is made that the driven wheels are
 % aj change 1,2,3 to a,b,c
 The main disadvantage of these skidding robots is that their turning nature makes it difficult to determine a center of rotation. In addition, the turning motion will be affected by differences in surface friction. This makes it significantly harder to determine the exact pose of the robot when turning compared to for example a normal differential drive robot. As a result, dead-reckoning is inaccurate for these robots and too aggressive turning motions could disorient the whole system. Another disadvantage is that the robot must overcome the static friction between the ground and the wheels/tracks to turn, this is highly inefficient on surfaces with high friction.
 
-\subsection{Motion Control}\label{sec:T:AN:MotionControl}
-Motion Control in mobile robotics refers to the actuation of motors to move  around the environment in a controlled manner. The control system calculates the actuation of the robotic motors based on inverse kinematics, moves the mobile robot by actuating its motors and estimates its movement based on wheel measurements and forward kinematics.
-
 
 \subsection{Perception}\label{sec:T:AN:Perception}
 In order to achieve autonomous navigation, it is essential for a robotic system to acquire knowledge of itself and its surroundings. This section gives a short introduction to a selection of different sensors that could be used to build a robotic system.
@@ -100,7 +98,7 @@ Using one of several time-of-flight principles, for example direct time-of-fligh
 % aj add camera, radar, thermal camera
 
 
-\subsection{Localisation}\label{sec:T:AN:Localisation}
+\subsection{Localisation and Mapping}\label{sec:T:AN:Localisation}
 %aj i would suggest make the title simultaneous localization and mapping. Then odometry, ... kalman filter becomes the part of it
 Robot localisation involves the robot building a map of the robot's environment, and determining its position relative to this map\cite{SiegwartRoland2011Itam}.  To achieve successful localisation, a combination of different localisation techniques is often used. As an example, a mobile robot could combine odometry with IMU and LiDAR measurements to determine its position. The following paragraphs discuss these localisation implementations.
 
@@ -141,7 +139,7 @@ EKFs are computationally efficient and a great tool to improve probabilistic loc
 \subsubsection{KLD-Sampling Monte Carlo Localisation}
 Plain MCL use particle sample sets of fixed size. At an early stage of localisation, when the robot does not know where it is, the sample set needs to be large to avoid divergence. However, when the location of the robot is fairly confident or known, it is computationally inefficient to have an unnecessarily large particle set. A variant of MCL, called KLD-sampling, adapts the number of particles based on Kullback-Leibler divergence(KLD). Kullback-Leibler divergence is a measure of the difference between two probability distributions. KLD-sampling use KLD to create a measure for the difference between the true posterior belief provided by measurements, and the sample based approximation of this belief. To read more about this localisation method, pleas refer to the source \cite{ThrunSebastian2005Pr}.
 
-\subsection{Simultaneous Localisation and Mapping} \label{sec:T:AN:L:SLAM}
+\subsubsection{Simultaneous Localisation and Mapping} \label{sec:T:AN:L:SLAM}
 Both EKF-localisation and MCL assumes that it is given a map of the environment. Although there could be a pre-made map that fits the application, this is often not the case. The robot therefore has to do the mapping and localisation at the same time. This problem is called the Simultaneous Localisation and Mapping(SLAM) problem. One of the more popular solutions to the SLAM problem is by the use of pose graphs \cite{Konolige2010}. A pose graph is a sparse graph of nodes with constraints between them. The nodes in the graph are different robot poses and features of the map. The constraints represents the relative relation between the robot poses and also between robot poses and features of the map. It is important to specify that the constraints between the poses are non-rigid. The pose graph can therefore be interpreted as an elastic net of poses. The solution is then to find the state where this net has the minimum amount of energy \cite{SiegwartRoland2011Itam}. Figure \ref{fig:poseGraph} illustrates how a pose graph is built from different robot and map feature poses as a robot moves through an environment. As the map becomes larger, the size of the pose graph also increases, which in turn results in an increased computational effort required for optimisation. A method of pose graph optimisation that has proven efficient, is Sparse Pose Adjustment (SPA)\cite{Konolige2010}. A  map can be constructed as for example an occupancy grid map (described in \cite{ThrunSebastian2005Pr}) when the pose graph is constructed and optimised. \cite{SiegwartRoland2011Itam} and \cite{ThrunSebastian2005Pr} provides more information on SLAM.
 
 \begin{figure}[htp]
@@ -151,14 +149,14 @@ Both EKF-localisation and MCL assumes that it is given a map of the environment.
   \label{fig:poseGraph}
 \end{figure}
 
-
-\subsection{Path Planning}\label{T:AN:PathPlaninng}
+\subsection{Navigation}
+\subsubsection{Path Planning}\label{T:AN:PathPlaninng}
 Path planning involves finding a trajectory that the robot can follow to reach it's goal \cite{SiegwartRoland2011Itam}. Path planning in mobile robotics draws from the extensive research done in this area for robotic manipulators \cite{SiegwartRoland2011Itam}. However, path planning for mobile robots is usually far less complex than that of manipulators due to the reduced degrees of freedom and the fact that manipulators often operate in such high speeds that the dynamics of the system has to be taken into account\cite{SiegwartRoland2011Itam}. A robotic manipulator typically has five or six degrees of freedom, whereas a mobile robot typically operates in a plane with three degrees of freedom. There are numerous different path planning algorithms available, two of the more popular path planning algorithms for use in mobile robotics is Djikstra's Algorithm and A*. When talking about path planning for mobile robotics, a \textit{node} represents a position, often in a grid-based map and an \textit{edge} represent the path from one node to a neighbour node. 
 
-\subsubsection{Djikstra's Algorithm}\label{T:AN:PP:DjikstrasAlgotihm}
+% \subsubsection{Djikstra's Algorithm}\label{T:AN:PP:DjikstrasAlgotihm}
 Djikstra's algorithm is a planning algorithm published by E. W. Djikstra in 1959\cite{DijkstraE.W1959Anot}. The algorithm presents a way to find the shortest path from a starting point $P_s$ to a goal $P_g$. This is done by giving a cost to the path it finds from $P_s$ to each node in the map, it will keep the paths with the lowest cost and keep searching until it has found the lowest cost path from $P_S$ to all nodes in the map. For each iteration, the algorithm will explore the unexplored node with the lowest calculated cost. The cost is usually based on distance or time taken to traverse the edge. In mobile robotics, the algorithm is often computed from the $P_g$, meaning that it will find the shortest path to any $P_s$ in the map. Thus, the robot is able to plan the best path to the goal based on it's current position without running the planning algorithm again \cite{SiegwartRoland2011Itam}. For example, if the robot is moving towards the goal and needs to take evasive actions because of some moving obstacle in it's trajectory. Time complexity for this algorithm is noted as $O(n\log(n)+m)$ where $n$ is the number of nodes and $m$ is the number of edges\cite{SiegwartRoland2011Itam}. See \cite{DijkstraE.W1959Anot} and \cite{SiegwartRoland2011Itam} for more information about the algorithm. 
 
-\subsubsection{A* Algorithm}\label{T:AN:PP:DjikstrasPlanning}
+% \subsubsection{A* Algorithm}\label{T:AN:PP:DjikstrasPlanning}
 The A* algorithm is similar to Djikstra's algorithm in that it will give the edges between the nodes a cost. However A* also carries a heuristic which estimates the distance from explored nodes to the goal, $P_g$. For mobile robotics, this heuristic is often calculated as the distance between any cell and the goal cell, $p_g$ in the absence of obstacles (straight distance) \cite{SiegwartRoland2011Itam}. This way, the algorithm will usually explore nodes located in the direction towards the goal before expanding in any other direction. Because of this, the algorithm is often much faster than for example Djikstra's, but it is not guaranteed that the lowest cost path is found. The time complexity of this algorithm is also largely dependent on the weighting of the heuristic and the geometry of the map. See \cite{SiegwartRoland2011Itam} for a more in-depth explanation of the algorithm.
 
 % \subsection{Obstacle Avoidance} \label{T:AN:PP:ObstacleAvoidance}
@@ -171,8 +169,10 @@ The A* algorithm is similar to Djikstra's algorithm in that it will give the edg
 % \subsection{Machine Vision}
 % Machine vision is a 
 \section{Pick and Place}
-\subsection{Object Detection \& Pose Estimation}\label{sec:T:ObjectDetection}
-Object detection in the context of this thesis refers to the act of detecting an object in the environment using machine vision. Pose estimation refers to finding the 6-DOF pose of the detected object, that is $x,y,z,\rho, \theta, \phi$ There are a multitude of different methods that could solve this problem. 
+\subsection{Manipulator}
+
+\subsection{Machine Vision} \label{sec:T:ObjectDetection}
+Machine vision in the context of this thesis refers to the act of detecting an object in the environment using machine vision. Pose estimation refers to finding the 6-DOF pose of the detected object, that is $x,y,z,\rho, \theta, \phi$ There are a multitude of different methods that could solve this problem. 
 
 \subsubsection{Machine Learning Based Object Detection \& Pose Estimation}
 Machine learning based approaches for object detection and 6-DOF pose estimation could provide a robust
