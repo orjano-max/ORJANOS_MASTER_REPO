@@ -330,11 +330,19 @@ As the UGV platform is set up with compatible motion control, perception, mappin
 
 
 \section{Pick and Place} \label{M:PickAndPlace}
+\textbf{WRITE ABOUT PICK AND PLACE TASK OR MOVE FROM EARLIER}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width = 1\textwidth]{Figures/figPickAndPlaceMethod.drawio.png}
+  \caption{This figure illustrates the Pick and Place subsystem}
+  \label{fig:M:PAP:PickAndPlaceMethod}
+\end{figure}
 
 \subsection{Manipulator Configuration}\label{sec:M:MRC:Manipulator}
 Interbotix provides ROS2 packages for the VX300 manipulator. The most relevant of these being the package \lstinline{interbotix_xsarm_moveit}, which is used to bring up the VX300 manipulator in Moveit2 for motion planning and control of the arm as well as Rviz2 with a GUI for running and testing the Moveit2 configuration. Figure \ref{fig:VX300Moveit} illustrates a virtual VX300 manipulator running with moveit2 and visualised in Rviz2. The Moveit2 Motion Planning GUI is located in the lower left corner of the figure. The actual manipulator pose is illustrated by a black manipulator and the goal pose is illustrated by an orange manipulator. In figure \ref{fig:VX300Moveit}, the manipulator is oriented at the goal pose. The orange goal pose shines through the actual pose at the fingers.
 
-\begin{figure}[htp]
+\begin{figure}[H]
   \centering
   \includegraphics[width = 1\textwidth]{Figures/figVX300Moveit.png}
   \caption{A virtual VX300 manipulator running moveit2 and visualised in Rviz2. The Moveit2 Motion Planning GUI is located in the lower left corner of the figure. The actual manipulator pose is illustrated by a black manipulator and the goal pose is illustrated by an orange manipulator which shines through at the gripper fingers. The Realsense camera can be seen mounted on top of the gripper.}
