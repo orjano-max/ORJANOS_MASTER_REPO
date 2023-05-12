@@ -104,6 +104,7 @@ The relatively powerful GPU of the Xaviers adds capabilities to implement deep l
 \subsection{Final Concept}\label{sec:M:CD:FinalConcept}
 
 The UR5 manipulator requires a dedicated controller to operate.This controller also contains the DC-power supply for the manipulator. As the manipulator is to be mounted on an UGV, this controller has to be powered through DC-power. According to the Universal Robots CB3 battery supply installation manual \cite{ur5_battery_manual}, the UR5 could draw up to 50A at "peak conditions". Looking at table \ref{tab:husky:a200:specs}, it is clear that the built in 24V power distribution on the Husky, with a 5A circuit breaker, is insufficient.
+%AJ can be skipped, directly to Interbotix. Better fit to future work
 
 The design of a mobile power system for the CB3 controller and thus, the UR5 manipulator is beyond the scope of this project. The decision was therefore made to swap out the UR5 manipulator with a smaller Interbotix VX300 manipulator from Trossen Robotics, illustrated in figure \ref{fig:M:CD:FC:VX300}. This is a significantly smaller robotic arm that is powered through 12V DC-power supply with a standard 2.5mm DC barrel jack. Some of it's key specifications is shown in table \ref{tab:M:CD:FC:VX300Specs}
 
@@ -127,6 +128,8 @@ This section describes the different hardware components of the robotic system a
   \caption{High level network topology showing the various components on the mobile robotic platform}
   \label{fig:topology}
 \end{figure}
+%AJ your laptop that runs top level node is missing
+%Aj 3.3 can be renamed Hardware architecture. remove subsection 3.3.1,3.3.2
 
 The WiFi Router allows external computers to connect to the network, either through WiFi or cabled connection, and communicate with the two Xaviers and the LiDAR. This makes it possible to control the Xavier computers through SSH and also allows developers to interact with the ROS2 network.
 
@@ -139,10 +142,11 @@ By comparing figure \ref{fig:M:H:CHS:CadHuskyComplete} and figure \ref{fig:M:H:C
   \caption{General arrangement drawing of UGV platform. Here, the physical position of different hardware components are defined. The sensor frame is drawn to the left of the main frame.}
   \label{fig:general_arrangement}
 \end{figure}
-
+%aj only of figure for a subsection. doesn't look good
 \subsection{Electrical Interface}\label{M:H:ElectricalInterface}
 The different components in the system is powered through the user power supply of the UGV(see table \ref{tab:husky:a200:specs}). Figure \ref{fig:circuit_diagram} is a circuit diagram that illustrates the DC power distribution.
-
+%Aj Not redeable. Make it bigger and font also larger.
+%aj only of figure for a subsection. doesn't look good
 \begin{figure}[H]
   \centering
   \includegraphics[width = 1\textwidth]{Figures/circuit_diagram.drawio.png}
@@ -257,7 +261,10 @@ A closer look at the experimental manipulator setup with it's Realsense D435i br
 
 
 \section{Autonomous Navigation}
-In order to achieve autonomous navigation of a mobile robot, some requirements first has to be met. The robot needs to be able to estimate its own movement based on the kinematics of the vehicle and the encoder feedback from the wheels. This is done through the motion control system described in section \ref{sec:M:AN:MotionControl}. The UGV needs some form of perception system to help determine its absolute position within the environment. This is done through the perception system described in section \ref{sec:M:AN:Perception}. Lastly has to be a map of the surrounding environment, so that the UGV can place itself somewhere on this map. This map is created with the use of SLAM \ref{sec:M:AN:LocalisationAndMapping}. With all these requirements fulfilled, an autonomous navigation system can be put together. The navigation system will take care of both global and local path planning, and send velocity commands to the motion control system based on the calculations. A high level illustration of how the different subsystems interact to achieve autonomous navigation, can be seen in figure \ref{fig:M:AN:ANMethod}.
+In order to achieve autonomous navigation of a mobile robot, some requirements first has to be met. The robot needs to be able to estimate its own movement based on the kinematics of the vehicle and the encoder feedback from the wheels. This is done through the motion control system described in section \ref{sec:M:AN:MotionControl}. 
+The UGV needs some form of perception system to help determine its absolute position within the environment. This is done through the perception system described in section \ref{sec:M:AN:Perception}.
+Lastly has to be a map of the surrounding environment, so that the UGV can place itself somewhere on this map. This map is created with the use of SLAM \ref{sec:M:AN:LocalisationAndMapping}.
+With all these requirements fulfilled, an autonomous navigation system can be put together. The navigation system will take care of both global and local path planning, and send velocity commands to the motion control system based on the calculations. A high level illustration of how the different subsystems interact to achieve autonomous navigation, can be seen in figure \ref{fig:M:AN:ANMethod}.
 
 \begin{figure}[H]
   \centering
@@ -265,14 +272,23 @@ In order to achieve autonomous navigation of a mobile robot, some requirements f
   \caption{Overview of autonomous navigation system. Motion Control provides odometry information, which is fused with IMU data in an EKF. The resulting filtered odometry is fed to SLAM along with Laser Scan from a LiDAR. SLAM then provides mapping and localisation for the navigation system. Path planning and collision avoidance is preformed in the navigation system which sends command velocities to the motion control system based on info.}
   \label{fig:M:AN:ANMethod}
 \end{figure}
-
+% Aj fig not redable. increas the fontzize and make blocks compact. need to discuss this to understand and how it can be explained better
 \subsection{Motion Control}\label{sec:M:AN:MotionControl}
 The Husky software is put together of several systems that work together in the ROS2 network. Here, the UGV working principle will be described from the nodes that handles input commands to estimated position output that is published to the ROS2 network.
 
 \subsubsection{UGV Setup}
-An adaptation of Clearpath's own Husky A200 ROS2 packages are used to operate the UGV in ROS2. Clearpath husky provides Debian ROS2 packages for ROS2 Foxy, and these are therefore used. The story is different for ROS2 Galactic which has reached its EOL and is no longer maintained. Nevertheless, the official Husky ROS2 repository\cite{husky_repo} still contains a branch for ROS2 Galactic even though it won't build. This branch is forked and modified in order to build as well as modified to take in some arguments to the launch file. The forked repository is public and available at \cite{uia_husky_repo}. 
+An adaptation of Clearpath's own Husky A200 ROS2 packages are used to operate the UGV in ROS2. 
 
+Though, Clearpath husky provides Debian ROS2 packages for ROS2 Foxy, and these are therefore used. The story is different for ROS2 Galactic which has reached its EOL and is no longer maintained. Nevertheless, the official Husky ROS2 repository\cite{husky_repo} still contains a branch for ROS2 Galactic even though it won't build. This branch is forked and modified in order to build as well as modified to take in some arguments to the launch file. The forked repository is public and available at \cite{uia_husky_repo}. 
+%aj explain this - husky: foxy, SLAM: galactic, NAV2: Galactic.
+%Manpulator: galactic, realsense: galactic, Apriltag: galactic
+%Only Mobile robot stuff is foxy. aka, Husky, Ouster Lidar, IMU, pointcloud to laserscan
+% to run two different ROS2 version modification was made and give link to your git.
 
+\subsubsection{Model Description} \label{sec:M:CS:UGV:S:ModelDescription}
+In ROS2, urdf files are used to describe robotic systems. As extra hardware is mounted on the UGV, some extra urdf information has to be added in order to describe the spatial relationship between the UGV and accessories such as the LiDAR. This information is added in an own urdf file and passed upon launch of the husky.
+
+A visual representation of the UGV with all accessories attached is preferable when interacting with the robot in Rviz2. An ope source library for the 3D CAD software Solidworks called "Solidworks to URDF Exporter" \cite{urdf_exporter} is used to export a CAD model of the assembly to urdf. The exporter creates a ROS compatible description package of the CAD model with transforms at user defined locations. The package itself is not used, as it is incompatible with ROS2. However, relevant urdf code and associated ".stl" mesh files is extracted and used when launching the Husky UGV.
 
 \subsubsection{Velocity Commands}
 The input velocity commands come from various sources such as a controller or navigation servers. These commands are published at topics to the ROS2 network. As illustrated in figure \ref{fig:rqt_teleop}, these topics are handled through the twist\_mux node. This node publishes velocity commands based on the incoming commands and the defined priority. The command is published to the \\/husky\_velocity\_controller/cmd\_vel\_unstamped topic which is used by the husky velocity controller later to process the incoming commands.
@@ -283,7 +299,7 @@ The input velocity commands come from various sources such as a controller or na
   \caption{Example of how velocity commands are handled by twist\_mux node. In this example, it takes in velocity commands from the /joy\_teleop/cmd\_vel topic and the /twist\_marker\_server/cmd\_vel topic. It then forwards the velocity command based on defined priorities to the /husky\_velocity\_controller/cmd\_vel\_unstamped topic.}
   \label{fig:rqt_teleop}
 \end{figure}
-
+% Aj fig not redable. increas the fontzize and make blocks compact
 \subsubsection{Controller}
 The velocity command coming from the /twist\_mux server needs to be handled by a controller in order to actuate the UGV. In the ROS2 network, this controller is represented as the husky\_velocity\_controller node. This node takes in velocity commands from the twist\_mux node, actuates the wheel motors and then calculates the motion of the UGV. The resulting odometry is published to the ROS2 topic "/odom".
 
@@ -307,16 +323,13 @@ As mentioned earlier in section\ref{sec:M:MRC:LiDARSetup}, the LaserScan output 
 
 
 \subsection{Localisation and Mapping} \label{sec:M:AN:LocalisationAndMapping}
-Localisation
+The localisation and mapping system combines several subsystems that work together to achieve SLAM. The SLAM algorithm itself is provided by the ROS2 package SLAM Toolbox. SLAM Toolbox utilises a pose-graph based approach to the SLAM problem.
+
+
 Since SLAM algorithms does both mapping and localisation simultaneously, it gives an accurate representation of an environment for navigation. In this project, the ROS2 package slam\_toolbox is used to run an online asynchronous SLAM node for mapping. This ROS2 node takes in odometry information from the motion control system together with LaserScan from the perception system to localise and generate a 2D map of the environment. Because of the use of "PointCloud to LaserScan", the resulting algorithm maps all obstacles in the "collision zone" of the UGV to the map. Obstacles that are too low to be mapped can be traversed by the UGV. Obstacles that are located so high that the UGV could go under it, won't be mapped. When looking at localisation, there are several methods that could be used. As SLAM is already used for mapping, it becomes a natural choice for preforming the localisation task as well. SLAM Toolbox utilises a pose-graph approach to the localisation and mapping problem. This is similar to the one described in section \ref{sec:T:AN:L:SLAM}.
 
 \subsubsection{IMU Setup}
 To be able to use the UM7 IMU with ROS2, it has to be set up as a ROS2 node. This is done by using UM7 ROS2 packages provided by \cite{um7_repo}. This node sets a connection to the UM7 IMU through USB and publishes measurements to the ROS topic "/imu/data". The node is dependent on \cite{serial_repo} which is a library for interfacing with serial communication.
-
-\subsubsection{Model Description} \label{sec:M:CS:UGV:S:ModelDescription}
-In ROS2, urdf files are used to describe robotic systems. As extra hardware is mounted on the UGV, some extra urdf information has to be added in order to describe the spatial relationship between the UGV and accessories such as the LiDAR. This information is added in an own urdf file and passed upon launch of the husky.
-
-A visual representation of the UGV with all accessories attached is preferable when interacting with the robot in Rviz2. An ope source library for the 3D CAD software Solidworks called "Solidworks to URDF Exporter" \cite{urdf_exporter} is used to export a CAD model of the assembly to urdf. The exporter creates a ROS compatible description package of the CAD model with transforms at user defined locations. The package itself is not used, as it is incompatible with ROS2. However, relevant urdf code and associated ".stl" mesh files is extracted and used when launching the Husky UGV.
 
 
  \subsubsection{Extended Kalman Filter}
@@ -347,32 +360,14 @@ As the UGV platform is set up with compatible motion control, perception, mappin
   \label{fig:M:PAP:PickAndPlaceMethod}
 \end{figure}
 
-\subsection{Manipulator Configuration}\label{sec:M:MRC:Manipulator}
-Interbotix provides ROS2 packages for the VX300 manipulator. The most relevant of these being the package \lstinline{interbotix_xsarm_moveit}, which is used to bring up the VX300 manipulator in Moveit2 for motion planning and control of the arm as well as Rviz2 with a GUI for running and testing the Moveit2 configuration. Figure \ref{fig:VX300Moveit} illustrates a virtual VX300 manipulator running with moveit2 and visualised in Rviz2. The Moveit2 Motion Planning GUI is located in the lower left corner of the figure. The actual manipulator pose is illustrated by a black manipulator and the goal pose is illustrated by an orange manipulator. In figure \ref{fig:VX300Moveit}, the manipulator is oriented at the goal pose. The orange goal pose shines through the actual pose at the fingers.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width = 1\textwidth]{Figures/figVX300Moveit.png}
-  \caption{A virtual VX300 manipulator running moveit2 and visualised in Rviz2. The Moveit2 Motion Planning GUI is located in the lower left corner of the figure. The actual manipulator pose is illustrated by a black manipulator and the goal pose is illustrated by an orange manipulator which shines through at the gripper fingers. The Realsense camera can be seen mounted on top of the gripper.}
-  \label{fig:VX300Moveit}
-\end{figure}
-
-\subsubsection{Model Description}
-Looking at figure \ref{fig:VX300Moveit}, it can be seen that the Realsense camera, described in section \ref{sec:M:CS:UGV:S:ModelDescription}, is mounted on top of the VX300 gripper using its mounting bracket. This is practical for visualisation, but also necessary to avoid collisions with both surrounding objects, and the manipulator itself. Similarly to how accessories were added to the UGV in section \ref{sec:M:CS:UGV:S:ModelDescription}, the Realsense camera assembly is generated through the open source urdf exporter\cite{urdf_exporter}. 
-
-\subsubsection{Planning Scene}
-In Moveit2, the planning scene describes the environment where the manipulator is located. Objects and barriers described in the planning scene will be taken into account by the planner when planning a manipulator motion. As this manipulator is mounted on top of the UGV, the manipulator needs to have a perspective of the shape and position of the UGV in order to avoid collision. As mentioned in section \ref{sec:M:CD:InitialConcept}, the UGV is running on the "UGV Xavier", and the manipulator is running on the "Manipulator Xavier". Both these robotic devices are described by xacro files on the form of urdf. However, they take in pure urdf files for accessories. This means that it is no easy way to add the urdf file of one as an accessory to the other. As a result, the robotic description of the UGV and the manipulator is separated. To take the UGV into account when planning manipulator motion, the shape of the husky is therefore added to the planning scene in Moveit2 as collision boxes.
-
-In the Motion planning GUI seen in the lower left corner of figure \ref{fig:VX300Moveit}, collision boxed can be added to the planning scene through the "Scene Objects" tab. This is a simple interface where it is possible to add different geometric shapes with a defined size and position. After defining a planning scene, the scene can be exported to a ".scene" file which can be used later to import the same scene. In this project, a ROS2 node that parses ".scene" files and publishes the information in them to the manipulator's planning scene is developed. This node is described more thoroughly later in section \ref{sec:M:A:SceneGeometryPublisher}.
-
 \subsection{Machine Vision} \label{sec:M:MRC:MachineVision}
-The machine vision system is comprised by an Intel Realsense D435i, as described in section \ref{sec:M:H:P&PH:ManipulatorMountedCamera}, and an AprilTag based 6-DOF pose estimation system.
+The machine vision system is comprised by an Intel Realsense D435i, as described in section \ref{sec:M:H:P&PH:ManipulatorMountedCamera}, and an AprilTag based 6-DOF pose estimation system described in section \ref{sec:M:MRC:MV:TagDetectionSystem}. This creates at robust machine vision system that achieves what is observed as real-time pose estimation.
 
 \subsubsection{Vision Camera} 
-The gripper mounted Realsense camera is used for the machine vision system during this project. Intel provides ROS2 packages for Realsense cameras that interfaces with the ROS2 network \cite{realsense_ros_repo}. These packages publishes the data from the Realsense camera to the ROS2 network so that it is available for other nodes on the network. The ROS2 Realsense packages requires Intel RealSense SDK 2.0 which is available as debian packages for AMD Ubuntu machines. For Xaviers, whom are running an ARM architecture, the SDK is available to be built from source on Github\cite{realsense_jetson_guide}.
+The gripper mounted Realsense camera provides flexible machine vision wherever the manipulators gripper is pointing. Intel provides ROS2 packages for Realsense cameras that interfaces with the ROS2 network \cite{realsense_ros_repo}. These packages publishes data from the Realsense camera to the ROS2 network so that it is available for other nodes on the network. The ROS2 Realsense packages requires Intel RealSense SDK 2.0 which is available as debian packages for AMD Ubuntu machines. For Xaviers, whom are running an ARM architecture, the SDK is available to be built from source on Github\cite{realsense_jetson_guide}.
 
 \subsubsection{Tag Detection System} \label{sec:M:MRC:MV:TagDetectionSystem}
-Together with the Realsense camera, an AprilTag detection system is set up using the open source packages provided by \cite{apriltag_repo}, \cite{apriltag_ros_repo} and \cite{apriltag_msgs_repo}. These packages are used to create a ROS2 node that will run continuous AprilTag detection on the defined camera stream. AprilTag is, as described in section \ref{sec:T:OD:TagBasedObjectDetection} a tag based system for 6-DOF pose estimation using a monocular vision system. Section \ref{sec:T:OD:TagBasedObjectDetection} also mentions tag families, that are collections of pre-defined AprilTags for use by developers. In this project, the standard tag family "\textit{tag36h11}" is used. The AprilTag ROS2 node requires tags to be defined in a \textit{".yaml"} file. An example of a tag definition can be seen in listing \ref{lst:M:M:MachineVision}.
+The AprilTag based detection system is set up using the open source packages provided by \cite{apriltag_repo}, \cite{apriltag_ros_repo} and \cite{apriltag_msgs_repo}. These packages are used to create a ROS2 node that will run continuous AprilTag detection on the defined camera stream. Section \ref{sec:T:OD:TagBasedObjectDetection} mentions tag families, which is collections of pre-defined AprilTags for use by developers. In this project, the standard tag family "\textit{tag36h11}" is used. The AprilTag ROS2 node requires the tags of the chosen tag family to be defined in a \textit{".yaml"} parameter file. The parameter file describes the name and physical size of each tag, which is vital information for this kind of machine vision system. An example of a tag definition can be seen in listing \ref{lst:M:M:MachineVision}.
 
 \begin{lstlisting}[language=XML, label=lst:M:M:MachineVision, caption={Example of AprilTag tag definitions in a ".yaml" file. This example defines two tags of different names, using the tag id 0 and 1 in the defined tag family The size is alse defined for each tag. The tag family (tag36h11) is set in another parameter file.}]
 /**:
@@ -387,51 +382,91 @@ Together with the Realsense camera, an AprilTag detection system is set up using
         size: 0.0344
 \end{lstlisting}
 
-In listing \ref{lst:M:M:MachineVision}, the tags "my\_tag\_0" and "my\_tag\_1" are defined. The "id" parameter on each tag definition links this definition to a specific AprilTag in the AprilTag family \textit{"tag36h11"}. This way, when the AprilTag detection node detects an AprilTag in the camera stream, it will check if the detected tag is defined in the tag definition "\textit{.yaml}" file. If so, it will use the defined size and location in the camera stream to publish a 6-DOF pose of the tag to the ROS2 network. The published pose will be on the form of a TF2 transform with the same name as the tag (ex. "my\_tag\_0").
+In listing \ref{lst:M:M:MachineVision}, the tags \lstinline{my_tag_0} and \lstinline{my_tag_1} are defined. The "id" parameter on each tag definition links this definition to a specific AprilTag in the AprilTag family \textit{"tag36h11"}. It is mentioned in the previous paragraph that the node runs continuous detection. This means that the node will continuously look for AprilTags in the camera stream for as long as it is running. When the AprilTag node detects an AprilTag, it will check if the detected tag is defined in the parameter "\textit{.yaml}" file. If so, it will use the defined size together with the information in the camera stream to publish a 6-DOF pose of the tag to the ROS2 network. The published pose will be on the form of a TF2 transform with the same name as the tag (ex. \lstinline{my_tag_0}).
 
-\subsection{Scene Geometry Publisher} \label{sec:M:A:SceneGeometryPublisher}
-As mentioned when describing the planning scene in section \ref{sec:M:MRC:Manipulator}, a ROS2 node that parses a "\textit{.scene}" file and publishes the information in this file to the planning scene. This node consists of a custom C++ Class, the implementation of this class, a launch file and a "scene" folder to put \textit{.scene} files. An UML class representation of the ScenePublisher class can be seen in figure \ref{fig:scenePublisherUML}. It appears alone in the UML Class diagram as the interactions between other nodes happens through the ROS2 network.
+\subsection{Manipulator}\label{sec:M:MRC:Manipulator}
+Interbotix provides ROS2 packages for the VX300 manipulator. The most relevant of these being the package \lstinline{interbotix_xsarm_moveit}, which is used to bring up the VX300 manipulator in Moveit2 for motion planning and control of the arm as well as Rviz2 with a GUI for running and testing the Moveit2 configuration. Figure \ref{fig:VX300Moveit} illustrates a virtual VX300 manipulator running with Moveit2 and visualised in Rviz2. The Moveit2 Motion Planning GUI is located in the lower left corner of the figure. The actual manipulator pose is illustrated by a black manipulator and the goal pose is illustrated by an orange manipulator. In figure \ref{fig:VX300Moveit}, the manipulator is oriented at the goal pose. The orange goal pose shines through the actual pose at the fingers.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width = 1\textwidth]{Figures/figVX300Moveit.png}
+  \caption{A virtual VX300 manipulator running Moveit2 and visualised in Rviz2. The Moveit2 Motion Planning GUI is located in the lower left corner of the figure. The actual manipulator pose is illustrated by a black manipulator and the goal pose is illustrated by an orange manipulator which shines through at the gripper fingers. The Realsense camera can be seen mounted on top of the gripper.}
+  \label{fig:VX300Moveit}
+\end{figure}
+
+\subsubsection{Model Description}
+Looking at figure \ref{fig:VX300Moveit}, it can be seen that the Realsense camera, described in section \ref{sec:M:H:PickandPlaceHardware}, is mounted on top of the VX300 gripper using its mounting bracket. This is practical for visualisation, but also necessary to avoid collisions with both surrounding objects, and the manipulator itself. Similarly to how accessories were added to the UGV in section \ref{sec:M:CS:UGV:S:ModelDescription}, the Realsense camera assembly is generated through the open source urdf exporter\cite{urdf_exporter}. 
+
+\subsubsection{Planning Scene}
+In Moveit2, the planning scene describes the environment around the manipulator. Objects and barriers described in the planning scene will be taken into account by the planner when planning a manipulator motion. As this manipulator is mounted on top of the mobile robot, the manipulator needs to have a perspective of the shape and position of the mobile robot in order to avoid collision. As mentioned in section \ref{sec:M:CD:InitialConcept}, the mobile robot is running on the "UGV Xavier", and the manipulator is running on the "Manipulator Xavier". Both these robotic devices are described by xacro files on the form of urdf. However, they take in pure urdf files for accessories. This means that there is no easy way to add the urdf file of one as an accessory to the other. As a result, the robotic description of the mobile robot and the manipulator is separated. To take the mobile robot into account when planning manipulator motion, the shape of the husky is therefore added to the planning scene in Moveit2 as collision boxes.
+
+In the Motion planning GUI seen in the lower left corner of figure \ref{fig:VX300Moveit}, collision boxed can be added to the planning scene through the "Scene Objects" tab. This is a simple interface where it is possible to add different geometric shapes with a defined size and position. After defining a planning scene, the scene can be exported to a ".scene" file which can be used later to import the same scene. In this project, a ROS2 node that parses ".scene" files and publishes the information in them to the manipulator's planning scene is developed.
+
+\subsubsection{Scene Geometry Publisher} \label{sec:M:PAP:SceneGeometryPublisher}
+As mentioned in the previous paragraph, a ROS2 node that parses a "\textit{.scene}" file and publishes the information in this file to the planning scene is developed. This node consists of a custom C++ Class, the implementation of this class, a launch file and a "scene" folder to put \textit{.scene} files. An UML class representation of the ScenePublisher C++ class can be seen in figure \ref{fig:scenePublisherUML}.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width = 0.8\textwidth]{Figures/scene_geometry_publisher.pdf}
-  \caption{UML Class Diagram of the Scene Geometry publisher Node. As this is one class and interacts through ROS topics, it appears alone in the class diagram.}
+  \caption{UML Class Diagram of the Scene Geometry publisher Node.}
   \label{fig:scenePublisherUML}
 \end{figure}
 
-It can be seen from figure \ref{fig:scenePublisherUML} that ScenePublisher inherits from "rclcpp::Node". This means that ScenePublisher will have all the functionality of a standard C++ node in addition to the functionality added to it. When an instance of a ScenePublisher is initiated, it will run the constructor (\lstinline{ScenePublisher(rclcpp::NodeOptions&)}, which sets the scene file path to the default path (.scene file in scene folder of the package). The constructor requires an \lstinline{rclcpp::NodeOptions}variable where the developer is able to pass custom node options to the node. 
+It can be seen from figure \ref{fig:scenePublisherUML} that ScenePublisher inherits from "rclcpp::Node".  Ros Client Library for C++(RCLCPP) is the official C++ API towards for interacting with ROS2. Inheriting from  "rclcpp::Node" means that ScenePublisher will have all the functionality of a standard C++ ROS node in addition to the functionality added to it. When an instance of a ScenePublisher is initiated, it will run the constructor \lstinline{ScenePublisher(rclcpp::NodeOptions&)}, which sets the scene file path to the default path (.scene file in scene folder of the package). The constructor requires an \lstinline{rclcpp::NodeOptions} variable where the developer is able to pass custom options to the node. Algorithm \ref{alg:M:ScenePubImplement} describes how the \lstinline{ScenePublisher} class is implemented in the Scene Geometry Publisher node.
 
-Upon initiation of a ScenePublisher node, the \textit{.scene} file path ca be changed using the \lstinline{setSceneFilePath()} method. Furthermore, \lstinline{readSceneFile()} should be used to read the specified \textit{.scene} file and store the information in the member variables of the class. After this, the method \lstinline{loadScene()} can be used to publish the collision objects specified by the .scene file. The private methods \lstinline{createObject()} and \lstinline{createObjectString()} is used by other methods in the class to create a collision object of the correct data type. The class also contains a private \lstinline{split()} method that splits up a string based on the defined input char. Other than that, there are methods to set and get the values of different member variables.
+\input{Algorithms/algScenePubImplement}
 
-An example implementation of this package is shown in appendix \ref{A:lst:ScenePublisher} this implementation first publishes static collision objects to the scene, before applying collision objects to the manipulator from another "\textit{.scene}" file. 
+After initiation of a ScenePublisher node, the ".scene" file path ca be changed using the \lstinline{setSceneFilePath()} method (line 3 in alg \ref{alg:M:ScenePubImplement}). Furthermore, \lstinline{readSceneFile()} (line 4 in alg \ref{alg:M:ScenePubImplement}) should be used to read the specified ".scene" file and store its information in a member variables of the class. After this, the method \lstinline{loadScene()} (line 5 in alg \ref{alg:M:ScenePubImplement}) is used to parse the information from the ".scene" file into a vector of collision objects that are stored a member variable of the class. Algorithm \ref{alg:M:scenePubLoadScene} describes \lstinline{loadScene()} in more detail later. 
+
+\input{Algorithms/algScenePubLoadScene}
+
+As all information in the ".scene" file is extracted using \lstinline{readSceneFile()}, it can be accessed using \lstinline{getLine()}. The first line in a ".scene" file is always the scene name. This is stored in a member variable of the class (line 2 in alg \ref{alg:M:scenePubLoadScene}). The while loop at line 5-10 in algorithm \ref{alg:M:scenePubLoadScene} will read the rest of the file and store the parsed information into a vector of collision objects. Looking at the contents of this wile-loop, \lstinline{createObjectStringVector()} will write the contents of one object and store it in a string (line 6 in alg \ref{alg:M:scenePubLoadScene}). This string will be passed into \lstinline{createObject()} which creates the corresponding collision object and stores this in a collision object variable (line 7 in alg \ref{alg:M:scenePubLoadScene}). This object is then added to the end of a vector of collision objects (line 8 in alg \ref{alg:M:scenePubLoadScene}). The loop is run until there are no more objects in the file. After parsing is done, the collision objects is stored in a member variable of the class. After all collision objects have been parsed and stored, an interface towards the planning scene is initiated (line 6 in alg \ref{alg:M:ScenePubImplement}) and the collision objects are applied to the scene (line 6 in alg \ref{alg:M:ScenePubImplement}).
+
 
 % It can also be seen that \lstinline{frameID_} is hard coded to "\textit{world}", the default base link of Interbotix manipulators.
 
-\subsection{Husky Pick and Place Package} \label{sec:M:A:HuskyPickAndPlace}
-In order to easier interact with Moveit2, a custom "Pick and Place" node is developed. This node listens for incoming commands through the custom ROS2 topic "\textit{/action}" and provides feedback about its operating status on the custom ROS2 topic "\textit{/action\_status}". Based on the incoming commands, the node will preform different pick and place related operations with the Interbotix VX300 manipulator. The node consists of a C++ class and the implementation of this class. As with the scene publisher, an UML class diagram of the C++ class is made. The diagram can be seen in figure \ref{fig:PickAndPlaceUML}.
+\subsubsection{Pick and Place Package} \label{sec:M:A:HuskyPickAndPlace}
+In order to easier interact with Moveit2, a custom "Pick and Place" package is developed. This node listens for incoming commands through the custom ROS2 topic \lstinline{/action} and provides feedback about its operating status on the custom ROS2 topic \lstinline{/action_status}. Based on the incoming commands, the node will preform different pick and place related operations with the Interbotix VX300 manipulator. The manipulator is limited to 5 degrees of freedom. This restricts the manipulators ability to reach certain positions. Therefore, the target poses has to take this into account. This problem is most prevalent when picking, as the target object could have any pose.
+The chosen solution is to always pick the target objects from the top. This solution places the following restrictions on the system in that object rotation around x-axis, $\rho$, and y-axis, $\theta$, is neglected. The object is then assumed to be placed on a level surface. Only xyz-position and z-rot will be taken into account when picking the object. 
+The package consists of a C++ class and the implementation of this class. As with the scene publisher, an UML class diagram of the C++ class is made to better illustrate the contents of the class. The diagram can be seen in figure \ref{fig:PickAndPlaceUML}.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width = 0.8\textwidth]{Figures/husky_pick_and_place.pdf}
-  \caption{UML Class Diagram of the Husky Pick and Place Node. As this is one class and interacts through ROS topics, it appears alone in the class diagram.}
+  \caption{UML Class Diagram of the Husky Pick and Place Node.}
   \label{fig:PickAndPlaceUML}
 \end{figure}
 
-The robotic manipulator is limited to 5 degrees of freedom. This restricts the manipulators ability to reach certain positions. Therefore, the target poses has to take this into account. This problem is most prevalent when picking, as the target object could have any pose.
-The chosen solution is to always pick the target objects from the top. This solution places a restriction on the object in that it has to be placed on a level surface. The x-rot and y-rot of the object has to be assumed to be level with the manipulator base. Then, only xyz-position and z-rot  will be taken into account when picking the object.
+Looking at figure \ref{fig:PickAndPlaceUML}, it can be seen that the PickAndPlace C++ class inherits from the same \lstinline{rclcpp::Node} as the ScenePublisher class. Upon initiation of the PickAndPlace Class, the constructor \lstinline{PickAndPlace(std::string move_group_namespace, rclcpp::NodeOptions&)} will be called. This constructor requires two variables. A namespace definition, corresponding to the defined manipulator name and an \lstinline{rlccpp::NodeOptions} variable. The Options variable is used to give the developer possibilities to pass custom variables to the node, as with the ScenePublisher class.
+The constructor will set up a subscription to the \lstinline{/action} topic and a publisher to the \lstinline{/action_status} topic. The subscription will constantly listen for messages on the \lstinline{/action} topic and store any messages it detects in the member variable \lstinline{action_subscription_} seen in figure \ref{fig:PickAndPlaceUML}. The Publisher will be used by class methods to publish status feedback to the \lstinline{\action_status} topic.
 
+Algorithm \ref{alg:M:PaPImplement}, describes how the Pick and Place class is implemented and used in the ROS2 node \lstinline{pick_and_place}. As it can be seen from this algorithm, the implementation of the class is quite simple. The first two lines involves setting a parameter and initiating the ROS2 node. The main functionality is gathered in one while-loop. Looking closer at that while-loop, it can be seen that the $getCurrentAction()$ function is called in every if-condition This function  returns a string containing the last message the node got through the \lstinline{/action} topic . If the data on the "\lstinline{/action}" topic fits one of the if-conditions, the corresponding operation is preformed.
+
+\input{Algorithms/algPaPImplement}
+
+Looking at algorithm \ref{alg:M:PaPImplement}, \textit{searchForObject()} is called in line 6. This function will search for a specified object coordinate frame and store it's pose in an \textit{objectPose\_} variable. The object's coordinate frame will b provided by the machine vision package if there are any objects available. Algorithm \ref{alg:M:PaPSearch} describes how \textit{searchForObject()} is implemented.
+
+\input{Algorithms/algPaPSearch}
+
+After search has been preformed using \ref{alg:M:PaPSearch} the object can be picked. This is done using the \lstinline{pickObject()}  method. This method will start by moving the gripper above the detected object to take a new measurement of the objects pose with the machine vision system. Then, the manipulator will pick the object based on the updated measurements and hold it in a "holding pose". This holding pose is suitable for holding objects while the Autonomous Navigation system navigates to another location. The \lstinline{pickObject()}  method is described in more depth in algorithm \ref{alg:M:PaPPick}. 
+
+\input{Algorithms/algPaPPick}
+
+The \lstinline{pickObject()} method starts out by publishing "picking" to the ROS2 topic \lstinline{/action_status} in line 1 of algorithm \ref{alg:M:PaPPick}. Next, it will set the member variable \lstinline{currentAction_} to "none". This is done to reset the command recieved from the ROS2 topic \lstinline{/action}. The algorithm then checks if object pose information has been stored in the class (line 3-8 in alg. \ref{alg:M:PaPPick}). If there are no object poses stored, the method will return an error message and stop execution. Line 9-11 in algorithm \ref{alg:M:PaPPick}, describes that object's pose is stored and extracted to $(x,y,z,\rho,\theta,\phi)$. After coordinate extraction, $qYaw$ is calculated. qYaw is defined as the angle between the 
 
 
 
 \section{Top Level} \label{M:TopLevel}
 % During the course of this thesis, a few custom ROS2 packages were made from scratch. These are ROS2 packages made to suit a need at a specific point of the thesis. For instance, "Scene Geometry Publisher" (section \ref{sec:M:A:SceneGeometryPublisher}) is used to parse a ".scene" file and publish objects to the Moveit2 planning scene. While, "Husky Pick and Place" (section \ref{sec:M:A:HuskyPickAndPlace}) waits for a command on a custom ROS2 topic before preforming pick and place related manipulator operations. Lastly "Husky Master" (section \ref{sec:M:A:HuskyMasterNode}) is the node that interacts with NAV2 and "Husky Pick and Place" and orchestrates these nodes in order to achieve autonomous warehouse product fetching.
 
+The top level system interacts with both Autonomous Navigation and Pick and Place to preform a warehouse automation task. This system consists of a ROS2 node called Husky Master. The node consists of a custom python class, "HuskyMasterNode", and the implementation of this class. As with other custom ROS2 nodes, an UML class diagram of the HuskyMasteNode class is made. This UML class diagram can be seen in figure \ref{fig:M:TL:huskyMasterUML}.
+
 %\subsection{Husky Master Node} \label{sec:M:A:HuskyMasterNode}
 
-On a high level, the system is controlled by a top level ROS node, the Husky Master Node, as described in section \ref{sec:M:ConceptualDesign}. 
+%On a high level, the system is controlled by a top level ROS node, the Husky Master Node, as described in section \ref{sec:M:ConceptualDesign}. 
 
-\subsection{Husky Master Node}
-An UML class diagram of the Husky Master Node can be seen in figure \ref{fig:M:TL:huskyMasterUML}.
+%\subsection{Husky Master Node}
+%
 
 \begin{figure}[H]
   \centering
@@ -439,6 +474,14 @@ An UML class diagram of the Husky Master Node can be seen in figure \ref{fig:M:T
   \caption{UML Class Diagram of the Husky Master Node. As this is one class and interacts through ROS topics, it appears alone in the class diagram.}
   \label{fig:M:TL:huskyMasterUML}
 \end{figure}
+
+Looking at the UML diagram in figure \ref{fig:M:TL:huskyMasterUML}, it can be seen that this class inherits from the class \lstinline{BasicNavigator}. \lstinline{BasicNavigator} is a part of the standard python API towards ROS2 and inheriting from this class gives all the functionality of this class plus additional custom functionality. This means that the interface towards NAV2 is set up from within the \lstinline{BasicNavigator} class. When initiating the HuskyMasterNode class, the constructor \lstinline{__init__(manipulator_model="vx300")} is called. This constructor sets up a subscription to the ROS2 topic \lstinline{/action_status}, and a publisher to the \lstinline{/action} topic. In a similar fashion as with the PickAndPlace class, any data detected on the \lstinline{/action_status} topic, will be stored in the member variable \lstinline{action_status_}. Additionally, the constructor will check if values are given for the parameters "object" (name of object to pick), "dimensions" (dimensions of object to pick $(d[m], w[m], h[m])$ and "pick\_loc" (mobile robot goal pose for object picking, $(x[m], y[m], \theta[rad]))$). If no values are given for these parameters, the constructor will give default values. 
+
+The implementation of this class is shown in greater detail in algorithm \ref{alg:M:HuskyMaster}. It is a relatively basic integration which relies on a predefined sequence of commands to the other subsystems. The place location and home location of the mobile robot is hard coded into the sequence and will have to be changed in the source code if needed.
+ 
+\input{Algorithms/algHuskyMaster}
+
+The first five lines of algorithm \ref{alg:M:HuskyMaster} contains declaration of some flags that are set when certain parts of the sequence is fulfilled. The next line contains the declaration of a timeout variable. This variable determines how long each operation (every while-loop in alg. \ref{alg:M:HuskyMaster}) is allowed to run. If for example picking exceeds 120s, it will throw and error and jump out of the while-loop at line 19-23, causing the whole node to stop execution.  Line 7 in algorithm \ref{alg:M:HuskyMaster}, initiates the node as \lstinline{nav}. This is where the constructor is called. When the system has gotten feedback that NAV2 is active (line 8 in alg. \ref{alg:M:HuskyMaster}), it will command NAV2 to navigate towards the goal (line 9 in alg. \ref{alg:M:HuskyMaster}) ad wait for feedback that the goal is reached. When the goal is eventually reached, the node will command the Pick and Place system to pick the object defined in the parameters of this node (line 16 and 17 in alg. \ref{alg:M:HuskyMaster}). The picking operation involves searching for the object as described in section \ref{M:PickAndPlace}. When the node receives a message that picking is finished, it will proceed. The rest of algorithm \ref{alg:M:HuskyMaster} from line 24, is similar to lines 9-23, as it involves sending commands to either NAV2 or Pick and Place and waiting for their response before preforming the next action. When the mobile robot reaches it's home pose again, the node shuts down.
 
 % \begin{figure}[htp]
 %   \centering

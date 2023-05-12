@@ -1,0 +1,47 @@
+\begin{algorithm}[H]
+    \caption{Algorithm describing object Picking is Preformed} \label{alg:M:PaPPick}
+    \begin{algorithmic}[1]
+            \State publishString("picking") \Comment{Feedback to Top Level System}
+            \State $currentAction\_ \gets "none"$ \Comment{Reset command from "/action" topic}
+            \If{$objectPose_ == emptyPose$}
+                \State Throw ERROR("No object pose stored, aborting picking procedure!")
+                \State Throw EROOR("Run 'searchForObject()' to populate the objectPose\_ variable!")
+                \State Plan and execute move to sleepPose
+                \State \textbf{return}
+            \EndIf
+            \State $objectPose \gets objectPose\_$ \Comment{Get pose from member var}
+            \State $[x, y, z] \gets getXYZ(objectPose)$ \Comment{Extract XYZ}
+            \State $[\rho, \theta, \phi] \gets getRPY(objectPose)$ \Comment{Extract RPY as $[\rho, \theta, \phi]$}
+            \State $denum \gets x$ 
+            \If{$denum == 0$}
+                \State $denum \gets 0.000001;$
+            \EndIf
+            \State $qYaw \gets \arctan\left ( \frac{y}{denum}\right )$ \Comment{same as: $qYaw \gets computeYawAngle(objectPose\_)$}
+            \State $heightAbove \gets 0.3m$ \Comment{Inspection height above object}
+            \State $shift \gets 0.0m$ \Comment{Brings Gripper closer in xy-coords to base}
+            \State $xInsp \gets x - shift\cdot \cos(qYaw)$
+            \State $yInsp \gets y - shift \cdot \sin(qYaw)$
+            \State $zInsp \gets z + heightAbove$
+            \State $poseInsp.Pos \gets setXYZ(xInsp, yInsp, zInsp)$
+            \State $poseInsp.Orient \gets setRPY(0, \frac{\pi}{2}, \phi)$ \Comment{5-DOF arm: using only $\phi$}
+            \State Plan and execute move to poseInsp \Comment{Directly above object, looking down at it}
+            \State Plan and execute gripper released
+            \State $searchForObject()$ \Comment{To get a better pose estimate, do a new measurement}
+            \State $objectPose \gets objectPose\_$ \Comment{Get pose from member var}
+            \State $[x, y, z] \gets getXYZ(objectPose)$ \Comment{Extract XYZ}
+            \State $[\rho, \theta, \phi] \gets getRPY(objectPose)$ \Comment{Extract RPY as $[\rho, \theta, \phi]$}
+            \State $poseAboveObj.Pos \gets setXYZ(x, y, z+0.05)$
+            \State $poseAboveObj.Orient \gets setRPY(0, \frac{\pi}{2}, \phi)$ \Comment{5-DOF arm: using only $\phi$}
+            \State Plan and execute move to poseAboveObj \Comment{Moves to 0.05m above objectPose}
+            \State $poseAtObj.Pos \gets objectPose.Pos$
+            \State $poseAtObj.Orient \gets poseAboveObj.Orient$ \Comment{5-DOF arm: using only $\phi$}
+            \State Plan and execute move to poseAtObj
+            \State $poseGripperGrasp \gets "Grasping\_" + currenObject\_$ \Comment{Grasping pose defined in srdf file}
+            \State Plan and execute poseGripperGrasp
+            \State $poseLiftObj.Pos \gets setXYZ(x, y, z+0.2)$
+            \State $poseLiftObj.Orient \gets poseAboveObj.Orient$ \Comment{5-DOF arm: using only $\phi$}
+            \State Plan and execute move to poseLiftObj \Comment{Moves to 0.2m above objectPose\_}
+            \State Plan and execute move to poseHolding \Comment{Pose suitable for holding object}
+            \State publishString("Picking finished") \Comment{Feedback to Top Level System}
+    \end{algorithmic}
+ \end{algorithm}

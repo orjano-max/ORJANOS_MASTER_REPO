@@ -1,0 +1,68 @@
+
+
+  \begin{algorithm}[H]
+    \caption{Algorithm describing how the Husky Master node is implemented} \label{alg:M:PaPImplement}
+    \begin{algorithmic}[1] 
+            \State $reachedPickLoc \gets$ \textbf{false}
+            \State $pickingFinished \gets$ \textbf{false}
+            \State $reachedPlaceLoc \gets$ \textbf{false}
+            \State $placingFinished \gets$ \textbf{false}
+            \State $reachedHome \gets$ \textbf{false}
+            \State $timeout \gets 120s$ \Comment{Timeout for while loops}
+            
+            \State $node \gets HuskyMasterNode$ \Comment{Initiate Husky Master Node}
+            \State Wait until NAV 2 is active
+            
+            \State $Nav2GoalPose \gets pickLoc$ \Comment{Send goal pose to NAV 2}
+            
+            \While{(\textbf{\textbf{not}} ERROR) \textbf{and} (\textbf{not} $reachedPickLoc$)}
+                \If{$nav.isTaskComplete()$}
+                    \State $reachedPickLoc \gets$ \textbf{true}
+                \EndIf
+            \EndWhile
+            
+            \If{$reachedPickLoc$}
+                \State $PickAndPlaceCommandString("pick" + "\;" + object +"\;" + Dimensions")$ 
+                \State Send $PickAndPlaceCommandString$ \Comment{Sends on topic "/action"}
+            \EndIf
+            
+            \While{(\textbf{\textbf{not}} ERROR) \textbf{and} (\textbf{not} $pickingFinished$)}
+                \If{$nav.actionStatus() == "picking \; finished"$} \Comment{Listens to topic "/action\_status"}
+                    \State $pickingFinished \gets$ \textbf{true}
+                \EndIf
+            \EndWhile
+            
+            \If{$pickingFinished$}
+                \State $Nav2GoalPose \gets placeLoc$ \Comment{Send goal pose to NAV 2}
+            \EndIf
+            
+            \While{(\textbf{\textbf{not}} ERROR) \textbf{and} (\textbf{not} $reachedPlaceLoc$)}
+                \If{$nav.isTaskComplete()$}
+                    \State $reachedPlaceLoc \gets$ \textbf{true}
+                \EndIf
+            \EndWhile
+            
+            \If{$reachedPlaceLoc$}
+                \State $PickAndPlaceCommandString("place")$ 
+                \State Send $PickAndPlaceCommandString$ \Comment{Sends on topic "/action"}
+            \EndIf
+            
+            \While{(\textbf{\textbf{not}} ERROR) \textbf{and} (\textbf{not} $placingFinished$)}
+                \If{$nav.actionStatus() == "picking \; finished"$} \Comment{Listens to topic "/action\_status"}
+                    \State $placingFinished \gets$ \textbf{true}
+                \EndIf
+            \EndWhile
+            
+            \If{$placingFinished$}
+                \State $Nav2GoalPose \gets homeLoc$ \Comment{Send goal pose to NAV 2}
+            \EndIf
+            
+            \While{(\textbf{\textbf{not}} ERROR) \textbf{and} (\textbf{not} $reachedHomeLoc$)}
+                \If{$nav.isTaskComplete()$}
+                    \State $reachedHomeLoc \gets$ \textbf{true}
+                \EndIf
+            \EndWhile
+            
+            \State \textbf{shutdown}
+    \end{algorithmic}
+ \end{algorithm}

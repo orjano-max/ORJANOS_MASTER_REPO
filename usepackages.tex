@@ -26,9 +26,17 @@
 \usepackage{svg} % For using svg figures
 \usepackage{pdfpages} % For inserting pdf documents
 \usepackage{algpseudocode} % For using algorithm
+\usepackage{algorithm} % For having algorithms with captions
 \usepackage{dirtree} % For creating directory trees
 \usepackage[normalem]{ulem}
 
+%-------------Adding exception handling----------------
+\algblock[TryCatchFinally]{try}{endtry}
+\algcblock[TryCatchFinally]{TryCatchFinally}{finally}{endtry}
+\algcblockdefx[TryCatchFinally]{TryCatchFinally}{catch}{endtry}
+	[1]{\textbf{catch} #1}
+	{\textbf{end try}}
+%-----------------------------------------------------
 
 %\usepackage{auto-pst-pdf} % Enables the psfrag tool
 %\usepackage{psfrag}% Enables the psfrag tool
