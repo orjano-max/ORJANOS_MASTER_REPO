@@ -454,7 +454,12 @@ After search has been preformed using \ref{alg:M:PaPSearch} the object can be pi
 
 The \lstinline{pickObject()} method starts out by publishing "picking" to the ROS2 topic \lstinline{/action_status} in line 1 of algorithm \ref{alg:M:PaPPick}. Next, it will set the member variable \lstinline{currentAction_} to "none". This is done to reset the command recieved from the ROS2 topic \lstinline{/action}. The algorithm then checks if object pose information has been stored in the class (line 3-8 in alg. \ref{alg:M:PaPPick}). If there are no object poses stored, the method will return an error message and stop execution. Line 9-11 in algorithm \ref{alg:M:PaPPick}, describes that object's pose is stored and extracted to $(x,y,z,\rho,\theta,\phi)$. After coordinate extraction, $qYaw$ is calculated. qYaw is defined as the angle between the 
 
-
+\begin{figure}[H]
+  \centering
+  \includesvg[width = 0.6\textwidth]{Figures/figqYaw.drawio.svg}
+  \caption{UML Class Diagram of the Husky Master Node. As this is one class and interacts through ROS topics, it appears alone in the class diagram.}
+  \label{fig:M:PAP:M:qYaw}
+\end{figure}
 
 \section{Top Level} \label{M:TopLevel}
 % During the course of this thesis, a few custom ROS2 packages were made from scratch. These are ROS2 packages made to suit a need at a specific point of the thesis. For instance, "Scene Geometry Publisher" (section \ref{sec:M:A:SceneGeometryPublisher}) is used to parse a ".scene" file and publish objects to the Moveit2 planning scene. While, "Husky Pick and Place" (section \ref{sec:M:A:HuskyPickAndPlace}) waits for a command on a custom ROS2 topic before preforming pick and place related manipulator operations. Lastly "Husky Master" (section \ref{sec:M:A:HuskyMasterNode}) is the node that interacts with NAV2 and "Husky Pick and Place" and orchestrates these nodes in order to achieve autonomous warehouse product fetching.
