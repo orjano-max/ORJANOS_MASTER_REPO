@@ -1,0 +1,32 @@
+\begin{algorithm}[H]
+    \caption{Algorithm describing how Object Detection and pose est. is preformed in the Pick and Place Package} \label{alg:M:PaPSearch}
+    \begin{algorithmic}[1]
+        \renewcommand{\algorithmicrequire}{\textbf{Input:}}
+       \renewcommand{\algorithmicensure}{\textbf{Output:}}
+       \Require $(timeout \gets 10.0s)$, $(tag\_frame \gets "")$
+       \Ensure $pose$
+            \State $frameAvailable \gets$ \textbf{false}
+            \If{$tagFrame == ""$} \Comment{Set $tagFrame$ to default if not set}
+                \State $tagFrame \gets currentObject\_ + "\_tag"$
+            \EndIf
+            \State $startTime \gets clockNow$
+            \While{(\textbf{not} ERROR) \textbf{and} (\textbf{not} $frameAvailable$)}
+                \try
+                    \State $transform \gets lookupTransform(planning\_frame, pose\_frame)$
+                    \State $frame\_available \gets$ \textbf{true}
+                \catch{Frame not Found}
+                    \State sleep for 100 milliseconds \Comment{Frame not available yet, wait and try again}
+                \endtry
+                \State $elapsedTime \gets clockNow - startTime$
+                \If{$elapsedTime \geq timeout$}
+                    \State Throw ERROR("Timeout reached while looking for tag!")
+                    \State \Return $emptyPose$
+                \EndIf
+            \EndWhile
+            \If{\textbf{not} $frameAvailable$}
+                \State \Return $emptyPose$
+            \EndIf
+            \State $pose \gets setPoseFromTransform(transform)$ \Comment{Convert to correct datatype}
+            \State \Return $pose$
+    \end{algorithmic}
+ \end{algorithm}

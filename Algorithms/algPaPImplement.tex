@@ -1,0 +1,22 @@
+\begin{algorithm}[H]
+    \caption{Algorithm describing how the Pick and Place class is implemented} \label{alg:M:HuskyMaster}
+    \begin{algorithmic}[1] 
+            \State $manipulatorNamespace \gets "vx300"$ \Comment{Declare namespace}
+            \State $opt \gets NodeOptions()$ \Comment{Declate node options}
+            \State $node \gets PickAndPlace(manipulatorNamespace, opt)$\Comment{Init PickAndPlace class with namespace and opt}
+            \While{\textbf{not} ERROR}
+                \If{$node.getCurrentAction() == "pick"$}
+                    \State $node.goToSearchPos()$
+                    \State $node.searchForObject()$
+                    \State $node.pickObject()$
+                \ElsIf{$node.getCurrentAction() == "place"$}
+                    \State $node.placeObject()$
+                \ElsIf{$node.getCurrent\_action() == "calibrate"$}
+                    \State $node.calibrate()$
+                \ElsIf{$node.getCurrent\_action() == "sleep"$}
+                    \State $node.goToSleepPos()$
+                \EndIf
+            \EndWhile
+            \State \textbf{shutdown}         
+    \end{algorithmic}
+ \end{algorithm}

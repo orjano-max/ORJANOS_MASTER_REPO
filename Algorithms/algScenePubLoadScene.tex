@@ -1,0 +1,18 @@
+\begin{algorithm}[H]
+    \caption{Algorithm describing how scenes are loaded into collision objects.} \label{alg:M:scenePubLoadScene}
+    \begin{algorithmic}[1]
+            \State $getline(file\_,line\_)$ \Comment{Reads line from $file\_$, stores in $line\_$}
+            \State $sceneName \gets line\_$ \Comment{First line is scene name}
+            \State $getline(file\_,line\_)$
+            \State $token \gets split(line\_,"\;")$ \Comment{Split line at spaces, store in "token" vector}
+            \While{$token[0] == "*"$} \Comment{"*" Denotes beginning of new object}
+                \State $objectStringVector \gets createObjectStringVector()$ \Comment{Parse object info}
+                \State $collisionObject \gets createObject(ObjectStringVector)$ \Comment{Create collisionObject from info}
+                \State $collisionObjects.push\_back(collisionObject)$ \Comment{Store collisionObject in vector/array}
+                \State $token \gets split(line\_,"\;")$
+            \EndWhile
+            \State $collisionObjects\_ \gets collisionObjects$ \Comment{Store in class member variable}
+    \end{algorithmic}
+ \end{algorithm}
+
+ 
