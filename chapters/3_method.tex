@@ -35,8 +35,9 @@ As described in section \ref{sec:I:Objective}, the objective of this project is 
 The warehouse automation scenario described in section \ref{sec:M:ProblemFormulation}, can be divided into three main parts; an autonomous navigation system, a pick and place system, and the top level system that fuses "autonomous navigation" and "pick and place" together. Figure \ref{fig:M:CD:topLevelMethod} illustrates on a high level how these systems interact.
 
 \begin{figure}[htp]
+    \fontsize{9}{14}\selectfont
     \centering
-    \includegraphics[width = 0.9\textwidth]{Figures/figTopLevelMethod.drawio.png}
+    \includesvg[width = 0.9\textwidth]{Figures/figTopLevelMethod.drawio.svg}
     \caption{This figure illustrates on a high level how the main systems in the solution interacts with each other to orchestrate a warehouse automation task. The "Top Level" system sends commands and receives feedback from the two other systems "Autonomous Navigation" and "Pick and Place"}
     \label{fig:M:CD:topLevelMethod}
 \end{figure}
@@ -388,11 +389,13 @@ Besides switching the ROS 2 Distribution and altering planning algorithm, some a
 
 \section{Pick and Place} \label{M:PickAndPlace}
 
+
 \begin{figure}[htp]
-  \centering
-  \includegraphics[width = 0.98\textwidth]{Figures/figPickAndPlaceMethod.drawio.png}
-  \caption{This figure illustrates the Pick and Place subsystem}
-  \label{fig:M:PAP:PickAndPlaceMethod}
+    \fontsize{9}{14}\selectfont
+    \centering
+    \includesvg[width = 0.98\textwidth]{Figures/figPickAndPlaceMethod.drawio.svg}
+    \caption{This figure is a high level illustration of the Pick and Place system. }
+    \label{fig:M:PAP:PickAndPlaceMethod}
 \end{figure}
 
 \subsection{Machine Vision} \label{sec:M:MRC:MachineVision}
