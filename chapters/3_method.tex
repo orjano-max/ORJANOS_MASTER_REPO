@@ -267,7 +267,7 @@ The odometry coming from motion control passes into the EKF, which is a part of 
 Finally, the navigation subsystem use the information from SLAM and Perception to preform path planning and obstacle avoidance. The navigation subsystem is also the one that interacts with the top level system by taking pose goals as commands and providing feedback when the goal has been reached.
 
 \subsection{Motion Control}\label{sec:M:AN:MotionControl}
-As described in section \ref{sec:M:AutonomousNavigation}, motion control regards the controller of the UGV. Specifically, this is the part of the system that sets up the Husky A200 UGV towards ROS 2 so that it is able to take velocity commands through the ROS 2 network. This is done through the official ROS 2 Foxy packages provided by Clearpath \cite{husky_repo}.
+As described in section \ref{sec:M:AutonomousNavigation}, motion control regards the controller of the UGV. Specifically, this is the part of the system that sets up the Husky A200 UGV towards ROS 2 so that it is able to take velocity commands through the ROS 2 network. This is done through the official ROS 2 Foxy packages provided by Clearpath \cite{husky_repo}. The ROS 2 Foxy Fitzroy distribution is chosen due to poor performance from the ROS 2 Galactic Geochelone Husky packages.
 
 % Though, Clearpath husky provides Debian ROS2 packages for ROS2 Foxy, and these are therefore used. The story is different for ROS2 Galactic which has reached its EOL and is no longer maintained. Nevertheless, the official Husky ROS2 repository\cite{husky_repo} still contains a branch for ROS2 Galactic even though it won't build. This branch is forked and modified in order to build as well as modified to take in some arguments to the launch file. The forked repository is public and available at \cite{uia_husky_repo}. 
 %aj explain this - husky: foxy, SLAM: galactic, NAV2: Galactic.
@@ -302,7 +302,17 @@ It is essential for the robotic system to know the pose of the Ouster LiDAR and 
 % The velocity command coming from the /twist\_mux server needs to be handled by a controller in order to actuate the UGV. In the ROS2 network, this controller is represented as the husky\_velocity\_controller node. This node takes in velocity commands from the twist\_mux node, actuates the wheel motors and then calculates the motion of the UGV. The resulting odometry is published to the ROS2 topic "/odom".
 
 \subsection{Perception}\label{sec:M:AN:Perception}
-As described in section \ref{sec:M:AutonomousNavigation}, the perception system of the mobile robot consists of the Ouster OS1 LiDAR and the ROS 2 package PointCloud to LaserScan \cite{pointcloud_to_laserscan_repo}. The LiDAR provides a 3D point cloud of the environment and publishes this information to the ROS 2 network. The PointCloud to LaserScan package then converts the point cloud to a 2D laser scan that is usable by the SLAM and navigation algorithms.
+As described in section \ref{sec:M:AutonomousNavigation}, the perception system of the mobile robot consists of the Ouster OS1 LiDAR and the ROS 2 package PointCloud to LaserScan \cite{pointcloud_to_laserscan_repo}. Figure ... illustrates how these two interact to deliver a laser scan usable by SLAM and navigation.
+
+\begin{figure}[htp]
+    \fontsize{7}{14}\selectfont
+    \centering
+    \includesvg[width = 1\textwidth]{Figures/figLocMapping.drawio.svg}
+    \caption{High level overview of localisation and mapping subsystem. It can be seen that EKF takes in odometry from motion control and IMU data from Ouster OS1 and UM7. The output from EKF is passed to the SLAM algorithm along with LaserScan from Perception. SLAM then outputs a map and localisation.}
+    \label{fig:M:AN:LAM:LocMapping}
+\end{figure}
+
+The LiDAR provides a 3D point cloud of the environment and publishes this information to the ROS 2 network. The PointCloud to LaserScan package then converts the point cloud to a 2D laser scan that is usable by the SLAM and navigation algorithms.
 
 The PointCloud to LaserScan package requires information about which points it should convert to laser scan. This is done by defining a maximum distance down and a maximum distance up, from the sensors origin. For example, the developer could say that all points from 1[m] below the sensor to 0.2[m] above the sensor should be considered when creating the LaserScan signal. This method takes advantage of the 3D PointCloud data set when creating a LaserScan of the surrounding area. The Resulting 2D map will therefore be valid for the whole UGV and not only for the plane where the LiDAR is located. However, since the position of the LiDAR has been altered during the course of this project, these distances has to be altered.
 
@@ -325,7 +335,7 @@ The PointCloud to LaserScan package requires information about which points it s
 
 
 \subsection{Localisation and Mapping} \label{sec:M:AN:LocalisationAndMapping}
-The localisation and mapping system seen in figure \ref{fig:M:AN:ANMethod}, is a combination of several subsystems, mainly an EKF filter and a SLAM algorithm. The UM7 IMU can also be seen in \ref{fig:M:AN:ANMethod} as a part of this system as it's data is only used for localisation. A bloated figure further explaining localisation and mapping is shown in figure \ref{fig:M:AN:LAM:LocMapping}.
+The localisation and mapping system from figure \ref{fig:M:AN:ANMethod}, is a combination of several subsystems, mainly an EKF filter and a SLAM algorithm. Figure \ref{fig:M:AN:LAM:LocMapping} illustrates how these two algorithms interact.
 
 \begin{figure}[htp]
     \fontsize{7}{14}\selectfont
@@ -335,30 +345,38 @@ The localisation and mapping system seen in figure \ref{fig:M:AN:ANMethod}, is a
     \label{fig:M:AN:LAM:LocMapping}
 \end{figure}
 
+From figure \ref{fig:M:AN:LAM:LocMapping}, it can be seen that the EKF, provided by the ROS 2 package "Robot Localization", takes in Odometry data from motion control along with IMU data from both the UM7 IMU and the Ouster OS1 LiDAR's built in IMU. This information is then use to create an optimised odometry estimate, "EKF Filtered Odometry". This optimised odometry estimate is then passed to the SLAM algorithm. The SLAM algorithm, provided by the ROS 2 package "SLAM Toolbox", bases itself on the SPA SLAM approach by \cite{Konolige2010}, mentioned in section \ref{sec:T:AN:L:SLAM}. This algorithm use the optimised odometry estimate together with laser scan from Perception in order preform SLAM. The resulting output is a 2D map of the environment along with an estimate of the robot's pose in this map.
 
-\subsubsection{IMU Setup} 
-To be able to use the UM7 IMU with ROS2, it has to be set up as a ROS2 node. This is done by using UM7 ROS2 packages provided by \cite{um7_repo}. This node sets a connection to the UM7 IMU through USB and publishes measurements to the ROS topic "/imu/data". The node is dependent on \cite{serial_repo} which is a library for interfacing with serial communication.
+Changes to the localisation and mapping system during this thesis, regards the introduction of the LiDARs IMU and choice or ROS 2 distribution. The extra IMU data was added to the EKF it help increase the performance of the odometry estimation. On the subject of ROS 2 distributions, the complete system was previously running ROS 2 Foxy Fitzroy. In this thesis, EKF node is running on ROS 2 Foxy Fitzroy, and SLAM Toolbox is running on ROS 2 Galactic Geochelone. The reason for this is that the EKF is launched along with the UGV, which is running on Foxy Fitzroy. And SLAM Toolbox must run on the Galactic Geochelone distribution in order to be compatible with NAV2 which is also running on ROS 2 Galactic Geochelone. Reasoning behind choice of NAV2 distributions will be explained later in section \ref{sec:M:AN:Navigation}.
 
 
- \subsubsection{Extended Kalman Filter}
-In order to more accurately calculate the movement of the UGV, an extended kalman filter is use. The ekf filter fuses UGV odometry with IMU data from both the UM7 IMU and OS1 LiDAR's built in IMU. Figure \ref{fig:rqt_ekf} illustrates how the extended kalman filter(ekf\_node) takes in odometry data from the UGV(husky\_velocity\_controller) as well as IMU data from the UM7 IMU(um7\_driver) and the OS1 LiDAR(ouster\_driver). The node ekf\_node then fuses the odometry and IMU data in order to calculate the transform from /odom to /base\_link.
+% \subsubsection{IMU Setup} 
+% To be able to use the UM7 IMU with ROS2, it has to be set up as a ROS2 node. This is done by using UM7 ROS2 packages provided by \cite{um7_repo}. This node sets a connection to the UM7 IMU through USB and publishes measurements to the ROS topic "/imu/data". The node is dependent on \cite{serial_repo} which is a library for interfacing with serial communication.
 
-\begin{figure}[htp]
-  \centering
-  \includegraphics[width = 1\textwidth]{Figures/husky_nodess.drawio.png}
-  \caption{Illustration of how the ekf\_node fuses the odometry from the husky\_velocity\_controller and IMU data from both the ouster\_driver and the um7\_driver.}
-  \label{fig:rqt_ekf}
-\end{figure}
 
-\subsubsection{Simultaneous Localisation And Mapping}
-Simultaneous localisation and mapping (SLAM) is used to give a final robot pose estimate along with a map. The SLAM algorithm itself is provided by the ROS2 package SLAM Toolbox. The ROS2 node takes in odometry information from the motion control system together with LaserScan from the perception system to localise and generate a 2D map of the environment. Because of the use of "PointCloud to LaserScan", the resulting map contains all obstacles in the "collision zone" of the mobile robot. Obstacles that are too low to be mapped can be traversed by the mobile robot and obstacles that are located too high will be ignored. When looking at localisation, there are several methods that could be used. As SLAM is already used for mapping, it becomes a natural choice for preforming the localisation task as well. SLAM Toolbox utilises a pose-graph approach to the SLAM problem, based on the SPA technique mentioned in section \ref{sec:T:AN:L:SLAM}.
+%  \subsubsection{Extended Kalman Filter}
+% In order to more accurately calculate the movement of the UGV, an extended kalman filter is use. The ekf filter fuses UGV odometry with IMU data from both the UM7 IMU and OS1 LiDAR's built in IMU. Figure \ref{fig:rqt_ekf} illustrates how the extended kalman filter(ekf\_node) takes in odometry data from the UGV(husky\_velocity\_controller) as well as IMU data from the UM7 IMU(um7\_driver) and the OS1 LiDAR(ouster\_driver). The node ekf\_node then fuses the odometry and IMU data in order to calculate the transform from /odom to /base\_link.
+
+% \begin{figure}[htp]
+%   \centering
+%   \includegraphics[width = 1\textwidth]{Figures/husky_nodess.drawio.png}
+%   \caption{Illustration of how the ekf\_node fuses the odometry from the husky\_velocity\_controller and IMU data from both the ouster\_driver and the um7\_driver.}
+%   \label{fig:rqt_ekf}
+% \end{figure}
+
+% \subsubsection{Simultaneous Localisation And Mapping}
+% Simultaneous localisation and mapping (SLAM) is used to give a final robot pose estimate along with a map. The SLAM algorithm itself is provided by the ROS2 package SLAM Toolbox. The ROS2 node takes in odometry information from the motion control system together with LaserScan from the perception system to localise and generate a 2D map of the environment. Because of the use of "PointCloud to LaserScan", the resulting map contains all obstacles in the "collision zone" of the mobile robot. Obstacles that are too low to be mapped can be traversed by the mobile robot and obstacles that are located too high will be ignored. When looking at localisation, there are several methods that could be used. As SLAM is already used for mapping, it becomes a natural choice for preforming the localisation task as well. SLAM Toolbox utilises a pose-graph approach to the SLAM problem, based on the SPA technique mentioned in section \ref{sec:T:AN:L:SLAM}.
 
 % Since SLAM algorithms does both mapping and localisation simultaneously, it gives an accurate representation of an environment for navigation and places the robot in this environment. Therefore, SLAM toolbox is used alongside NAV2 during autonomous navigation. 
 
-\subsection{Navigation}
-As the UGV platform is set up with compatible motion control, perception, mapping and localisation systems, it is now able to run the ROS2 Navigation stack NAV2. This is the standard autonomous navigation library for mobile robots in ROS2. In ROS2 Galactic, NAV2 introduced a simple API towards Python, which is used by a custom Top Level ROS2 node to interact with NAV2. The Top Level node is described later in section \ref{M:TopLevel}. Since this API is introduced in Galactic, the choice was made to use ROS2 Galactic for NAV2. This means that SLAM Toolbox also has to run in ROS2 Galactic to ensure compatibility between the two.
+\subsection{Navigation} \label{sec:M:AN:Navigation}
+The navigation system from figure \ref{fig:M:AN:ANMethod} consists of the ROS 2 Navigation stack NAV2. This is the standard autonomous navigation library for mobile robots in ROS2. The navigation stack includes path planning (referred to as global planner in NAV 2) and obstacle avoidance (referred to as local planner in NAV 2) among other algorithms that create a robust navigation pipeline.
 
-As long as the other systems are up and running, the navigation stack should be ready for use. However, there is a parameter \lstinline{.yaml} file that could require tweaking in order to achieve optimal performance. By default, the file is set up to fit smaller mobile robots. As the mobile robot in this project is quite large, adjustments to the inflation layer of the navigational maps has been made. The inflation layers tells the navigational system how close the robot is allowed to get to obstacles in the map. Another adjustment regards the footprint of the robot. The robot footprint in NAV2 defines the outline of the mobile robot relative to it's origin. Footprint adjustment is done by Didrik Robsrud as a part of the work on his thesis on Radar-LiDAR sensor fusion in ROS. Lastly, the moving window that defines the size of the local planner(obstacle avoidance), is increased to better fit the larger dimensions of the mobile robot
+In ROS2 Galactic, NAV2 introduced a simple API towards Python, which is used by a custom Top Level ROS2 node to interact with NAV2. The Top Level node is described later in section \ref{M:TopLevel}. Since this API is introduced in Galactic, the choice was made to use ROS2 Galactic for NAV2 instead of ROS 2 Foxy as was used previously. This means that SLAM Toolbox also has to run in ROS2 Galactic to ensure compatibility between the two.
+
+By default NAV 2 utilises Djikstra's algorithm for path planning, but has possibilities to use A*. The has advantages of Djikstra's algorithm is that it calculates the optimal path from the goal pose to all points in the map. If the robot has preform some sort of evasive action on it's way to the goal, the planner already knows the optimal path from it's new location to the goal. This way, the planner can effectively plan new trajectories without having to run the planning algorithm every time. However, as stated in section \ref{sec:T:RC:PathPlanning}, the A* algorithm is usually faster than Djikstra's algorithm. A* might not find the optimal solution and it will stop as soon as a solution is found. For this project, planning has been changed from Djikstra's algorithm to A* for it's increased speed in most cases.
+
+Besides switching the ROS 2 Distribution and altering planning algorithm, some additional parameters have been tweaked to achieve better performance. By default, NAV 2 is set up to fit relatively small mobile robots. As the Husky A200 is quite large, adjustments to the inflation layer of the navigational maps has been made. The inflation layers tells the navigational system how close the robot is allowed to get to obstacles in the map. Another adjustment regards robot footprint. The robot footprint in NAV2 defines the outline of the mobile robot relative to it's origin. Footprint adjustment is done by Didrik Robsrud as a part of his thesis on Radar-LiDAR sensor fusion in ROS/ROS 2. Lastly, the size of the local planner's rolling window has been increased to better fit the larger dimensions of the Husky A200.
 
 \section{Pick and Place} \label{M:PickAndPlace}
 
