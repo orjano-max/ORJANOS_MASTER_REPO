@@ -388,7 +388,7 @@ By default NAV 2 utilises Djikstra's algorithm for path planning, but has possib
 Besides switching the ROS 2 Distribution and altering planning algorithm, some additional parameters have been tweaked to achieve better performance. By default, NAV 2 is set up to fit relatively small mobile robots. As the Husky A200 is quite large, adjustments to the inflation layer of the navigational maps has been made. The inflation layers tells the navigational system how close the robot is allowed to get to obstacles in the map. Another adjustment regards robot footprint. The robot footprint in NAV2 defines the outline of the mobile robot relative to it's origin. Footprint adjustment is done by Didrik Robsrud as a part of his thesis on Radar-LiDAR sensor fusion in ROS/ROS 2. Lastly, the size of the local planner's rolling window has been increased to better fit the larger dimensions of the Husky A200.
 
 \section{Pick and Place} \label{M:PickAndPlace}
-
+The pick and place system consists of two main parts, machine vision, and the manipulator. Figure \ref{fig:M:PAP:PickAndPlaceMethod} illustrates how machine vision and the manipulator interact to create the pick and place system.
 
 \begin{figure}[htp]
     \fontsize{9}{14}\selectfont
