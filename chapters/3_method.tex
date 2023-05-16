@@ -326,10 +326,10 @@ The PointCloud to LaserScan package requires information about which points it s
 The localisation and mapping system seen in figure \ref{fig:M:AN:ANMethod}, is a combination of several subsystems, mainly an EKF filter and a SLAM algorithm. The UM7 IMU can also be seen in \ref{fig:M:AN:ANMethod} as a part of this system as it's data is only used for localisation. A bloated figure further explaining localisation and mapping is shown in figure \ref{fig:M:AN:LAM:LocMapping}.
 
 \begin{figure}[htp]
-    \fontsize{8}{14}\selectfont
+    \fontsize{7}{14}\selectfont
     \centering
     \includesvg[width = 1\textwidth]{Figures/figLocMapping.drawio.svg}
-    \caption{Localisation and mapping}
+    \caption{High level overview of localisation and mapping subsystem. It can be seen that EKF takes in odometry from motion control and IMU data from Ouster OS1 and UM7. The output from EKF is passed to the SLAM algorithm along with LaserScan from Perception. SLAM then outputs a map and localisation.}
     \label{fig:M:AN:LAM:LocMapping}
 \end{figure}
 
