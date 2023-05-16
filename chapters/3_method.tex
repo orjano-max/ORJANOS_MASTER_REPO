@@ -323,14 +323,15 @@ The PointCloud to LaserScan package requires information about which points it s
 
 
 \subsection{Localisation and Mapping} \label{sec:M:AN:LocalisationAndMapping}
-The localisation and mapping system seen in figure \ref{fig:M:AN:ANMethod}, is a combination of several subsystems, mainly an EKF filter and a SLAM algorithm. The UM7 IMU can also be seen in \ref{fig:M:AN:ANMethod} as a part of this system as it's data is only used for localisation. A bloated figure further explaining localisation and mapping is shown in figure ...
+The localisation and mapping system seen in figure \ref{fig:M:AN:ANMethod}, is a combination of several subsystems, mainly an EKF filter and a SLAM algorithm. The UM7 IMU can also be seen in \ref{fig:M:AN:ANMethod} as a part of this system as it's data is only used for localisation. A bloated figure further explaining localisation and mapping is shown in figure \ref{fig:M:AN:LAM:LocMapping}.
 
-% \begin{figure}[htp]
-%   \centering
-%   \includegraphics[width = 1\textwidth]{Figures/husky_nodess.drawio.png}
-%   \caption{Illustration of how the ekf\_node fuses the odometry from the husky\_velocity\_controller and IMU data from both the ouster\_driver and the um7\_driver.}
-%   \label{fig:rqt_ekf}
-% \end{figure}
+\begin{figure}[htp]
+    \fontsize{8}{10}\selectfont
+    \centering
+    \includesvg[width = 1\textwidth]{Figures/figLocMapping.drawio.svg}
+    \caption{Localisation and mapping}
+    \label{fig:M:AN:LAM:LocMapping}
+\end{figure}
 
 
 \subsubsection{IMU Setup} 
