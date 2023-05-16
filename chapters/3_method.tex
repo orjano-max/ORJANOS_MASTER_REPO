@@ -249,10 +249,11 @@ A closer look at the experimental manipulator setup with it's mounted Realsense 
 An overview of the autonomous navigation system is illustrated at a high level in figure \ref{fig:M:AN:ANMethod}. This figure shows the relation between the different subsystems that make up this navigation system and what kind of information that are transmitted between them. The figure is divided into four parts in correspondence to the description in section \ref{sec:T:AutonomousNavigation}. These four parts are Motion Control, Perception, Localisation and Mapping and Navigation. 
 
 \begin{figure}[htp]
-  \centering
-  \includegraphics[width = 0.98\textwidth]{Figures/figANMethod.drawio.png}
-  \caption{Overview of autonomous navigation system. Motion Control provides odometry information, which is fused with IMU data in an EKF. The resulting filtered odometry is fed to SLAM along with Laser Scan from a LiDAR. SLAM then provides mapping and localisation for the navigation system. Path planning and collision avoidance is preformed in the navigation system which sends command velocities to the motion control system based on info.}
-  \label{fig:M:AN:ANMethod}
+    %\fontsize{7}{14}\selectfont
+    \centering
+    \includesvg[width = 0.98\textwidth]{Figures/figANMethod.drawio.svg}
+    \caption{Overview of autonomous navigation system. Motion Control provides odometry information, which is fused with IMU data in an EKF. The resulting filtered odometry is fed to SLAM along with Laser Scan from a LiDAR. SLAM then provides mapping and localisation for the navigation system. Path planning and collision avoidance is preformed in the navigation system which sends command velocities to the motion control system based on info.}
+    \label{fig:M:AN:ANMethod}
 \end{figure}
 % Aj fig not redable. increas the fontzize and make blocks compact. need to discuss this to understand and how it can be explained better
 
