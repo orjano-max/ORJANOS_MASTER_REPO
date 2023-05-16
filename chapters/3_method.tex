@@ -302,14 +302,14 @@ It is essential for the robotic system to know the pose of the Ouster LiDAR and 
 % The velocity command coming from the /twist\_mux server needs to be handled by a controller in order to actuate the UGV. In the ROS2 network, this controller is represented as the husky\_velocity\_controller node. This node takes in velocity commands from the twist\_mux node, actuates the wheel motors and then calculates the motion of the UGV. The resulting odometry is published to the ROS2 topic "/odom".
 
 \subsection{Perception}\label{sec:M:AN:Perception}
-As described in section \ref{sec:M:AutonomousNavigation}, the perception system of the mobile robot consists of the Ouster OS1 LiDAR and the ROS 2 package PointCloud to LaserScan \cite{pointcloud_to_laserscan_repo}. Figure ... illustrates how these two interact to deliver a laser scan usable by SLAM and navigation.
+As described in section \ref{sec:M:AutonomousNavigation}, the perception system of the mobile robot consists of the Ouster OS1 LiDAR and the ROS 2 package PointCloud to LaserScan \cite{pointcloud_to_laserscan_repo}. Figure \ref{fig:M:AN:P:Perception} illustrates how these two interact to deliver a laser scan usable by SLAM and navigation.
 
 \begin{figure}[htp]
-    \fontsize{7}{14}\selectfont
+    \fontsize{9}{14}\selectfont
     \centering
     \includesvg[width = 1\textwidth]{Figures/figPerception.drawio.svg}
     \caption{Illustration of Perception system. The LiDAR driver provides a 3D point cloud that is converted into a 2D laser scan by PCL to LS.}
-    \label{fig:M:AN:LAM:LocMapping}
+    \label{fig:M:AN:P:Perception}
 \end{figure}
 
 The LiDAR provides a 3D point cloud of the environment and publishes this information to the ROS 2 network. The PointCloud to LaserScan package then converts the point cloud to a 2D laser scan that is usable by the SLAM and navigation algorithms.
