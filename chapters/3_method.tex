@@ -121,13 +121,14 @@ Considering the given design criteria, the following components were chosen for 
 
   
 \section{Hardware Architecture}\label{sec:M:Hardware}
-This section describes the different hardware components of the robotic system and how they are set up for this project. A high level overview of the network topology is shown in figure \ref{fig:topology}. This topology gives an insight to how the different components are connected to create a complete system. Looking at figure \ref{fig:topology}, it can be seen that the UGV Xavier communicates with the Husky through RS232 and the UM7 IMU through USB. The LiDAR communicates through Ethernet via a WiFi router that, in this case acts as a switch. The LiDAR data is therefore available for all computers on the network. From figure \ref{fig:topology}, it can be seen that the Manipulator Xavier interfaces with both the Realsense camera and the manipulator through USB. 
+This section describes the different hardware components of the robotic system and how they are set up for this project. A high level overview of the network topology is shown in figure \ref{fig:topology}. This topology gives an insight to how the different components are connected to create a complete system. Looking at figure \ref{fig:topology}, it can be seen that the UGV Xavier communicates with the Husky through RS232 and the UM7 IMU through USB. The LiDAR communicates through Ethernet via a WiFi router that, in this case acts as a switch. The LiDAR data is therefore available for all computers on the network. From figure \ref{fig:M:HA:NetworkTopology}, it can be seen that the Manipulator Xavier interfaces with both the Realsense camera and the manipulator through USB. 
 
 \begin{figure}[htp]
-  \centering
-  \includegraphics[width = 0.9\textwidth]{Figures/example_figure.drawio.png}
-  \caption{High level network topology showing the various components on the mobile robotic platform}
-  \label{fig:topology}
+    \fontsize{9}{14}\selectfont
+    \centering
+    \includesvg[width = 0.9\textwidth]{Figures/figNetworkTopology.drawio.svg}
+    \caption{High level network topology showing the various components on the mobile robotic platform}
+    \label{fig:M:HA:NetworkTopology}
 \end{figure}
 %AJ your laptop that runs top level node is missing
 
