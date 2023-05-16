@@ -370,7 +370,14 @@ Changes to the localisation and mapping system during this thesis, regards the i
 % Since SLAM algorithms does both mapping and localisation simultaneously, it gives an accurate representation of an environment for navigation and places the robot in this environment. Therefore, SLAM toolbox is used alongside NAV2 during autonomous navigation. 
 
 \subsection{Navigation} \label{sec:M:AN:Navigation}
-The navigation system from figure \ref{fig:M:AN:ANMethod} consists of the ROS 2 Navigation stack NAV2. This is the standard autonomous navigation library for mobile robots in ROS2. The navigation stack includes path planning (referred to as global planner in NAV 2) and obstacle avoidance (referred to as local planner in NAV 2) among other algorithms that create a robust navigation pipeline.
+The navigation system from figure \ref{fig:M:AN:ANMethod} consists of the ROS 2 Navigation stack NAV2. This is the standard autonomous navigation library for mobile robots in ROS2. The navigation stack includes path planning (referred to as global planner in NAV 2) and obstacle avoidance (referred to as local planner in NAV 2) among other algorithms that create a robust navigation pipeline. Figure ... presents a high level illustration of the navigation pipeline. As mentioned, the navigation system contains other parts too, these are not described in this figure.
+
+\begin{figure}[htp]
+  \centering
+  \includegraphics[width = 0.98\textwidth]{Figures/figPickAndPlaceMethod.drawio.png}
+  \caption{This figure illustrates the Pick and Place subsystem}
+  \label{fig:M:PAP:PickAndPlaceMethod}
+\end{figure}
 
 In ROS2 Galactic, NAV2 introduced a simple API towards Python, which is used by a custom Top Level ROS2 node to interact with NAV2. The Top Level node is described later in section \ref{M:TopLevel}. Since this API is introduced in Galactic, the choice was made to use ROS2 Galactic for NAV2 instead of ROS 2 Foxy as was used previously. This means that SLAM Toolbox also has to run in ROS2 Galactic to ensure compatibility between the two.
 
