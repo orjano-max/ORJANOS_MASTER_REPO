@@ -307,8 +307,8 @@ As described in section \ref{sec:M:AutonomousNavigation}, the perception system 
 \begin{figure}[htp]
     \fontsize{7}{14}\selectfont
     \centering
-    \includesvg[width = 1\textwidth]{Figures/figLocMapping.drawio.svg}
-    \caption{High level overview of localisation and mapping subsystem. It can be seen that EKF takes in odometry from motion control and IMU data from Ouster OS1 and UM7. The output from EKF is passed to the SLAM algorithm along with LaserScan from Perception. SLAM then outputs a map and localisation.}
+    \includesvg[width = 1\textwidth]{Figures/figPerception.drawio.svg}
+    \caption{Illustration of Perception system. The LiDAR driver provides a 3D point cloud that is converted into a 2D laser scan by PCL to LS.}
     \label{fig:M:AN:LAM:LocMapping}
 \end{figure}
 
