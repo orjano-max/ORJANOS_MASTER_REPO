@@ -1,14 +1,65 @@
 \appendix
 
-\chapter{Husky A200 Data Sheet}
-\label{A:fig:husky_data_sheet}
-\begin{figure}[H]
+\chapter{Kalman Filter Localisation} \label{A:KalmanFilterLocalisation}
+Figure \ref{fig:kalmanFilter} is an illustration from \cite{SiegwartRoland2011Itam} that demonstrates Kalman Filter localisation working principle. The robot is represented in a one-dimensional environment and it's positioning belief, $bel(x)$, is represented as a Gaussian distribution. From figure \ref{fig:kalmanFilter} \textit{(a)}, the robots initial is represented as a fairly confident Gaussian. The robot then moves, and in figure \ref{fig:kalmanFilter} \textit{(b)} the robot has estimated its position using it's wheel odometry. Since odometry accumulates measurement errors, it's belief is now represented as a less confident Gaussian. Next, the robot uses its perception system and sees that it is near the second pillar. This results in a posterior probability $p(z_t | x_t,M)$ of the observation represented as a Gaussian in figure \ref{fig:kalmanFilter} \textit{(c)}. The posterior observation is then fused with the robots belief after moving (fig. \ref{fig:kalmanFilter}\textit{(b)} and represented as $bel(x)$ in figure \ref{fig:monteCarloLocalisation}\textit{(c)}. It can be seen that this belief is more confident(narrower) than the two Gaussians it is comprised of. This makes sense since the two independent measurements agree and that would result in a more certain estimate. In the last step, seen in figure \ref{fig:kalmanFilter}\textit{(d)}, the robot has moved again and convolved its odometry with the previous belief. Because of the uncertainty of the odometry, the resulting belief is less confident.
+
+\begin{figure}[htp]
   \centering
-  \includegraphics[width = 0.9\textwidth]{appendices/HUSKY_DATA_SHEET_Jan22.pdf}
+  \includegraphics[width = 0.7\textwidth]{Figures/figKalmanFilter.pdf}
+  \caption{Kalman Filter demonstration in a one-dimensional environment. Each figure, \textit{(a), (b), (c), (d)} represents a robot and it's positional belief $bel(x)$ as a Gaussian distribution. \textbf{(a):} The robots initial belief. \textbf{(b):} The robots belief after moving and convolving odometry with initial belief. \textbf{(C):} The robot observed the second pillar and gained a posterior probability $p(z|x,M)$. Fusing this with the belief from \textbf{(b)} results in a narrower belief $bel(x)$. \textbf{(d)} Robots belief after moving again and convolving the odometry with the previous belief. Figure from \cite{ThrunSebastian2005Pr}}
+  \label{fig:kalmanFilter}
 \end{figure}
 
+\chapter{Monte Carlo Localisation} \label{A:MonteCarloLocalisation}
+Figure \ref{fig:monteCarloLocalisation} is used to better explain how MCL works. The figure and description is adapted from \cite{ThrunSebastian2005Pr}. The figure illustrates a robot in a one-dimensional corridor. The belief $bel(x)$ is represented as pose particles with a height corresponding to their importance factor, hence the particle filter definition. In figure \ref{fig:monteCarloLocalisation}\textit{(a)} the global uncertainty is illustrated through a set of pose particles drawn at random and uniformly over the entire pose space. The robot could be anywhere in the corridor. Then, the robot senses the door and gives a posterior probability $p(z|x)$. MCL gives a importance factor to each particle from the initial particle sampling. The resulting belief$b(x)$ along with $p(z|x)$ can be seen in figure \ref{fig:monteCarloLocalisation}\textit{(b)}. In figure \ref{fig:monteCarloLocalisation}\textit{(c)} the robot has re-sampled the particle set and implemented its movement. It can be seen that the particles are now more densely populated around the most likely poses, but with uniform importance factors. The robot then senses another door and gives the posterior probability $p(z|x)$ again. Looking at figure \ref{fig:monteCarloLocalisation}, it is worth noticing that the posterior probability from \textit{(b)} and \textit{(d)} is equal, as the door sensor won't know the difference between each door. MCL again gives importance factors to each particle, as seen in the belief $bel(x)$ in figure \ref{fig:monteCarloLocalisation}\textit{(d)}. This time, most of the total particle mass is centred around the second door, which is also the robots position according to the illustration. In figure \ref{fig:monteCarloLocalisation}\textit{(e)}, the robot has moved and re-sampled the pose particles, which is centred around the most likely pose of the robot.
 
-\chapter{Implementation of Scene Publisher}
-\label{A:lst:ScenePublisher}
+\begin{figure}[htp]
+  \centering
+  \includegraphics[width = 0.7\textwidth]{Figures/figMCL.pdf}
+  \caption{Monte Carlo Localisation a one-dimensional environment. Figure from \cite{ThrunSebastian2005Pr}.}
+  \label{fig:monteCarloLocalisation}
+\end{figure}
+
+\chapter{Technical Specification Tables}
+
+\section{Clearpath - Husky A200 Specs} 
+\input{Tables/tabHuskySpecs}
+
+\section{Interbotix - VX300 Specs}
+\input{Tables/tabVX300Specs}
+
+% \begin{figure}[H]
+%   \centering
+%   \includegraphics[width = 0.9\textwidth]{appendices/HUSKY_DATA_SHEET_Jan22.pdf}
+% \end{figure}
+
+\chapter{Drawings}
+
+\section{General Arrangement}\label{M:H:GeneralArrangement}
+A general arrangement drawing describing the physical arrangement of all the components mounted on the UGV is presented in figure \ref{fig:general_arrangement}.
+
+\begin{figure}[htp]
+  \centering
+   \includegraphics[width=0.9\textwidth]{Figures/general_arrangement.drawio.png}
+  \caption{General arrangement drawing of UGV platform. Here, the physical position of different hardware components are defined. The sensor frame is drawn to the left of the main frame.}
+  \label{fig:general_arrangement}
+\end{figure}
+%aj only of figure for a subsection. doesn't look good - I DIDNT UNDERSTAND THIS - ØØ
+
+\section{Electrical Interface}\label{A:ElectricalInterface}
+The different components in the system is powered through the user power supply of the UGV(see table \ref{tab:husky:a200:specs}). Figure \ref{fig:circuit_diagram} is a circuit diagram that illustrates the DC power distribution.
+\begin{figure}[htp]
+  \centering
+  \includegraphics[angle=-90, width = 0.9\textwidth]{Figures/circuit_diagram.drawio.png}
+  \caption{Circuit diagram showing the power distribution on the UGV}
+  \label{fig:circuit_diagram}
+\end{figure}
+
+\chapter{Implementation of Scene Publisher} \label{A:lst:ScenePublisher}
 \UseRawInputEncoding
 \lstinputlisting[language=C++]{code/src/scene_geometry_publisher/src/scene_geometry_publisher.cpp}
+
+\chapter{MAS531 - Autonomous Lane Keeping for UGV Using a Monocular Vision System and Machine Learning} \label{A:MAS513Report}
+
+\includepdf[pages=-]{appendices/MAS513_Project__Husky_Group.pdf}
+
