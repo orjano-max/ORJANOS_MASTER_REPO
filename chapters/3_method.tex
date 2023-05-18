@@ -5,7 +5,7 @@
 This chapter will describe different methodologies used to solve technical problems over the course of this project.
 
 \section{Problem Formulation} \label{sec:M:ProblemFormulation}
-As described in section \ref{sec:I:Objective}, the objective of this project is to modify the existing mobile robot from the report in appendix \ref{A:MAS513Report} so that it is capable of preforming a warehouse automation task. The solution should be tested in a scenario where the robot is tasked with fetching and object from a given location, and delivering this object to a predefined location. The following list will provide a better understanding of the test scenario and the order in which the different tasks should be preformed.
+As described in section \ref{sec:I:Objective}, the objective of this project is to modify the existing mobile robot from the report in appendix \ref{A:MAS513Report}, so that it is capable of preforming warehouse automation tasks. The solution will be tested in a scenario where the robot is tasked with fetching and object from a given location and delivering this object to a predefined location. The following list will provide a better understanding of the test scenario and the order in which the different tasks should be preformed.
 
 \begin{enumerate}
     \item Autonomously navigate to a given "pick pose".
@@ -42,14 +42,18 @@ The warehouse automation scenario described in section \ref{sec:M:ProblemFormula
     \label{fig:M:CD:topLevelMethod}
 \end{figure}
 
-The top level system should take commands for what object to pick and where this object is located in the warehouse. It should then give commands to both the autonomous navigation system and the pick and place system in order to orchestrate the defined warehouse automation scenario described in the problem formulation, sec \ref{sec:M:ProblemFormulation}. During this operation, this system will need some information on the status of the other systems to be able to orchestrate the scenario correctly.
+The top level system should take commands for what object to pick and where this object is located in the warehouse. It should then give commands to both the autonomous navigation system and the pick and place system in order to orchestrate the defined warehouse automation scenario described in the problem formulation, sec \ref{sec:M:ProblemFormulation}. During this operation, the top level system will need some information on the status of the other systems to be able to orchestrate the scenario correctly.
 
-The autonomous navigation system should be able to take goal poses consisting of $x,y,\theta$ coordinates, from the top level system. It should then plan it's trajectory, using either Djikstra's algorithm or A*, and autonomously navigate towards the goal pose without the assistance of any operator. During this operation, a SLAM algorithm should be running to provide an updated map of the robot's environment as well as robust localisation. It should also have a collision avoidance system capable of detecting and avoiding collision with moving objects such as workers in the warehouse. When the mobile robot has reached it's goal, the system should report back to the top level system that the goal has been reached. This is already set up during the course MAS-513-G, however, modifications have been done to accommodate the additions of other systems.
+The autonomous navigation system should be able to take goal poses consisting of ($x,y,\theta$) coordinates, from the top level system. It should then plan it's trajectory, using either Djikstra's algorithm or A*, and autonomously navigate towards the goal pose without the assistance of any operator. During this operation, a SLAM algorithm should be running to provide an updated map of the robot's environment as well as robust localisation. It should also have an obstacle avoidance system capable of detecting and avoiding collision with moving objects such as workers in the warehouse. When the mobile robot has reached it's goal, the navigation system should report back to the top level system that the goal has been reached. This functionality is already set up during the course MAS-513-G, however, modifications have been done to accommodate the additions of other systems.
 
-The pick and place system should consist of a manipulator and a machine vision system that will be a part of the mobile robot. The system should be able to take commands from the top level system and act accordingly. Example of commands are "pick", "place" and "sleep". During picking, machine vision should be utilised for object detection and pose estimation. The system should give feedback on it's current status to the top level system.
+The pick and place system is a vision guided robotic system(VGR) consisting of a robotic manipulator and a machine vision system that will be a part of the mobile robot. The system should be able to take commands from the top level system and act accordingly. Example of commands are "pick", "place" and "sleep". During picking, machine vision will be utilised for object detection and pose estimation. The system should give feedback on it's current status to the top level system.
 
 \subsection{Choice of Components} \label{sec:M:CD:ChoiceOfComponents}
-The design of the robot should reflect the intended warehouse automation task. This places some requirements on the design that needs to be considered when setting up the robotic system. Design considerations in terms of component choice, regards the pick and place system, as the components for the mobile robot are provided before this project. The provided components are listed below as:
+The design of the robot should reflect the intended warehouse automation task. This places some requirements on the design that needs to be considered when setting up the robotic system. 
+
+A design requirement for all components chosen in this project, is compatibility with Robot Operating System 2(ROS 2). This has also been a design requirement for the components chosen for the MAS-513-G project. ROS 2 is an open source software development kit (SDK) for developing robots. This system acts as a middleware that takes care of the communication between components \cite{https://doi.org/10.48550/arxiv.1711.06396}. ROS 2 also contains a large open source library of algorithms for common robotic applications like EKF, SLAM, manipulator planning and autonomous navigation to name a few. Additionally, it contains development tools for visualisation, simulation, debugging, and more \cite{https://doi.org/10.48550/arxiv.1711.06396}. Finally, it is important to mention that there are different ROS 2 distributions and this project mainly uses focuses around Galactic Geochelone.
+
+Components for the mobile robot is provided and set up in the previous project course MAS513-G (appendix \ref{A:MAS513Report)}.  This includes a mobile robotic platform, a 3D LiDAR, an IMU, and two ARM-based computers, all mounted on the mobile robotic platform. The main components including the UGV are listed below:
 
 \begin{itemize}
     \item Clearpath - Husky A200 UGV
@@ -58,18 +62,16 @@ The design of the robot should reflect the intended warehouse automation task. T
     \item 2 X NVIDIA - Jetson AGX Xavier
 \end{itemize}
 
-A design requirement for all components chosen in this project, is compatibility with Robot Operating System 2(ROS 2). This has also been a design requirement for the components chosen for the MAS-513-G project. ROS 2 is an open source software development kit (SDK) for developing robots. This system acts as a middleware that takes care of the communication between components \cite{https://doi.org/10.48550/arxiv.1711.06396}. ROS 2 also contains a large open source library of algorithms for common robotic applications like EKF, SLAM, manipulator planning, autonomous navigation to name a few. Additionally, it contains development tools for visualisation, simulation, debugging, and more \cite{https://doi.org/10.48550/arxiv.1711.06396}. Finally, it is important to mention that there are different ROS 2 distributions and this project mainly uses focuses around Galactic Geochelone.
-
-It can be seen that there are two NVIDIA Jetson AGX Xaviers mounted on the UGV. One of these is intended to take care of the autonomous navigation system along with all it's sensors. The other one is free as it stands before project startup. Therefore, it becomes natural to run the pick and place system on this extra computer. The concept is therefore largely focused around the pick and place system. The main hardware considerations in this system regards choosing a robotic manipulator that is small enough to be mounted on the UGV along with deciding where to mount the vision sensor and what vision sensor should be used. 
-
-Considering the given design criteria, the following components were chosen for the pick and place system:
+The main component choices for this thesis therefore regards choosing components for the pick and place part of the system. A robotic manipulator has to be small enough to be mounted on the Husky A200 UGV, yet strong enough to pick the objects it is tasked with. Additionally a machine vision system for object detection and pose estimation has to be designed,. Where to mount the vision sensor and which vision sensor that should be used is design considerations that has to be taken into account. Considering the given design criteria, the following components were chosen for the pick and place system:
 
 \begin{itemize}
     \item Interbotix - VX300 5-DOF Manipulator
     \item Intel - Realsense D435i Camera
 \end{itemize}
 
- The Interbotix VX300, seen in figure \ref{fig:M:CD:FC:VX300}, is a 5-DOF manipulator with a specified payload of $750[g]$ and a reach of $750[mm]$, as specified in table \ref{tab:M:CD:FC:VX300Specs}. For the vision system, it was decided to mount a Realsense camera to the gripper of the robot. The Intel Realsense D435i is a stereoscopic camera, for machine vision applications, capable of providing 3D information of the environment. This camera provides the information necessary to preform object detection and pose estimation with point cloud data, for example using "PointPoseNet" as described in section \ref{sec:T:MachineVision}. However, for this project, a fiducial tag based vision system, also described in section \ref{sec:T:MachineVision}, is chosen.
+There are two NVIDIA Jetson AGX Xaviers provided with the UGV. One of these is intended to take care of the autonomous navigation system along with all its sensors. The other one is unoccupied as it stands before project startup. Therefore, it becomes natural to run the pick and place system on this extra computer. 
+
+ The Interbotix VX300, seen in figure \ref{fig:M:CD:FC:VX300}, is a 5-DOF manipulator with a specified payload of $750[g]$ and a reach of $750[mm]$ (specified in appendix \ref{tab:M:CD:FC:VX300Specs}). For the vision system, it was decided to mount a Realsense camera to the gripper of the robot. The Intel Realsense D435i is a stereoscopic camera, for machine vision applications, capable of providing 3D information of the environment. This camera provides the information necessary to preform object detection and pose estimation with point cloud data, for example using "PointPoseNet" as described in section \ref{sec:T:MachineVision}. However, for this project, a fiducial tag based vision system, also described in section \ref{sec:T:MachineVision}, is chosen, for ease of implementation and to allow project to focus on integration of the whole system and not solely machine vision.
 
 \begin{figure}[htp]
   \centering
@@ -121,7 +123,7 @@ Considering the given design criteria, the following components were chosen for 
 
   
 \section{Hardware Architecture}\label{sec:M:Hardware}
-This section describes the different hardware components of the robotic system and how they are set up for this project. A high level overview of the network topology is shown in figure \ref{fig:topology}. This topology gives an insight to how the different components are connected to create a complete system. Looking at figure \ref{fig:topology}, it can be seen that the UGV Xavier communicates with the Husky through RS232 and the UM7 IMU through USB. The LiDAR communicates through Ethernet via a WiFi router that, in this case acts as a switch. The LiDAR data is therefore available for all computers on the network. From figure \ref{fig:M:HA:NetworkTopology}, it can be seen that the Manipulator Xavier interfaces with both the Realsense camera and the manipulator through USB. 
+This section describes the different hardware components of the robotic system and how they are set up for this project. A high level overview of the network topology is shown in figure \ref{fig:M:HA:NetworkTopology}. This topology gives an insight to how the different components are connected to create a complete system. Looking at figure \ref{fig:M:HA:NetworkTopology}, it can be seen that the UGV Xavier communicates with the Husky through RS232 and the UM7 IMU through USB. The LiDAR communicates through Ethernet via a WiFi router. The LiDAR data is therefore available for all computers on the network. From figure \ref{fig:M:HA:NetworkTopology}, it can be seen that the Manipulator Xavier interfaces with both the Realsense camera and the manipulator through USB. 
 
 \begin{figure}[htp]
     \fontsize{8.5}{14}\selectfont
@@ -131,6 +133,7 @@ This section describes the different hardware components of the robotic system a
     \label{fig:M:HA:NetworkTopology}
 \end{figure}
 %AJ your laptop that runs top level node is missing
+% ØØ - Added "External Computer" through wifi
 
 The WiFi Router allows external computers to connect to the network, either through WiFi or cabled connection, and communicate with the two Xaviers and the LiDAR. This makes it possible to control the Xavier computers through SSH and also allows developers to interact with the ROS2 network.
 
