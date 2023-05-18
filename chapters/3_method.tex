@@ -124,7 +124,7 @@ Considering the given design criteria, the following components were chosen for 
 This section describes the different hardware components of the robotic system and how they are set up for this project. A high level overview of the network topology is shown in figure \ref{fig:topology}. This topology gives an insight to how the different components are connected to create a complete system. Looking at figure \ref{fig:topology}, it can be seen that the UGV Xavier communicates with the Husky through RS232 and the UM7 IMU through USB. The LiDAR communicates through Ethernet via a WiFi router that, in this case acts as a switch. The LiDAR data is therefore available for all computers on the network. From figure \ref{fig:M:HA:NetworkTopology}, it can be seen that the Manipulator Xavier interfaces with both the Realsense camera and the manipulator through USB. 
 
 \begin{figure}[htp]
-    \fontsize{9}{14}\selectfont
+    \fontsize{8.5}{14}\selectfont
     \centering
     \includesvg[width = 0.9\textwidth]{Figures/figNetworkTopology.drawio.svg}
     \caption{High level network topology showing the various components on the mobile robotic platform}
@@ -389,7 +389,7 @@ By default NAV 2 utilises Djikstra's algorithm for path planning, but has possib
 Besides switching the ROS 2 Distribution and altering planning algorithm, some additional parameters have been tweaked to achieve better performance. By default, NAV 2 is set up to fit relatively small mobile robots. As the Husky A200 is quite large, adjustments to the inflation layer of the navigational maps has been made. The inflation layers tells the navigational system how close the robot is allowed to get to obstacles in the map. Another adjustment regards robot footprint. The robot footprint in NAV2 defines the outline of the mobile robot relative to it's origin. Footprint adjustment is done by Didrik Robsrud as a part of his thesis on Radar-LiDAR sensor fusion in ROS/ROS 2. Lastly, the size of the local planner's rolling window has been increased to better fit the larger dimensions of the Husky A200.
 
 \section{Pick and Place} \label{M:PickAndPlace}
-The pick and place system consists of two main parts, machine vision, and the manipulator. Figure \ref{fig:M:PAP:PickAndPlaceMethod} gives a more detailed description of how this system is composed.
+The pick and place system consists of two main parts, machine vision, and the manipulator. Figure \ref{fig:M:PAP:PickAndPlaceMethod} gives a more detailed view of how this system is composed.
 
 \begin{figure}[htp]
     \fontsize{8}{14}\selectfont
@@ -400,7 +400,7 @@ The pick and place system consists of two main parts, machine vision, and the ma
 \end{figure}
 
 \subsection{Machine Vision} \label{sec:M:MRC:MachineVision}
-The machine vision system is comprised by an Intel Realsense D435i, as described in section \ref{sec:M:H:P&PH:ManipulatorMountedCamera}, and an AprilTag based 6-DOF pose estimation system described in section \ref{sec:M:MRC:MV:TagDetectionSystem}. This creates at robust machine vision system that achieves what is observed as real-time pose estimation.
+The machine vision system is comprised of the Intel Realsense D435i camera described in section \ref{sec:M:HA:AuxiliaryHardware}, and an AprilTag based 6-DOF pose estimation system. This creates at robust machine vision system that achieves what is observed as real-time pose estimation.
 
 \subsubsection{Vision Camera} 
 The gripper mounted Realsense camera provides flexible machine vision wherever the manipulators gripper is pointing. Intel provides ROS2 packages for Realsense cameras that interfaces with the ROS2 network \cite{realsense_ros_repo}. These packages publishes data from the Realsense camera to the ROS2 network so that it is available for other nodes on the network. The ROS2 Realsense packages requires Intel RealSense SDK 2.0 which is available as debian packages for AMD Ubuntu machines. For Xaviers, whom are running an ARM architecture, the SDK is available to be built from source on Github\cite{realsense_jetson_guide}.
