@@ -201,7 +201,7 @@ abstract = {1. Preview; 2. Configuration space; 3. Rigid-body motions; 4. Forwar
 }
 
 @article{
-    doi:10.1126/scirobotics.abm6074,
+    MacenskiROS22022,
     author = {Steven Macenski  and Tully Foote  and Brian Gerkey  and Chris Lalancette  and William Woodall },
     title = {Robot Operating System 2: Design, architecture, and uses in the wild},
     journal = {Science Robotics},
@@ -272,7 +272,25 @@ pages = {846--894},
   doi={10.1109/TSSC.1968.300136}
   }
 
+@inproceedings{QuigleyROS,
+author = {Quigley, Morgan and Conley, Ken and Gerkey, Brian and Faust, Josh and Foote, Tully and Leibs, Jeremy and Wheeler, Rob and Ng, Andrew},
+year = {2009},
+month = {01},
+pages = {},
+title = {ROS: an open-source Robot Operating System},
+volume = {3},
+journal = {ICRA Workshop on Open Source Software}
+}
 
+@INPROCEEDINGS{Wasisto2019,
+  author={Wasisto, Isro and Istiqomah, Novera and Trisnawan, I Kadek Nuary and Jati, Agung Nugroho},
+  booktitle={2019 International Conference on Computer, Control, Informatics and its Applications (IC3INA)}, 
+  title={Implementation of Mobile Sensor Navigation System Based on Adaptive Monte Carlo Localization}, 
+  year={2019},
+  volume={},
+  number={},
+  pages={187-192},
+  doi={10.1109/IC3INA48034.2019.8949581}}
 
 @INPROCEEDINGS{Konolige2010,
   author={Konolige, Kurt and Grisetti, Giorgio and Kümmerle, Rainer and Burgard, Wolfram and Limketkai, Benson and Vincent, Regis},
@@ -285,7 +303,29 @@ pages = {846--894},
   doi={10.1109/IROS.2010.5649043}
   }
 
- 
+ @online{ROS2Nodes,
+    author = "Open Robotics",
+    title = "Understanding nodes",
+    url  = "https://docs.ros.org/en/humble/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Nodes/Understanding-ROS2-Nodes.html",
+    addendum = "(accessed: 21.05.2023)",
+    keywords = "ROS2,Nodes"
+}
+
+@online{ROStf2,
+    author = "Open Robotics",
+    title = "tf2",
+    url  = "http://wiki.ros.org/tf2",
+    addendum = "(accessed: 21.05.2023)",
+    keywords = "ROS2,tf2"
+}
+
+@online{ROS2distros,
+    author = "Open Robotics",
+    title = "Distributions",
+    url  = "https://docs.ros.org/en/humble/Releases.html",
+    addendum = "(accessed: 21.05.2023)",
+    keywords = "ROS2,distros"
+}
  
 @online{knuthwebsite,
     author = "Donald Knuth",
@@ -311,6 +351,14 @@ pages = {846--894},
   revision = {2.0.1},
   url = {https://s3-eu-west-1.amazonaws.com/ur-support-site/99858/CB3_UR_RobotWithBatterySupplyInstallationGuideCB3_V2_0_1.pdf},
   urldate = {2023-04-19}
+}
+
+@online{moveit2_doc,
+    author = "PickNik Robotics.",
+    title = "MoveIt 2 Documentation",
+    url  = "https://moveit.picknik.ai/humble/index.html",
+    addendum = "(accessed: 18.05.2023)",
+    keywords = "MoveIt2,ROS2"
 }
 
 @online{um7_imu,
@@ -385,11 +433,152 @@ pages = {846--894},
     keywords = "pointcloudToLaserscan, repo"
 }
 
+@mastersthesis{ovsthus2023,
+  author = {Øvsthus, Ørjan},
+  title = {retrofitting of an autonomously navigating mobile robotic system for object fetching by the use of vision guided pick and place},
+  school = {University of Agder},
+  year = {2023},
+  note = {Unpublished Master's thesis}
+}
+
+
+
+@unpublished{MAS513Rep,
+  author = "Didrik Robsrud, Lars Muggerud, Ørjan Øvsthus",
+  title  = " Autonomous Lane Keeping for UGV Using a Monocular Vision System and Machine Learning",
+  note   = "Report From MAS513-G Course at UiA",
+  year   = "2022",
+}
+
+@mastersthesis{muggerud2023,
+  author = {Muggerud, Lars},
+  title = {Autonomous platooning},
+  school = {University of Agder},
+  year = {2023},
+  note = {Unpublished Master's thesis}
+}
+
+@mastersthesis{robsrud2023,
+  author = {Robsrud, Didrik Nicolai},
+  title = {Lidar-mmW radar fusion for safer indoor navigation with collision avoidance},
+  school = {University of Agder},
+  year = {2023},
+  note = {Unpublished Master's thesis}
+}
+
+@INPROCEEDINGS{Minghao2019LidarMob,
+  author={Liu, Minghao and Hou, Zhixing and Sun, Zezhou and Yin, Ning and Yang, Hang and Wang, Ying and Chu, Zhiqiang and Kong, Hui},
+  booktitle={2019 European Conference on Mobile Robots (ECMR)}, 
+  title={Campus Guide: A Lidar-based Mobile Robot}, 
+  year={2019},
+  volume={},
+  number={},
+  pages={1-6},
+  doi={10.1109/ECMR.2019.8870916}}
+
+@article{Rouveure2007Radar,
+author = {Rouveure, Raphaël and Faure, Patrice and Checchin, Paul and Monod, Marie-Odile},
+year = {2007},
+month = {02},
+pages = {},
+title = {Mobile Robot Localization and Mapping in Extensive Outdoor Environment based on Radar Sensor-First Results}
+}
+
+@article{GUAN2018161,
+title = {Monte Carlo localisation of a mobile robot using a Doppler–Azimuth radar},
+journal = {Automatica},
+volume = {97},
+pages = {161-166},
+year = {2018},
+issn = {0005-1098},
+doi = {https://doi.org/10.1016/j.automatica.2018.08.012},
+url = {https://www.sciencedirect.com/science/article/pii/S0005109818304023},
+author = {Robin Ping Guan and Branko Ristic and Liuping Wang and Rob Evans},
+keywords = {Monte Carlo localisation, Particle filter, Random finite sets, Mobile robot navigation, Doppler radar},
+}
+
+@article{Abueejela2018,
+author = {Abueejela, Yousef and Ali, Haithem},
+year = {2018},
+month = {03},
+pages = {},
+title = {Wheeled Mobile Robot Obstacle Avoidance Using Compass and Ultrasonic},
+volume = {6},
+journal = {Universal Journal of Control and Automation},
+doi = {10.13189/ujca.2018.060102}
+}
+
+@ARTICLE{ApolloEKF1973,
+  author={Tapley, B. and Ingram, D.},
+  journal={IEEE Transactions on Automatic Control}, 
+  title={Orbit determination in the presence of unmodeled accelerations}, 
+  year={1973},
+  volume={18},
+  number={4},
+  pages={369-373},
+  doi={10.1109/TAC.1973.1100331}}
+
+  @INPROCEEDINGS{Eman2020,
+  author={Eman, Alhamdi and Ramdane, Hedjar},
+  booktitle={2020 3rd International Conference on Computer Applications & Information Security (ICCAIS)}, 
+  title={Mobile Robot Localization Using Extended Kalman Filter}, 
+  year={2020},
+  volume={},
+  number={},
+  pages={1-5},
+  doi={10.1109/ICCAIS48893.2020.9096805}}
+
+@INPROCEEDINGS{Chen2012,
+  author={Chen, Ling and Hu, Huosheng and McDonald-Maier, Klaus},
+  booktitle={2012 Third International Conference on Emerging Security Technologies}, 
+  title={EKF Based Mobile Robot Localization}, 
+  year={2012},
+  volume={},
+  number={},
+  pages={149-154},
+  doi={10.1109/EST.2012.19}}
+
+  @INPROCEEDINGS{NAV2020,
+  author={Macenski, Steve and Martín, Francisco and White, Ruffin and Clavero, Jonatan Ginés},
+  booktitle={2020 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)}, 
+  title={The Marathon 2: A Navigation System}, 
+  year={2020},
+  volume={},
+  number={},
+  pages={2718-2725},
+  doi={10.1109/IROS45743.2020.9341207}}
+
+  @INPROCEEDINGS{Song2017,
+  author={Xu, Song and Chou, Wusheng},
+  booktitle={2017 10th International Symposium on Computational Intelligence and Design (ISCID)}, 
+  title={An Improved Indoor Localization Method for Mobile Robot Based on WiFi Fingerprint and AMCL}, 
+  year={2017},
+  volume={1},
+  number={},
+  pages={324-329},
+  doi={10.1109/ISCID.2017.25}}
+
 @online{husky_vx300_repo,
-    author = "Clearpath Robotics",
+    author = "{Ørjan Øvsthus}",
     title = "uia\_husky\_vx300",
     url  = "https://github.com/orjano-max/uia_husky_vx300",
     addendum = "(accessed: 05.05.2023)",
+    keywords = "husky, repo"
+}
+
+@online{turtlebot3RobotisManual,
+    author = "ROBOTIS",
+    title = "TurtleBot3",
+    url  = "https://emanual.robotis.com/docs/en/platform/turtlebot3/overview/",
+    addendum = "(accessed: 20.05.2023)",
+    keywords = "turtlebot, manual"
+}
+
+@online{husky_0776_repo,
+    author = "{Ørjan Øvsthus}, Lars Muggerud and Robsrud, Didrik Nicolai",
+    title = "uia\_husky\_0776",
+    url  = "https://github.com/orjano-max/uia_husky_0776",
+    addendum = "(accessed: 18.05.2023)",
     keywords = "husky, repo"
 }
 
@@ -489,4 +678,13 @@ pages = {846--894},
   year = {2017},
   
   copyright = {arXiv.org perpetual, non-exclusive license}
+}
+
+@manual{OS1_datasheet,
+    organization  = "Ouster, Inc.",
+    title         = "OS1 - High Resolution Imaging LIDAR",
+    number        = "OS1",
+    year          =  2019,
+    month         =  12,    
+    note          = "REV: 6/12/2019"
 }
