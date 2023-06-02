@@ -1,5 +1,5 @@
 \begin{algorithm}[htp!]
-    \caption{Algorithm describing how the Pick and Place class is implemented} \label{alg:M:HuskyMaster}
+    \caption{Algorithm describing how the Pick and Place class is implemented} \label{alg:M:PAPImplement}
     \begin{algorithmic}[1] 
             \State $manipulatorNamespace \gets "vx300"$ \Comment{Declare namespace}
             \State $opt \gets NodeOptions()$ \Comment{Declate node options}
@@ -7,8 +7,8 @@
             \While{\textbf{not} ERROR}
                 \If{$node.getCurrentAction() == "pick"$}
                     \State $node.goToSearchPos()$
-                    \State $node.searchForObject()$
-                    \State $node.pickObject()$
+                    \State $node.searchForObject()$ \Comment{$searchForObject()$ described in alg. \ref{alg:M:PaPSearch}}
+                    \State $node.pickObject()$ \Comment{$pickObject()$ described in alg. \ref{alg:M:PaPPick}}
                 \ElsIf{$node.getCurrentAction() == "place"$}
                     \State $node.placeObject()$
                 \ElsIf{$node.getCurrent\_action() == "calibrate"$}

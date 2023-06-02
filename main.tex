@@ -12,34 +12,32 @@
 \begin{document}
 %\rmfamily
 
-
-
-
 \pagestyle{empty} %No headings for the first pages.
-
-
 \input{titlepage}
 
-  
+\null
+\thispagestyle{empty}%
+\newpage
+
+\thispagestyle{empty}
 \clearpage
 
 \pagenumbering{gobble}
 \pagenumbering{roman}
 
-
 \newpage
-
-%\input{chapters/Pre-Chapters/a_declaration.tex}
-
+\thispagestyle{plain}
+\input{chapters/Pre-Chapters/a_declaration}
+\afterpage{\blankpage}
 
 \input{chapters/Pre-Chapters/b_acknowledgements.tex}
 \addcontentsline{toc}{chapter}{Acknowledgements}
+\afterpage{\blankpage}
 
 \clearpage
 \input{chapters/Pre-Chapters/c_abstract.tex}
 \addcontentsline{toc}{chapter}{Abstract}
-%\input{chapters/Pre-Chapters/d_sammendrag.tex}
-%\addcontentsline{toc}{chapter}{Sammendrag}
+\afterpage{\blankpage}
 
 \clearpage
 
@@ -50,10 +48,12 @@
 %List of Figures
 \listoffigures
 \addcontentsline{toc}{chapter}{List of Figures}
-\clearpage
-\textcolor{white}{.}
-\thispagestyle{empty}
-\newpage
+% \clearpage
+% \textcolor{white}{.}
+% \thispagestyle{plain}
+% \newpage
+
+% \afterpage{\blankpage}
 
 %List of Tables
 \listoftables
@@ -61,7 +61,7 @@
 \clearpage
 
 \textcolor{white}{.}
-\thispagestyle{empty}
+\thispagestyle{plain}
 \newpage
 
 \clearpage
@@ -73,10 +73,12 @@
 \setlength{\headheight}{24pt}
 \fancyhf{}
 \rhead{\includegraphics[width=3cm]{Figures/standard_uia-logo-2019.png}}
-\rfoot{\thepage}
+\cfoot{\thepage}
 
 \input{chapters/1_intro}
+\afterpage{\blankpage}
 \input{chapters/2_theory}
+\afterpage{\blankpage}
 \input{chapters/3_method}
 \input{chapters/4_results}
 \input{chapters/5_discussion}
@@ -90,7 +92,7 @@
 heading=bibintoc,
 title={Bibliography}
 ]
-
+\afterpage{\blankpage}
 \input{appendices/appendix.tex}
 
 \end{document}

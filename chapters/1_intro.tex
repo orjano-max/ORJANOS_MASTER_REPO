@@ -20,12 +20,12 @@ Motion Control refers to moving a mobile robot in a predictable manner based on 
 
 In order to achieve autonomous navigation, a mobile robot needs some kind of perception system which gives it information about the surrounding area. This system will become the eyes of the robot, giving it the information it needs to localise itself and react to a dynamically changing environment.
 
-With a perception and a motion control system, the robot is given the tools to be able to localise itself and map it's environment. The process of doing this is called Simultaneous Localisation And Mapping(SLAM). This is an advanced problem in reality as the information provided from the sensor data could have inherent inaccuracies.  For warehouse automation, localisation and mapping should be robust and accurate enough so that the mobile robot can successfully use this information for navigation.
+With a perception and a motion control system, the robot is given the tools to be able to localise itself and map it's environment. The process of doing this is called Simultaneous Localisation And Mapping (SLAM). This is an advanced problem in reality as the information provided from the sensor data could have inherent inaccuracies.  For warehouse automation, localisation and mapping should be robust and accurate enough so that the mobile robot can successfully use this information for navigation.
 
 With a working localisation and mapping system, the mobile robot needs to be able to plan it's route and react to a dynamically changing environment. If evasive actions are taken, or if the environment has changed, the mobile robot should be able to re-plan it's route accordingly. This is referred to as the cognitive part of the system, or the navigation system itself.
 
 \subsection{Pick and Place} \label{sec:I:PAP}
-With a mobile robot successfully navigating autonomously around the warehouse, it now needs means of picking the object it is tasked to fetch. However, the robot needs to know the position of the object for the picking operation to be successful. This can be done by having the objects at fixed locations, but this is not a very flexible solution and it puts tremendous precision requirements on the navigation system. A solution that has the potential to be more flexible and robust, is by the use of a machine vision system that can detect and estimate the pose of the object. computer vision solutions for object detection and pose estimation are extensively studied and there are numerous solutions to this problem.
+With a mobile robot successfully navigating autonomously around the warehouse, it now needs means of picking the object it is tasked to fetch. However, the robot needs to know the position of the object for the picking operation to be successful. This can be done by having the objects at fixed locations, but this is not a very flexible solution and it puts tremendous precision requirements on the navigation system. A solution that has the potential to be more flexible and robust, is by the use of a computer vision system that can detect and estimate the pose of the object. computer vision solutions for object detection and pose estimation are extensively studied and there are numerous solutions to this problem.
 
 Assuming that the pose of the object is known to the pick and place system, the robot now needs a robotic arm, often called a manipulator, to be able to pick the object. Robotic manipulators have been around for some decades and there are countless different shapes and sizes to choose from. In the case of warehouse automation, the manipulator should be small enough to be mounted on a mobile robot, yet strong enough to lift the objects it is tasked to manipulate. The manipulator should be equipped with some kind of gripping mechanism that is suited for grasping the types of objects it is presented with.
 
@@ -34,17 +34,17 @@ Assuming that the pose of the object is known to the pick and place system, the 
 \section{Objective} \label{sec:I:Objective}
 An autonomous navigating mobile robot has been set up previously at UiA, using a Unmanned Ground Vehicle (UGV) as a platform \cite{MAS513Rep}. The mobile robot also had a simple implementation of a lane detection and following algorithm intended for roads, based on a pre-trained Convolutional Neural Network (CNN) trained for road lane detection. It should also be noted that there are two other students, Didrik Robsrud and Lars Muggerud, working on their own theses on the same robotic platform \cite{robsrud2023}, \cite{muggerud2023}. 
 
-Using the mobile robot from the MAS513-G project as a starting point, the objective of this thesis is to modify this setup so that it is able to preform warehouse automation tasks. The solution should be modular so that it is possible for future students to pick up on the work. This involves modifying the autonomous navigation system to accommodate the addition of a manipulator, and developing a pick and place system and a top-level system.
+Using the mobile robot set up by \cite{MAS513Rep} as a starting point, the objective of this thesis is to modify this setup so that it is able to preform warehouse automation tasks. The solution should be modular so that it is possible for future students to pick up on the work. This involves modifying the autonomous navigation system to accommodate the addition of a manipulator, and developing a pick and place system and a top-level system.
 
 \subsection{Warehouse Automation Benchmark Scenario} \label{sec:I:O:WarehouseScenario}
 In order to better define the capabilities that this project aims to achieve, a warehouse automation scenario is defined. This scenario describes a typical warehouse automation task that involves both autonomous navigation and pick and place using a vision guided robotic system. The following list will provide a better understanding of the test scenario and the order in which its different parts should be performed.
 \begin{enumerate}
     \item Autonomously navigate from any position within the workspace of the mobile robot to an arbitrarily chosen pick position (also within the workspace of the mobile robot). Given that a route is viable.
-    \item Preform object detection and pose estimation of a chosen pick object using a computer vision system
+    \item Preform object detection and pose estimation of a chosen pick object using a computer vision system.
     \item Pick the defined object using a manipulator mounted on the mobile robot.
-    \item Autonomously navigate to a predefined place position
-    \item Drop of the picked object at the place position
-    \item Autonomously navigate to a predefined home position
+    \item Autonomously navigate to a predefined place position.
+    \item Drop of the picked object at the place position.
+    \item Autonomously navigate to a predefined home position.
 \end{enumerate}
 
 

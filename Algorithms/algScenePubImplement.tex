@@ -6,7 +6,7 @@
             \State $node \gets ScenePublisher(opt)$\Comment{Init ScenePublisher class with param override}
             \State $node.setSceneFilePath(sceneFilePath)$ \Comment{Set scene file path if alternative path is wanted}
             \State $node.readSceneFile()$ \Comment{Read .scene file, store in $file\_$}
-            \State $node.loadScene()$ \Comment{Parse file contents into collision objects, store in $collisionObjects\_$}
+            \State $node.loadScene()$ \Comment{$loadScene()$ described in alg. \ref{alg:M:scenePubLoadScene}}
             \State $PlanningSceneInterface \;\; planningSceneInterface$ \Comment{Declare planning scene interface}
             \State $planningSceneInterface.apply(node.getCollisionObjects())$\Comment{Publish Collision objects using interface}
             \State \textbf{shutdown}           
