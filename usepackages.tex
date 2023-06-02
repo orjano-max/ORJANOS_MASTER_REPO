@@ -30,6 +30,7 @@
 \usepackage{dirtree} % For creating directory trees
 \usepackage{parskip}
 \usepackage[normalem]{ulem}
+\usepackage{placeins} % For using float barriers
 
 %-------------Adding exception handling----------------
 \algblock[TryCatchFinally]{try}{endtry}
@@ -44,6 +45,18 @@
 \usepackage{psfrag}
 \usepackage{authblk}
 
+% To fix ulr issues in bibtex
+\usepackage{url}
+\setcounter{biburllcpenalty}{7000}
+\setcounter{biburlucpenalty}{8000}
+
+%%%% --------------- For adding blank Page --------------%%
+\usepackage{afterpage}
+\newcommand\blankpage{%
+    \null
+    \thispagestyle{plain}%
+    \newpage}
+%%%% ----------------------------------------------------%%%
 
 %% For programming text input %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
