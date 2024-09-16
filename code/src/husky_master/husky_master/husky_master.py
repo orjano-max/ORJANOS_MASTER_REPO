@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+fg#!/usr/bin/env python3
 import rclpy
 from std_msgs.msg import String
 from nav2_simple_commander.robot_navigator import BasicNavigator
@@ -25,7 +25,7 @@ class HuskyMasterNode(BasicNavigator):
         if not self.has_parameter("dimensions"):
             self.declare_parameter("dimensions", [0.15, 0.045, 0.04])
         if not self.has_parameter("pick_loc"):
-            self.declare_parameter("pick_loc", [4.5, 1.0, 1.57])
+            self.declare_parameter("pick_loc", [3.5, -2.0, 0.0])
 
         self.object = self.get_parameter("object").get_parameter_value().string_value
         self.dimensions = self.get_parameter("dimensions").get_parameter_value().string_value
@@ -86,6 +86,7 @@ def main(args=None):
 
     reachedPickLoc = False
     pickingFinished = False
+    reachedIntermediateLoc = False
     reachedPlaceLoc = False
     placingFinished = False
     reachedHome = False
@@ -143,10 +144,30 @@ def main(args=None):
             elapsed_time = 0
             break # Jump out if timeout is reached
 
-    # Go to place location
+    # Go to intermediate location
     if pickingFinished:
         # Send Nav2 goal 
-        place_pose = nav.create_pose_stamped( 1.0, 1.0, 1.57)
+        place_pose = nav.create_pose_stamped(4.5, -2.0, 0)
+        nav.goToPose(place_pose)
+
+    # Wait for navigation task to finish
+    start_time = time.monotonic()
+    while rclpy.ok() and not reachedIntermediateLoc:
+
+        # Check if navigation task is complete
+        if nav.isTaskComplete():
+            reachedIntermediateLoc = True
+
+        # Check elapsed time
+        elapsed_time = time.monotonic() - start_time
+        if elapsed_time > timeout:
+            elapsed_time = 0
+            break # Jump out if timeout is reached
+
+    # Go to place location
+    if reachedIntermediateLoc:
+        # Send Nav2 goal 
+        place_pose = nav.create_pose_stamped(4.5, 1.0, 1.57)
         nav.goToPose(place_pose)
 
     # Wait for navigation task to finish
@@ -186,7 +207,7 @@ def main(args=None):
             break # Jump out if timeout is reached
 
     # Send Nav2 goal 
-    goal_pose = nav.create_pose_stamped( 0.0, 0.0, 0.0)
+    goal_pose = nav.create_pose_stamped( 0.0, 0.0, 3.14)
     nav.goToPose(goal_pose)
 
     # Wait for navigation task to finish
